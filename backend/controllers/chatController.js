@@ -39,7 +39,7 @@ export const handleChat = async (req, res) => {
     });
 
     const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
 
     const finalPrompt = `
 User Message:
@@ -68,7 +68,10 @@ Remember:
 
     const fetchPromise = fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
       body: JSON.stringify(body)
     });
 
