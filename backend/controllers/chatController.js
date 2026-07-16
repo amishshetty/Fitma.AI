@@ -80,10 +80,20 @@ Remember:
   } catch (error) {
     console.error("Liva Error:", error.message || error);
 
+    const errorMessage = error.message || "Unknown error";
+    let customResponse = "I'm having a little trouble connecting to my brain right now. Can you try again in a moment?";
+    
+    if (errorMessage.includes("API key not valid")) {
+      customResponse = "It looks like the Gemini API Key is invalid! Please check the key in Render.";
+    } else {
+      // Temporarily send the raw error to the frontend so we can see what's wrong!
+      customResponse = `System Error: ${errorMessage}`;
+    }
+
     return res.status(500).json({
       success: false,
       error: "Failed to generate AI response",
-      response: "I'm having a little trouble connecting to my brain right now. Can you try again in a moment?"
+      response: customResponse
     });
   }
 };
