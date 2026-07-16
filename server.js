@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 import dotenv from "dotenv";
 import { genAI } from "./backend/services/chatService.js";
 import chatRoutes from "./backend/routes/chatRoutes.js";
@@ -18,7 +19,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 
-// We do not serve frontend static files here because the frontend is hosted on Vercel.
+// Serve frontend static files ONLY if they exist (for Vercel/Local)
+const distPath = path.join(__dirname, "dist");
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
 
 /* ---------------------------------------------------------
                     ROUTES
@@ -47,7 +52,12 @@ app.get("/api/health", (req, res) => {
 
 // Fallback for root route
 app.use((req, res) => {
-  res.send("Fitma AI Backend API is running perfectly! 🚀");
+  const indexPath = path.join(__dirname, "dist", "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send("Fitma AI Backend API is running perfectly! 🚀");
+  }
 });
 
 /* ---------------------------------------------------------
