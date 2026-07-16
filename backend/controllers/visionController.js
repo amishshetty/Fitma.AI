@@ -22,7 +22,7 @@ export const handleVisionAnalyze = async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-flash-latest",
+      model: "gemini-1.5-flash",
       systemInstruction: "You are a helpful assistant." 
     });
 

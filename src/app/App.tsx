@@ -526,6 +526,10 @@ export default function App() {
         }
       };
       loadProfile();
+      
+      // Ping the Render backend to wake it up in the background!
+      const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
+      fetch(`${API_URL}/api/health`).catch(() => {});
     }
   }, []);
 
@@ -638,9 +642,13 @@ export default function App() {
       setSiriText("Thinking...");
       
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
         const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
         const response = await fetch(`${API_URL}/api/chat`, {
           method: "POST",
+          signal: controller.signal,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             message: finalTranscript,
@@ -655,6 +663,8 @@ export default function App() {
             previousMessages: []
           }),
         });
+
+        clearTimeout(timeoutId);
         
         if (activeSiriRecRef.current !== recognition) return; // double check after fetch
 

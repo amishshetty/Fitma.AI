@@ -68,9 +68,13 @@ export default function LivaChatScreen({
     setIsTyping(true);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
       const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
       const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json"
         },
@@ -87,6 +91,8 @@ export default function LivaChatScreen({
           previousMessages: messages.map(m => ({ sender: m.sender, text: m.text }))
         })
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error("Failed to contact Liva backend");
