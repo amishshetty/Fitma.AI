@@ -14,7 +14,7 @@ export default function CameraAIProcessingScreen({ image, mealType, loggedMeals,
     // Call our real Vision API
     const analyzeImage = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
+        const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
         const response = await fetch(`${API_URL}/api/vision/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
