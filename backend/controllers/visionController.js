@@ -21,11 +21,6 @@ export const handleVisionAnalyze = async (req, res) => {
       });
     }
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: "You are a helpful assistant." 
-    });
-
     // Strip out the data URL prefix if it exists (e.g., "data:image/jpeg;base64,")
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
@@ -44,20 +39,44 @@ You MUST respond ONLY with a valid JSON object in this exact format:
 }
 Do not include markdown tags like \`\`\`json or any other text. Just the raw JSON object.`;
 
-    const imageParts = [
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType: "image/jpeg"
+    const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    const body = {
+      system_instruction: { parts: [{ text: "You are a helpful assistant." }] },
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+            {
+              inline_data: {
+                data: base64Data,
+                mime_type: "image/jpeg"
+              }
+            }
+          ]
         }
-      }
-    ];
+      ]
+    };
+
+    const fetchPromise = fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
     const result = await Promise.race([
-      model.generateContent([prompt, ...imageParts]),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini Timeout")), 2500))
+      fetchPromise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini Timeout")), 30000))
     ]);
-    const responseText = result.response.text().trim();
+
+    const data = await result.json();
+    if (!result.ok) {
+      throw new Error(data.error?.message || "Google API Error");
+    }
+
+    const responseText = data.candidates[0].content.parts[0].text.trim();
     
     // Clean up potential markdown blocks if the model ignored instructions
     let jsonString = responseText;

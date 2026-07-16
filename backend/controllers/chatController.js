@@ -38,13 +38,8 @@ export const handleChat = async (req, res) => {
       });
     });
 
-    // ---------- GEMINI MODEL ----------
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: systemPrompt,
-    });
-
-    const chat = model.startChat({ history });
+    const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const finalPrompt = `
 User Message:
@@ -60,11 +55,34 @@ Remember:
 - End positively.
 `;
 
+    const contents = history.map(msg => ({
+      role: msg.role,
+      parts: msg.parts
+    }));
+    contents.push({ role: "user", parts: [{ text: finalPrompt }] });
+
+    const body = {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: contents
+    };
+
+    const fetchPromise = fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
     const result = await Promise.race([
-      chat.sendMessage(finalPrompt),
+      fetchPromise,
       new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini Timeout")), 30000))
     ]);
-    let response = result.response.text();
+
+    const data = await result.json();
+    if (!result.ok) {
+      throw new Error(data.error?.message || "Google API Error");
+    }
+
+    let response = data.candidates[0].content.parts[0].text;
 
     const { cleanResponse, mealData, waterData, deleteData } = parseLogs(response);
 
