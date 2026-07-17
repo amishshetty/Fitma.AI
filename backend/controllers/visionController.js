@@ -40,8 +40,7 @@ You MUST respond ONLY with a valid JSON object in this exact format:
 Do not include markdown tags like \`\`\`json or any other text. Just the raw JSON object.`;
 
     const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
-    // Using gemini-1.5-flash-latest to avoid "not found" errors on newly provisioned free-tier projects
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
 
     const body = {
       system_instruction: { parts: [{ text: "You are a helpful assistant." }] },
