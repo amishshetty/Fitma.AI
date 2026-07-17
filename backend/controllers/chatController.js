@@ -39,7 +39,8 @@ export const handleChat = async (req, res) => {
     });
 
     const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+    // Using gemini-1.5-flash-latest to avoid "not found" errors on newly provisioned free-tier projects
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
 
     const finalPrompt = `
 User Message:
