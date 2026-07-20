@@ -42,13 +42,9 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
 
   const startListening = async () => {
     if (recognitionRef.current) {
-      // Workaround: Explicitly request microphone permission first to fix access denied issues in Chrome/Mobile
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(track => track.stop());
-      } catch (err) {
-        console.error("Microphone access error:", err);
-        alert("Microphone access denied. Please enable microphone permissions in your browser.");
+      const isIOSChrome = navigator.userAgent.match("CriOS");
+      if (isIOSChrome) {
+        alert("Apple restricts voice recognition in Chrome on iOS. Please use Safari to use voice features.");
         setVoiceStatus("error");
         return;
       }

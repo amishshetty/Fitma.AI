@@ -69,7 +69,7 @@ export default function LivaChatScreen({
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
       const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
       const response = await fetch(`${API_URL}/api/chat`, {
@@ -179,13 +179,9 @@ export default function LivaChatScreen({
       return;
     }
 
-    // Workaround: Explicitly request microphone permission first to fix access denied issues in Chrome/Mobile
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop());
-    } catch (err) {
-      console.error("Microphone access error:", err);
-      alert("Microphone access denied. Please enable microphone permissions in your browser.");
+    const isIOSChrome = navigator.userAgent.match("CriOS");
+    if (isIOSChrome) {
+      alert("Apple restricts voice recognition in Chrome on iOS. Please use Safari to use voice features.");
       return;
     }
 
