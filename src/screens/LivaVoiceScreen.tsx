@@ -7,7 +7,7 @@ import SecondaryButton from "../components/ui/SecondaryButton";
 import { Screen } from "../types";
 
 export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => void; onDone: (spoken: string) => void }) {
-  const [voiceStatus, setVoiceStatus] = useState<"listening" | "processing" | "error">("listening");
+  const [voiceStatus, setVoiceStatus] = useState<"idle" | "listening" | "processing" | "error">("idle");
   const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
 
@@ -31,12 +31,27 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
       setTranscript(currentTranscript);
     };
     recognition.onerror = () => setVoiceStatus("error");
-    recognition.start();
+    recognition.onend = () => {
+      if (voiceStatus === "listening") setVoiceStatus("idle");
+    };
 
     return () => {
       recognition.stop();
     };
   }, []);
+
+  const startListening = () => {
+    if (recognitionRef.current) {
+      setVoiceStatus("listening");
+      setTranscript("");
+      try {
+        recognitionRef.current.start();
+      } catch (e) {
+        console.error(e);
+        setVoiceStatus("error");
+      }
+    }
+  };
 
   const handleSend = () => {
     if (transcript.trim()) {
@@ -60,14 +75,15 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
 
       <div className="flex flex-1 flex-col items-center justify-center text-center px-6">
         <div className="relative mb-12">
-          <div className="absolute inset-0 rounded-full bg-[#34C759]/10 animate-ping" />
+          {voiceStatus === "listening" && <div className="absolute inset-0 rounded-full bg-[#34C759]/10 animate-ping" />}
           <motion.div
-            animate={{ scale: [1, 1.08, 1] }}
+            animate={voiceStatus === "listening" ? { scale: [1, 1.08, 1] } : { scale: 1 }}
             transition={{ duration: 1.8, repeat: Infinity }}
-            className="relative flex h-36 w-36 items-center justify-center rounded-full text-white"
+            onClick={voiceStatus === "idle" || voiceStatus === "error" ? startListening : undefined}
+            className={`relative flex h-36 w-36 items-center justify-center rounded-full text-white ${voiceStatus === "idle" || voiceStatus === "error" ? "cursor-pointer hover:scale-105 transition-transform" : ""}`}
             style={{
-              background: voiceStatus === "error" ? "linear-gradient(135deg, #ef4444, #dc2626)" : "linear-gradient(135deg, #34C759, #00C4B0)",
-              boxShadow: voiceStatus === "error" ? "0 18px 48px rgba(239,68,68,0.3)" : "0 18px 48px rgba(52,199,89,0.3)",
+              background: voiceStatus === "error" ? "linear-gradient(135deg, #ef4444, #dc2626)" : voiceStatus === "idle" ? "linear-gradient(135deg, #9bb2a5, #6d8779)" : "linear-gradient(135deg, #34C759, #00C4B0)",
+              boxShadow: voiceStatus === "error" ? "0 18px 48px rgba(239,68,68,0.3)" : voiceStatus === "idle" ? "0 18px 48px rgba(155,178,165,0.3)" : "0 18px 48px rgba(52,199,89,0.3)",
             }}
           >
             {voiceStatus === "error" ? <MicOff size={64} /> : <Mic size={64} />}
@@ -75,7 +91,7 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
         </div>
 
         <h1 className="text-2xl font-extrabold tracking-wide" style={{ color: "#ffffff" }}>
-          {voiceStatus === "error" ? "Mic not available" : voiceStatus === "processing" ? "Sending to Liva..." : "Listening..."}
+          {voiceStatus === "error" ? "Mic not available" : voiceStatus === "processing" ? "Sending to Liva..." : voiceStatus === "idle" ? "Tap Mic to Start" : "Listening..."}
         </h1>
 
         {transcript && (
