@@ -40,8 +40,19 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
     };
   }, []);
 
-  const startListening = () => {
+  const startListening = async () => {
     if (recognitionRef.current) {
+      // Workaround: Explicitly request microphone permission first to fix access denied issues in Chrome/Mobile
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+      } catch (err) {
+        console.error("Microphone access error:", err);
+        alert("Microphone access denied. Please enable microphone permissions in your browser.");
+        setVoiceStatus("error");
+        return;
+      }
+
       setVoiceStatus("listening");
       setTranscript("");
       try {

@@ -597,7 +597,7 @@ export default function App() {
     };
   }, [showFloatingLiva, livaSiriActive]);
 
-  const triggerSiri = () => {
+  const triggerSiri = async () => {
     if (livaSiriActive) return; // Prevent double trigger if already active
 
     // Manually release wake word recognizer if active
@@ -612,6 +612,16 @@ export default function App() {
     if (!SpeechRecognition) {
       setChatInitialMsg("");
       go("liva-chat");
+      return;
+    }
+
+    // Workaround: Explicitly request microphone permission first to fix access denied issues in Chrome/Mobile
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    } catch (err) {
+      console.error("Microphone access error:", err);
+      alert("Microphone access denied. Please enable microphone permissions in your browser.");
       return;
     }
 

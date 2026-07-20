@@ -156,7 +156,7 @@ export default function LivaHomeScreen({
     }
   };
 
-  const toggleVoiceInput = () => {
+  const toggleVoiceInput = async () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Voice input is not supported in this browser. Please use Chrome.");
@@ -166,6 +166,16 @@ export default function LivaHomeScreen({
     if (isListening) {
       recognitionRef.current?.stop();
       setIsListening(false);
+      return;
+    }
+
+    // Workaround: Explicitly request microphone permission first to fix access denied issues in Chrome/Mobile
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    } catch (err) {
+      console.error("Microphone access error:", err);
+      alert("Microphone access denied. Please enable microphone permissions in your browser.");
       return;
     }
 
