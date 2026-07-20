@@ -69,7 +69,7 @@ export default function LivaChatScreen({
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
       const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
       const response = await fetch(`${API_URL}/api/chat`, {
