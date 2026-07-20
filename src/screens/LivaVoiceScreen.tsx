@@ -12,29 +12,60 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setVoiceStatus("error");
-      return;
-    }
+    let recognition: any = null;
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = true;
-    recognitionRef.current = recognition;
+    const initVoice = async () => {
+      try {
+        // Request microphone permission explicitly first to ensure the browser shows the prompt
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+      } catch (err) {
+        console.error("Mic permission denied", err);
+        setVoiceStatus("error");
+        return;
+      }
 
-    recognition.onresult = (event: any) => {
-      const currentTranscript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join("");
-      setTranscript(currentTranscript);
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.error("Speech recognition not supported in this browser.");
+        setVoiceStatus("error");
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = true;
+      recognition.continuous = true;
+      recognitionRef.current = recognition;
+
+      recognition.onresult = (event: any) => {
+        const currentTranscript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join("");
+        setTranscript(currentTranscript);
+      };
+      
+      recognition.onerror = (e: any) => {
+        console.error("Speech recognition error", e);
+        if (e.error !== "no-speech") {
+          setVoiceStatus("error");
+        }
+      };
+
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error("Failed to start recognition", err);
+      }
     };
-    recognition.onerror = () => setVoiceStatus("error");
-    recognition.start();
+
+    initVoice();
 
     return () => {
-      recognition.stop();
+      if (recognition) {
+        recognition.stop();
+      }
     };
   }, []);
 
