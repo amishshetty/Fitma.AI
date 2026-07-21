@@ -528,7 +528,7 @@ export default function App() {
       loadProfile();
       
       // Ping the Render backend to wake it up in the background!
-      const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
+      const API_URL = import.meta.env.VITE_API_URL || '';
       fetch(`${API_URL}/api/health`).catch(() => {});
     }
   }, []);
@@ -653,7 +653,7 @@ export default function App() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-        const API_URL = import.meta.env.VITE_API_URL || 'https://fitma-ai.onrender.com';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         const response = await fetch(`${API_URL}/api/chat`, {
           method: "POST",
           signal: controller.signal,
