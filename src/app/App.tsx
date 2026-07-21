@@ -343,6 +343,8 @@ export default function App() {
 
     const addedCal = Number(mealData.calories) || 0;
     const addedProt = Number(mealData.protein) || 0;
+    const addedCarbs = Number(mealData.carbs) || 0;
+    const addedFat = Number(mealData.fat) || 0;
     const mealType = (mealData.mealType || "snack").toLowerCase();
     const items = mealData.items || ["meal"];
 
@@ -359,6 +361,8 @@ export default function App() {
       name: items.join(", "),
       calories: addedCal,
       protein: addedProt,
+      carbs: addedCarbs,
+      fat: addedFat,
       timestamp: mealDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mealType: mealType
     };

@@ -1,4 +1,4 @@
-import { ArrowLeft, MicOff, Mic, Send } from "lucide-react";
+import { ArrowLeft, MicOff, Mic, Send, Flame, Egg, Leaf, Droplet } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import LivaAvatar from "../components/layout/LivaAvatar";
 import IconButton from "../components/ui/IconButton";
@@ -121,13 +121,21 @@ export default function LivaChatScreen({
         onMealDeleted(data.deleteData);
       }
 
+      const summaryToRender = data.mealData || data.summaryData || null;
+
       setMessages((prev) => [
         ...prev, 
         { 
           id: (Date.now() + 1).toString(),
           sender: "liva", 
           text: livaReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          nutritionSummary: summaryToRender ? {
+            calories: summaryToRender.calories || 0,
+            protein: summaryToRender.protein || 0,
+            carbs: summaryToRender.carbs || 0,
+            fat: summaryToRender.fat || 0
+          } : undefined
         }
       ]);
     } catch (err) {
@@ -294,6 +302,52 @@ export default function LivaChatScreen({
                   >
                     {msg.text}
                   </div>
+                  {msg.nutritionSummary && (
+                    <div className="mt-2 bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.04)] animate-fadeIn w-[280px]">
+                      <div className="flex justify-between items-center text-center">
+                        {/* Calories */}
+                        <div className="flex-1 border-r border-slate-100 px-1">
+                          <div className="flex justify-center mb-2">
+                            <div className="w-8 h-8 rounded-full border border-[#34c759] flex items-center justify-center text-[#34c759]">
+                              <Flame size={16} strokeWidth={2.5} />
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Calories</p>
+                          <p className="text-xs font-extrabold text-slate-800">{msg.nutritionSummary.calories} <span className="text-[10px] font-semibold text-slate-400">kcal</span></p>
+                        </div>
+                        {/* Protein */}
+                        <div className="flex-1 border-r border-slate-100 px-1">
+                          <div className="flex justify-center mb-2">
+                            <div className="w-8 h-8 rounded-full border border-[#34c759] flex items-center justify-center text-[#34c759]">
+                              <Egg size={16} strokeWidth={2.5} />
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Protein</p>
+                          <p className="text-xs font-extrabold text-slate-800">{msg.nutritionSummary.protein} <span className="text-[10px] font-semibold text-slate-400">g</span></p>
+                        </div>
+                        {/* Carbs */}
+                        <div className="flex-1 border-r border-slate-100 px-1">
+                          <div className="flex justify-center mb-2">
+                            <div className="w-8 h-8 rounded-full border border-[#34c759] flex items-center justify-center text-[#34c759]">
+                              <Leaf size={16} strokeWidth={2.5} />
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Carbs</p>
+                          <p className="text-xs font-extrabold text-slate-800">{msg.nutritionSummary.carbs} <span className="text-[10px] font-semibold text-slate-400">g</span></p>
+                        </div>
+                        {/* Fat */}
+                        <div className="flex-1 px-1">
+                          <div className="flex justify-center mb-2">
+                            <div className="w-8 h-8 rounded-full border border-[#34c759] flex items-center justify-center text-[#34c759]">
+                              <Droplet size={16} strokeWidth={2.5} />
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Fat</p>
+                          <p className="text-xs font-extrabold text-slate-800">{msg.nutritionSummary.fat} <span className="text-[10px] font-semibold text-slate-400">g</span></p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <span className={`text-[9px] font-semibold text-slate-400 px-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
                     {msg.timestamp}
                   </span>

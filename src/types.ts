@@ -7,6 +7,12 @@ export interface ChatMessage {
   sender: "user" | "liva";
   text: string;
   timestamp: string;
+  nutritionSummary?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 export interface GoalConfig {
@@ -37,6 +43,8 @@ export interface LoggedMeal {
   name: string;
   calories: number;
   protein: number;
+  carbs?: number;
+  fat?: number;
   timestamp: string;
   mealType: string;
 }

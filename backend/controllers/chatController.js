@@ -89,7 +89,7 @@ Remember:
 
     let response = data.candidates[0].content.parts[0].text;
 
-    const { cleanResponse, mealData, waterData, deleteData } = parseLogs(response);
+    const { cleanResponse, mealData, summaryData, waterData, deleteData } = parseLogs(response);
 
     return res.json({
       success: true,
@@ -97,6 +97,7 @@ Remember:
       intent,
       response: cleanResponse,
       mealData,
+      summaryData,
       waterData,
       deleteData,
     });

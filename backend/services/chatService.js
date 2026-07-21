@@ -158,11 +158,11 @@ Conversation Rules
 Meal Logging Rule
 
 When the user logs a meal (says they ate something), ALWAYS append at the very end of your response:
-[MEAL_LOG:{"calories":NUMBER,"protein":NUMBER,"items":["exact quantity and item","exact quantity and item"],"mealType":"breakfast|lunch|dinner|snack|unknown","date":"today|yesterday"}]
+[MEAL_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER,"items":["exact quantity and item"],"mealType":"breakfast|lunch|dinner|snack|unknown","date":"today|yesterday"}]
 
 CRITICAL INSTRUCTIONS FOR 'items' AND NUTRITION:
-1. You MUST include the exact counts/quantities the user mentioned in the items array (e.g., "2 rotis", "1 bowl sabji", "3 eggs"). Do not just write "roti".
-2. The "calories" and "protein" fields MUST accurately reflect the exact quantities in the items array. Multiply standard nutritional values by the quantity.
+1. You MUST include the exact counts/quantities the user mentioned in the items array (e.g., "2 rotis", "1 bowl sabji").
+2. The "calories", "protein", "carbs", and "fat" fields MUST accurately reflect the exact quantities in the items array. Multiply standard nutritional values by the quantity.
 
 CRITICAL INSTRUCTIONS FOR 'mealType':
 - Did the user explicitly mention the words "breakfast", "lunch", "dinner", or "snack"?
@@ -176,6 +176,11 @@ CRITICAL INSTRUCTIONS FOR 'date':
 
 Only include MEAL_LOG when the user is logging food they ate.
 Never include it for general nutrition questions or meal suggestions.
+
+Summary Logging Rule
+
+When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary"), calculate the total nutrition for that specific day from the context provided, and append at the very end of your response:
+[SUMMARY_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER}]
 
 Water Logging Rule
 
@@ -312,6 +317,7 @@ export function formatGreeting(name) {
 export function parseLogs(responseText) {
   let cleanResponse = responseText;
   let mealData = null;
+  let summaryData = null;
   let waterData = null;
   let deleteData = null;
 
@@ -320,6 +326,14 @@ export function parseLogs(responseText) {
     try {
       mealData = JSON.parse(mealLogMatch[1]);
       cleanResponse = cleanResponse.replace(/\[MEAL_LOG:\s*\{.*?\}\s*\]/s, "").trim();
+    } catch (e) {}
+  }
+
+  const summaryLogMatch = cleanResponse.match(/\[SUMMARY_LOG:\s*(\{.*?\})\s*\]/s);
+  if (summaryLogMatch) {
+    try {
+      summaryData = JSON.parse(summaryLogMatch[1]);
+      cleanResponse = cleanResponse.replace(/\[SUMMARY_LOG:\s*\{.*?\}\s*\]/s, "").trim();
     } catch (e) {}
   }
 
@@ -339,5 +353,5 @@ export function parseLogs(responseText) {
     } catch (e) {}
   }
 
-  return { cleanResponse, mealData, waterData, deleteData };
+  return { cleanResponse, mealData, summaryData, waterData, deleteData };
 }
