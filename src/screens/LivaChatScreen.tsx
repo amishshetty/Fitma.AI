@@ -340,6 +340,7 @@ export default function LivaChatScreen({
                           why={rec.why}
                           alternatives={rec.alternatives}
                           tip={rec.tip}
+                          onQuickAction={handleSendText}
                         />
                       </React.Fragment>
                     ))}

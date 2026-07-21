@@ -16,11 +16,14 @@ interface FoodRecommendationCardProps {
   message_suffix?: string;
   alternatives?: AlternativeFood[];
   tip?: string;
+  onQuickAction?: (action: string) => void;
 }
 
 export const FoodRecommendationCard: React.FC<FoodRecommendationCardProps> = ({
+  meal,
   alternatives,
-  tip
+  tip,
+  onQuickAction
 }) => {
   return (
     <div className="flex flex-col gap-3 w-full animate-fadeIn mt-2">
@@ -31,6 +34,27 @@ export const FoodRecommendationCard: React.FC<FoodRecommendationCardProps> = ({
       {tip && (
         <LivaTipCard tip={tip} />
       )}
+
+      {/* Quick Actions (Futuristic Pills) */}
+      <div className="flex flex-wrap gap-2 mt-2">
+        {[
+          { label: "Log This Meal", query: `Log this meal: ${meal || "this meal"}` },
+          { label: "Show Another Option", query: "Show Another Option" },
+          { label: "Vegetarian Version", query: "Vegetarian Version" },
+          { label: "High Protein", query: "High Protein" },
+          { label: "Takes <15 mins", query: "Takes <15 mins" }
+        ].map((action, idx) => (
+          <button
+            key={idx}
+            onClick={() => onQuickAction && onQuickAction(action.query)}
+            className="px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200 
+                       bg-[#f2faf5] text-[#2a9d48] border border-[#34C759]/20 
+                       hover:bg-[#34C759] hover:text-white hover:scale-[1.02] active:scale-95 shadow-sm"
+          >
+            {action.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
