@@ -408,75 +408,37 @@ export default function LivaChatScreen({
                     </div>
                   )}
                   {msg.recommendationData && msg.recommendationData.length > 0 && (
-                    <div className="mt-2 flex flex-col gap-3 w-[280px]">
-                      {msg.recommendationData.map((rec, index) => (
-                        <div key={index} className="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.04)] animate-fadeIn overflow-hidden w-full">
-                          {/* Header */}
-                          <div className="bg-[#f2faf5] px-4 py-3 border-b border-slate-100">
-                            <p className="text-[10px] font-bold text-[#34c759] uppercase tracking-wider mb-1">Recommended Option {index + 1}</p>
-                            <h3 className="text-sm font-extrabold text-slate-800 whitespace-pre-wrap">{rec.meal}</h3>
-                          </div>
-                          
-                          {/* Macros */}
-                          <div className="px-4 py-3 border-b border-slate-100">
-                            <div className="flex justify-between items-center text-center">
-                              <div className="flex-1 border-r border-slate-100 px-1">
-                                <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Calories</p>
-                                <p className="text-xs font-extrabold text-slate-800">{rec.calories}</p>
-                              </div>
-                              <div className="flex-1 border-r border-slate-100 px-1">
-                                <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Protein</p>
-                                <p className="text-xs font-extrabold text-slate-800">{rec.protein}g</p>
-                              </div>
-                              <div className="flex-1 border-r border-slate-100 px-1">
-                                <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Carbs</p>
-                                <p className="text-xs font-extrabold text-slate-800">{rec.carbs}g</p>
-                              </div>
-                              <div className="flex-1 px-1">
-                                <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Fat</p>
-                                <p className="text-xs font-extrabold text-slate-800">{rec.fat}g</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Why this? */}
-                          {rec.why && rec.why.length > 0 && (
-                            <div className="px-4 py-3 border-b border-slate-100">
-                              <p className="text-[10px] font-bold text-slate-500 mb-2">Why this?</p>
-                              <ul className="space-y-1.5">
-                                {rec.why.map((reason, i) => (
-                                  <li key={i} className="flex items-start gap-1.5 text-xs font-semibold text-slate-600">
-                                    <span className="text-[#34c759] mt-0.5">✓</span>
-                                    <span>{reason}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          {/* Alternatives */}
-                          {rec.alternatives && rec.alternatives.length > 0 && (
-                            <div className="px-4 py-3 border-b border-slate-100 bg-[#fafafa]">
-                              <p className="text-[10px] font-bold text-slate-500 mb-2">Alternatives</p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {rec.alternatives.map((alt, i) => (
-                                  <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-md text-[10px] font-bold text-slate-600">
-                                    {alt}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Tip */}
-                          {rec.tip && (
-                            <div className="px-4 py-3 bg-[#e8f5e9]/50">
-                              <p className="text-[10px] font-bold text-[#2e7d32] mb-1">AI Tip</p>
-                              <p className="text-xs font-medium text-slate-700 leading-relaxed">{rec.tip}</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                    <div className="mt-2 w-[300px] sm:w-[340px] bg-white rounded-2xl border border-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.04)] animate-fadeIn overflow-hidden">
+                      <div className="bg-[#f2faf5] px-4 py-3 border-b border-slate-100">
+                        <h3 className="text-sm font-extrabold text-[#2e7d32]">Meal Recommendations</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs whitespace-nowrap">
+                          <thead className="bg-slate-50 text-slate-500 font-semibold">
+                            <tr>
+                              <th className="px-3 py-2">Option</th>
+                              <th className="px-3 py-2 text-right">Kcal</th>
+                              <th className="px-3 py-2 text-right">P</th>
+                              <th className="px-3 py-2 text-right">C</th>
+                              <th className="px-3 py-2 text-right">F</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 text-slate-700">
+                            {msg.recommendationData.map((rec, index) => (
+                              <tr key={index} className="hover:bg-slate-50 transition-colors">
+                                <td className="px-3 py-3 whitespace-normal min-w-[120px]">
+                                  <p className="font-bold text-slate-800 leading-tight">{rec.meal}</p>
+                                  {rec.tip && <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{rec.tip}</p>}
+                                </td>
+                                <td className="px-3 py-3 text-right font-medium">{rec.calories}</td>
+                                <td className="px-3 py-3 text-right font-medium">{rec.protein}g</td>
+                                <td className="px-3 py-3 text-right font-medium">{rec.carbs}g</td>
+                                <td className="px-3 py-3 text-right font-medium">{rec.fat}g</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                   <span className={`text-[9px] font-semibold text-slate-400 px-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
