@@ -126,7 +126,7 @@ export default function LivaChatScreen({
             language: "English"
           },
           previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
-          loggedMeals: loggedMeals.map(m => {
+          loggedMeals: (loggedMeals || []).map(m => {
             let dateStr = "";
             try {
               dateStr = new Date(parseInt(m.id)).toDateString();

@@ -55,6 +55,7 @@ Remember:
 - Suggest healthy Indian/Indian-western food when asked.
 - Give a highly varied, unique response. Do NOT repeat previous answers!
 - End positively.
+- CRITICAL: If you are suggesting meals, you MUST append the [RECOMMENDATION_LOG: [...]] JSON array at the very end of your response! Do NOT forget this!
 `;
 
     const contents = history.map(msg => ({

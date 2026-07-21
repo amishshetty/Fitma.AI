@@ -217,11 +217,11 @@ When the user asks for food suggestions or recommendations, NEVER return a long 
 Instead, you MUST append a structured JSON array at the very end of your short, friendly response text so the frontend can render beautiful cards. You can provide 1 or more recommendations in the array.
 
 Append exactly this format at the end:
-[RECOMMENDATION_LOG:[{"meal":"Name of meal with brief components (e.g. Paneer Bhurji\\n2 Chapati\\nSalad)","calories":520,"protein":35,"carbs":45,"fat":16,"why":["Reason 1","Reason 2"],"alternatives":["Alternative 1","Alternative 2"],"tip":"Short AI contextual tip"}]]
+[RECOMMENDATION_LOG:[{"meal":"Name of meal with brief components (e.g. Paneer Bhurji, 2 Chapati, Salad)","calories":520,"protein":35,"carbs":45,"fat":16,"why":["Reason 1","Reason 2"],"alternatives":["Alternative 1","Alternative 2"],"tip":"Short AI contextual tip"}]]
 
 Example Response:
 "I've got the perfect high-protein Indian options for you today!"
-[RECOMMENDATION_LOG:[{"meal":"Paneer Bhurji\\n2 Chapati\\nSalad","calories":520,"protein":35,"carbs":45,"fat":16,"why":["High Protein","Fits today's calorie target","Good recovery meal"],"alternatives":["Dal Khichdi","Grilled Chicken"],"tip":"This meal focuses on protein."}, {"meal":"Chicken Curry\\n1 Bowl Rice","calories":450,"protein":40,"carbs":40,"fat":12,"why":["Lean protein","Filling"],"alternatives":["Egg Curry"],"tip":"Great for muscle building."}]]
+[RECOMMENDATION_LOG:[{"meal":"Paneer Bhurji, 2 Chapati, Salad","calories":520,"protein":35,"carbs":45,"fat":16,"why":["High Protein","Fits today's calorie target","Good recovery meal"],"alternatives":["Dal Khichdi","Grilled Chicken"],"tip":"This meal focuses on protein."}, {"meal":"Chicken Curry, 1 Bowl Rice","calories":450,"protein":40,"carbs":40,"fat":12,"why":["Lean protein","Filling"],"alternatives":["Egg Curry"],"tip":"Great for muscle building."}]]
 
 Meal Logging Rule
 
@@ -394,16 +394,36 @@ export function parseLogs(responseText) {
   let deleteData = null;
   let recommendationData = null;
 
-  const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(\[.*?\]|\{.*?\})\s*\]/s);
+  const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(```json\s*)?(\[.*?\]|\{.*?\})(\s*```)?\s*\]/s);
   if (recLogMatch) {
     try {
-      let parsed = JSON.parse(recLogMatch[1]);
+      // Clean potential unescaped newlines within the string
+      let rawJson = recLogMatch[2].replace(/\n/g, '\\n');
+      // If the AI accidentally outputs literal \n instead of escaped, we clean it
+      // but wait, if we replace all newlines, it will break the formatting?
+      // Actually, standard JSON stringify handles \n by emitting \n. 
+      // If the model outputs a literal newline inside a string, we can try to fix it.
+      let parsed = JSON.parse(recLogMatch[2]);
       if (!Array.isArray(parsed)) {
         parsed = [parsed];
       }
       recommendationData = parsed;
-      cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:\s*(\[.*?\]|\{.*?\})\s*\]/s, "").trim();
-    } catch (e) {}
+      cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
+    } catch (e) {
+      console.error("Failed to parse RECOMMENDATION_LOG", e);
+      try {
+        // Fallback: try removing all literal newlines that might break JSON
+        let fixedJson = recLogMatch[2].replace(/\n/g, ' ');
+        let parsed = JSON.parse(fixedJson);
+        if (!Array.isArray(parsed)) {
+          parsed = [parsed];
+        }
+        recommendationData = parsed;
+        cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
+      } catch (e2) {
+        console.error("Fallback parsing failed too", e2);
+      }
+    }
   }
 
   const mealLogMatch = cleanResponse.match(/\[MEAL_LOG:\s*(\{.*?\})\s*\]/s);
