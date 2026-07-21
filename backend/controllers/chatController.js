@@ -47,17 +47,14 @@ ${message}
 
 Remember:
 - Speak only as Liva.
-- Never mention Gemini.
-- Never mention ChatGPT.
+- Never mention Gemini or ChatGPT.
 - Use the user's motivation style.
 - Personalize the reply.
 - If this is meal logging, estimate nutrition.
 - Suggest healthy Indian/Indian-western food when asked.
 - Give a highly varied, unique response. Do NOT repeat previous answers!
 - End positively.
-- CRITICAL: If you are suggesting meals, you MUST append EXACTLY this JSON format at the very end of your response:
-[RECOMMENDATION_LOG: [{"meal":"...","calories":0,"protein":0,"carbs":0,"fat":0,"why":[],"alternatives":[],"tip":""}]]
-Do NOT forget the [RECOMMENDATION_LOG: prefix or the [ ] array brackets!
+- CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided in the instructions. DO NOT return plain text.
 `;
 
     const contents = history.map(msg => ({
@@ -68,7 +65,10 @@ Do NOT forget the [RECOMMENDATION_LOG: prefix or the [ ] array brackets!
 
     const body = {
       system_instruction: { parts: [{ text: systemPrompt }] },
-      contents: contents
+      contents: contents,
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
     };
 
     const fetchPromise = fetch(url, {
@@ -92,13 +92,15 @@ Do NOT forget the [RECOMMENDATION_LOG: prefix or the [ ] array brackets!
 
     let response = data.candidates[0].content.parts[0].text;
 
-    const { cleanResponse, mealData, summaryData, waterData, deleteData, recommendationData } = parseLogs(response);
+    const { cleanResponse, mealData, summaryData, waterData, deleteData, recommendationData, greeting, motivation } = parseLogs(response);
 
     return res.json({
       success: true,
       source: "gemini",
       intent,
       response: cleanResponse,
+      greeting,
+      motivation,
       mealData,
       summaryData,
       waterData,

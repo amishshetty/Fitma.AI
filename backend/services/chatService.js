@@ -211,66 +211,75 @@ Avoid extreme diets or unrealistic calorie restrictions.
 
 ---
 
-# Structured UI Recommendations
+# Structured JSON Response
 
-When the user asks for food suggestions or recommendations, NEVER return a long paragraph describing the food. 
-Instead, you MUST append a structured JSON array at the very end of your short, friendly response text so the frontend can render beautiful cards. You can provide 1 or more recommendations in the array.
+You MUST return your ENTIRE response as a single, valid JSON object. Do not include any markdown formatting (like \`\`\`json), just the raw JSON object.
+Your JSON object MUST follow this exact structure:
 
-Append exactly this format at the end:
-[RECOMMENDATION_LOG:[{"meal":"Name of meal with brief components (e.g. Paneer Bhurji, 2 Chapati, Salad)","calories":520,"protein":35,"carbs":45,"fat":16,"why":["Reason 1","Reason 2"],"alternatives":["Alternative 1","Alternative 2"],"tip":"Short AI contextual tip"}]]
+{
+  "greeting": "Friendly greeting (optional)",
+  "message": "Main conversational text. Keep it very short. Do NOT include calories/macros here.",
+  "motivation": "A short motivational statement or tip (optional)",
+  "action": {
+    "type": "MEAL_LOG" | "WATER_LOG" | "DELETE_LOG" | "SUMMARY_LOG" | "NONE",
+    "data": {} 
+  },
+  "recommendations": [
+    {
+      "meal": "Name of meal with brief components (e.g. Paneer Bhurji, 2 Chapati, Salad)",
+      "calories": 520,
+      "protein": 35,
+      "carbs": 45,
+      "fat": 16,
+      "why": ["High Protein", "Fits calorie target"],
+      "alternatives": ["Dal Khichdi", "Grilled Chicken"],
+      "tip": "Short AI contextual tip"
+    }
+  ]
+}
 
-Example Response:
-"I've got the perfect high-protein Indian options for you today!"
-[RECOMMENDATION_LOG:[{"meal":"Paneer Bhurji, 2 Chapati, Salad","calories":520,"protein":35,"carbs":45,"fat":16,"why":["High Protein","Fits today's calorie target","Good recovery meal"],"alternatives":["Dal Khichdi","Grilled Chicken"],"tip":"This meal focuses on protein."}, {"meal":"Chicken Curry, 1 Bowl Rice","calories":450,"protein":40,"carbs":40,"fat":12,"why":["Lean protein","Filling"],"alternatives":["Egg Curry"],"tip":"Great for muscle building."}]]
+## Action Logging Rules
 
-Meal Logging Rule
+If the user is NOT logging anything, set "action": { "type": "NONE", "data": {} }.
 
-When the user logs a meal (says they ate something), ALWAYS append at the very end of your response:
-[MEAL_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER,"items":["exact quantity and item"],"mealType":"breakfast|lunch|dinner|snack|unknown","date":"today|yesterday"}]
+1. MEAL_LOG: If user says they ate something.
+"action": {
+  "type": "MEAL_LOG",
+  "data": {
+    "calories": NUMBER,
+    "protein": NUMBER,
+    "carbs": NUMBER,
+    "fat": NUMBER,
+    "items": ["exact quantity and item"],
+    "mealType": "breakfast" | "lunch" | "dinner" | "snack" | "unknown",
+    "date": "today" | "yesterday"
+  }
+}
+- You MUST mathematically calculate calories, protein, carbs, and fat based on exact quantities.
+- mealType is "unknown" unless they explicitly say breakfast, lunch, dinner, or snack.
 
-CRITICAL INSTRUCTIONS FOR 'items' AND NUTRITION:
-1. You MUST include the exact counts/quantities the user mentioned in the items array (e.g., "2 rotis", "1 bowl sabji").
-2. The "calories", "protein", "carbs", and "fat" fields MUST accurately reflect the exact quantities in the items array. Multiply standard nutritional values by the quantity.
+2. SUMMARY_LOG: If user asks for a summary of their meals (e.g., "today's summary").
+"action": {
+  "type": "SUMMARY_LOG",
+  "data": { "calories": NUMBER, "protein": NUMBER, "carbs": NUMBER, "fat": NUMBER }
+}
 
-CRITICAL INSTRUCTIONS FOR 'mealType':
-- Did the user explicitly mention the words "breakfast", "lunch", "dinner", or "snack"?
-  - YES: Use that exact word for mealType.
-  - NO: You MUST set mealType to "unknown". UNDER NO CIRCUMSTANCES should you guess the mealType based on the food, the time of day, or anything else. If the exact word is not in their message, it is ALWAYS "unknown".
+3. WATER_LOG: If user logs drinking water (e.g., "add 1 glass of water").
+"action": {
+  "type": "WATER_LOG",
+  "data": { "amountML": NUMBER }
+}
+- Assume 1 glass is 250ml.
 
-CRITICAL INSTRUCTIONS FOR 'date':
-- Did the user explicitly mention "yesterday" in their message?
-  - YES: Use "yesterday" for date.
-  - NO: Use "today" for date.
+4. DELETE_LOG: If user asks to delete, remove, or undo a logged meal.
+"action": {
+  "type": "DELETE_LOG",
+  "data": { "mealType": "breakfast" | "lunch" | "dinner" | "snack" }
+}
 
-Only include MEAL_LOG when the user is logging food they ate.
-Never include it for general nutrition questions or meal suggestions.
+If user asks to CHANGE or REPLACE an already logged meal, just use MEAL_LOG, the frontend will handle replacement based on context.
 
-Summary Logging Rule
-
-CRITICAL INSTRUCTION: When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary", "how much did I eat?"), you MUST mathematically calculate the exact total nutrition for that specific day from the "User's Logged Meals Context" block provided above. 
-You are FORBIDDEN from listing the calories, protein, carbs, and fat values in the conversational text paragraph. You MUST ONLY output them inside the structured log tag. Keep your conversational response extremely brief (e.g., "Here is your summary for today!").
-You MUST append the following structured log at the very end of your response:
-[SUMMARY_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER}]
-
-Failure to append [SUMMARY_LOG:...] will result in the UI breaking.
-
-Water Logging Rule
-
-When the user logs drinking water (e.g., "I drank a glass of water", "add 1 glass of water"), at the very end of your response append:
-[WATER_LOG:{"amountML":NUMBER}]
-
-Assume 1 glass is 250ml (e.g., 2 glasses = 500ml). If they specify ml/liters, use that amount in ml.
-Only include WATER_LOG when the user is actually logging that they drank water.
-
-Meal Deletion Rule
-
-When the user asks you to delete, remove, or undo a logged meal from a specific category (e.g. "delete my breakfast", "remove the pizza from lunch", "undo my dinner"), at the very end of your response append:
-[DELETE_LOG:{"mealType":"breakfast|lunch|dinner|snack"}]
-
-If the user asks to CHANGE or REPLACE an already logged meal (e.g. "change breakfast from oatmeal to roti and egg", "instead of salad for lunch I had a burger"), you MUST append BOTH a DELETE_LOG (to remove the old meal) AND a MEAL_LOG (to add the new meal) at the end of your response!
-
-This will instruct the system to remove the most recently logged meal from that category for today.
-Only include DELETE_LOG when the user explicitly requests to delete, remove, change, or replace a meal.
+CRITICAL: ONLY return JSON. Do not return any other text.
 `;
 }
 
@@ -384,8 +393,6 @@ export function formatGreeting(name) {
   return `${getGreeting()}, ${name}! 👋`;
 }
 
-// Mock response removed to enforce real API usage
-
 export function parseLogs(responseText) {
   let cleanResponse = responseText;
   let mealData = null;
@@ -393,80 +400,59 @@ export function parseLogs(responseText) {
   let waterData = null;
   let deleteData = null;
   let recommendationData = null;
+  let greeting = null;
+  let motivation = null;
 
-  const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(```json\s*)?(\[.*?\]|\{.*?\})(\s*```)?\s*\]/s);
-  let rawJsonStr = null;
+  try {
+    // Clean up potential markdown formatting if the AI still includes it
+    let jsonStr = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+    
+    // Parse the JSON
+    const parsedData = JSON.parse(jsonStr);
 
-  if (recLogMatch) {
-    rawJsonStr = recLogMatch[2];
-    cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
-  } else {
-    // Fallback 1: Look for any JSON array containing "meal"
-    const arrayMatch = cleanResponse.match(/(```json\s*)?(\[\s*\{\s*"meal"[\s\S]*?\}\s*\])(\s*```)?/s);
-    if (arrayMatch) {
-      rawJsonStr = arrayMatch[2];
-      cleanResponse = cleanResponse.replace(arrayMatch[0], "").trim();
-    } else {
-      // Fallback 2: Look for multiple raw JSON objects containing "meal" (if AI forgot brackets)
-      const objects = cleanResponse.match(/\{\s*"meal"[\s\S]*?\}(?=\s*,|\s*$|\s*```)/g);
-      if (objects && objects.length > 0) {
-        rawJsonStr = "[" + objects.join(",") + "]";
-        for (const obj of objects) {
-          cleanResponse = cleanResponse.replace(obj, "").replace(/,\s*$/, "").trim();
-        }
-        cleanResponse = cleanResponse.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Extract fields
+    if (parsedData.message !== undefined) {
+      cleanResponse = parsedData.message;
+    }
+    if (parsedData.greeting) {
+      greeting = parsedData.greeting;
+    }
+    if (parsedData.motivation) {
+      motivation = parsedData.motivation;
+    }
+
+    if (parsedData.recommendations && Array.isArray(parsedData.recommendations)) {
+      recommendationData = parsedData.recommendations;
+    }
+
+    if (parsedData.action && parsedData.action.type) {
+      const type = parsedData.action.type;
+      const data = parsedData.action.data;
+      
+      if (type === "MEAL_LOG") {
+        mealData = data;
+      } else if (type === "WATER_LOG") {
+        waterData = data;
+      } else if (type === "DELETE_LOG") {
+        deleteData = data;
+      } else if (type === "SUMMARY_LOG") {
+        summaryData = data;
       }
     }
+  } catch (error) {
+    console.error("Failed to parse AI JSON response:", error);
+    // If it completely fails, we just return the raw text (fallback)
+    cleanResponse = responseText;
   }
 
-  if (rawJsonStr) {
-    try {
-      let parsed = JSON.parse(rawJsonStr.replace(/\n/g, '\\n'));
-      if (!Array.isArray(parsed)) parsed = [parsed];
-      recommendationData = parsed;
-    } catch (e) {
-      try {
-        let fixedJson = rawJsonStr.replace(/\n/g, ' ');
-        let parsed = JSON.parse(fixedJson);
-        if (!Array.isArray(parsed)) parsed = [parsed];
-        recommendationData = parsed;
-      } catch (e2) {
-        console.error("Failed to parse RECOMMENDATION JSON", e2);
-      }
-    }
-  }
-
-  const mealLogMatch = cleanResponse.match(/\[MEAL_LOG:\s*(\{.*?\})\s*\]/s);
-  if (mealLogMatch) {
-    try {
-      mealData = JSON.parse(mealLogMatch[1]);
-      cleanResponse = cleanResponse.replace(/\[MEAL_LOG:\s*\{.*?\}\s*\]/s, "").trim();
-    } catch (e) {}
-  }
-
-  const summaryLogMatch = cleanResponse.match(/\[SUMMARY_LOG:\s*(\{.*?\})\s*\]/s);
-  if (summaryLogMatch) {
-    try {
-      summaryData = JSON.parse(summaryLogMatch[1]);
-      cleanResponse = cleanResponse.replace(/\[SUMMARY_LOG:\s*\{.*?\}\s*\]/s, "").trim();
-    } catch (e) {}
-  }
-
-  const waterLogMatch = cleanResponse.match(/\[WATER_LOG:\s*(\{.*?\})\s*\]/s);
-  if (waterLogMatch) {
-    try {
-      waterData = JSON.parse(waterLogMatch[1]);
-      cleanResponse = cleanResponse.replace(/\[WATER_LOG:\s*\{.*?\}\s*\]/s, "").trim();
-    } catch (e) {}
-  }
-
-  const deleteLogMatch = cleanResponse.match(/\[DELETE_LOG:\s*(\{.*?\})\s*\]/s);
-  if (deleteLogMatch) {
-    try {
-      deleteData = JSON.parse(deleteLogMatch[1]);
-      cleanResponse = cleanResponse.replace(/\[DELETE_LOG:\s*\{.*?\}\s*\]/s, "").trim();
-    } catch (e) {}
-  }
-
-  return { cleanResponse, mealData, summaryData, waterData, deleteData, recommendationData };
+  return {
+    cleanResponse,
+    mealData,
+    summaryData,
+    waterData,
+    deleteData,
+    recommendationData,
+    greeting,
+    motivation
+  };
 }

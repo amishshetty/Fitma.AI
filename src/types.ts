@@ -6,6 +6,8 @@ export interface ChatMessage {
   id: string;
   sender: "user" | "liva";
   text: string;
+  greeting?: string;
+  motivation?: string;
   timestamp: string;
   nutritionSummary?: {
     calories: number;

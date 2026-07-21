@@ -170,6 +170,8 @@ export default function LivaChatScreen({
           id: (Date.now() + 1).toString(),
           sender: "liva", 
           text: livaReply,
+          greeting: data.greeting,
+          motivation: data.motivation,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           nutritionSummary: summaryToRender ? {
             calories: summaryToRender.calories || 0,
@@ -342,7 +344,7 @@ export default function LivaChatScreen({
                 {msg.sender === "liva" && <LivaAvatar size={32} />}
                 <div className="flex flex-col gap-1 max-w-[76%]">
                   <div
-                    className="rounded-[22px] px-4 py-3 text-sm leading-relaxed"
+                    className="rounded-[22px] px-4 py-3 text-sm leading-relaxed flex flex-col gap-2"
                     style={{
                       background: msg.sender === "user" ? "linear-gradient(135deg, #34C759 0%, #25ad48 100%)" : "white",
                       color: msg.sender === "user" ? "white" : ink,
@@ -351,7 +353,24 @@ export default function LivaChatScreen({
                       border: msg.sender === "liva" ? "1px solid rgba(52, 199, 89, 0.08)" : "none"
                     }}
                   >
-                    {msg.text}
+                    {msg.sender === "liva" && msg.greeting && (
+                      <div className="font-bold text-slate-800 text-[15px]">
+                        {msg.greeting}
+                      </div>
+                    )}
+                    {msg.text && (
+                      <div className={msg.sender === "user" ? "text-white" : "text-slate-600"}>
+                        {msg.text}
+                      </div>
+                    )}
+                    {msg.sender === "liva" && msg.motivation && (
+                      <div className="mt-1 bg-[#f2faf5] rounded-xl px-3 py-2 border border-[#34C759]/20 flex items-start gap-2">
+                        <span className="text-[#34c759] text-sm mt-0.5">✨</span>
+                        <p className="text-xs font-semibold text-[#2e7d32] italic leading-snug flex-1">
+                          {msg.motivation}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   {msg.nutritionSummary && (
                     <div className="mt-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden w-[280px] animate-fadeIn">
