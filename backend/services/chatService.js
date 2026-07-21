@@ -213,15 +213,15 @@ Avoid extreme diets or unrealistic calorie restrictions.
 
 # Structured UI Recommendations
 
-When the user asks for a food suggestion or recommendation, NEVER return a long paragraph describing the food. 
-Instead, you MUST append a structured JSON block at the very end of your short, friendly response text so the frontend can render a beautiful card.
+When the user asks for food suggestions or recommendations, NEVER return a long paragraph describing the food. 
+Instead, you MUST append a structured JSON array at the very end of your short, friendly response text so the frontend can render beautiful cards. You can provide 1 or more recommendations in the array.
 
 Append exactly this format at the end:
-[RECOMMENDATION_LOG:{"meal":"Name of meal with brief components (e.g. Paneer Bhurji\\n2 Chapati\\nSalad)","calories":520,"protein":35,"carbs":45,"fat":16,"why":["Reason 1","Reason 2"],"alternatives":["Alternative 1","Alternative 2"],"tip":"Short AI contextual tip"}]
+[RECOMMENDATION_LOG:[{"meal":"Name of meal with brief components (e.g. Paneer Bhurji\\n2 Chapati\\nSalad)","calories":520,"protein":35,"carbs":45,"fat":16,"why":["Reason 1","Reason 2"],"alternatives":["Alternative 1","Alternative 2"],"tip":"Short AI contextual tip"}]]
 
 Example Response:
-"I've got the perfect high-protein Indian dinner for you that fits your goals today!"
-[RECOMMENDATION_LOG:{"meal":"Paneer Bhurji\\n2 Chapati\\nSalad","calories":520,"protein":35,"carbs":45,"fat":16,"why":["High Protein","Fits today's calorie target","Good recovery meal"],"alternatives":["Dal Khichdi","Grilled Chicken"],"tip":"Since you've already consumed enough carbohydrates today, this meal focuses on protein."}]
+"I've got the perfect high-protein Indian options for you today!"
+[RECOMMENDATION_LOG:[{"meal":"Paneer Bhurji\\n2 Chapati\\nSalad","calories":520,"protein":35,"carbs":45,"fat":16,"why":["High Protein","Fits today's calorie target","Good recovery meal"],"alternatives":["Dal Khichdi","Grilled Chicken"],"tip":"This meal focuses on protein."}, {"meal":"Chicken Curry\\n1 Bowl Rice","calories":450,"protein":40,"carbs":40,"fat":12,"why":["Lean protein","Filling"],"alternatives":["Egg Curry"],"tip":"Great for muscle building."}]]
 
 Meal Logging Rule
 
@@ -247,7 +247,8 @@ Never include it for general nutrition questions or meal suggestions.
 
 Summary Logging Rule
 
-CRITICAL INSTRUCTION: When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary"), you MUST mathematically calculate the exact total nutrition for that specific day from the "User's Logged Meals Context" block provided above. Pay very close attention to the [Date: ...] field for each meal to ensure you only sum meals from the requested day.
+CRITICAL INSTRUCTION: When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary", "how much did I eat?"), you MUST mathematically calculate the exact total nutrition for that specific day from the "User's Logged Meals Context" block provided above. 
+You are FORBIDDEN from listing the calories, protein, carbs, and fat values in the conversational text paragraph. You MUST ONLY output them inside the structured log tag. Keep your conversational response extremely brief (e.g., "Here is your summary for today!").
 You MUST append the following structured log at the very end of your response:
 [SUMMARY_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER}]
 
@@ -393,11 +394,15 @@ export function parseLogs(responseText) {
   let deleteData = null;
   let recommendationData = null;
 
-  const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(\{.*?\})\s*\]/s);
+  const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(\[.*?\]|\{.*?\})\s*\]/s);
   if (recLogMatch) {
     try {
-      recommendationData = JSON.parse(recLogMatch[1]);
-      cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:\s*\{.*?\}\s*\]/s, "").trim();
+      let parsed = JSON.parse(recLogMatch[1]);
+      if (!Array.isArray(parsed)) {
+        parsed = [parsed];
+      }
+      recommendationData = parsed;
+      cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:\s*(\[.*?\]|\{.*?\})\s*\]/s, "").trim();
     } catch (e) {}
   }
 

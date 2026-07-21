@@ -22,7 +22,7 @@ export interface ChatMessage {
     why: string[];
     alternatives: string[];
     tip: string;
-  };
+  }[];
 }
 
 export interface GoalConfig {
