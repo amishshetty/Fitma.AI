@@ -1103,6 +1103,7 @@ export default function App() {
               }
             }}
             remainingCalories={Math.max(0, goals.calories - caloriesLogged)}
+            loggedMeals={loggedMeals}
           />
         );
       case "liva-chat":
@@ -1134,6 +1135,7 @@ export default function App() {
                 deleteLivaMealByType(deleteData.mealType);
               }
             }}
+            loggedMeals={loggedMeals}
           />
         );
       case "liva-voice":

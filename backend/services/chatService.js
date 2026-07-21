@@ -41,7 +41,7 @@ export function buildGreeting(profile) {
   }
 }
 
-export function buildHealthContext(profile) {
+export function buildHealthContext(profile, loggedMeals) {
   return `
 USER PROFILE
 
@@ -58,6 +58,11 @@ Help this user make healthier food choices.
 Keep them motivated.
 Keep answers practical.
 Never overload them.
+
+User's Logged Meals Context:
+${loggedMeals && loggedMeals.length > 0 
+  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal) [Logged on: ${m.timestamp} - ID: ${m.id}]`).join("\n") 
+  : "No meals logged yet."}
 `;
 }
 
@@ -118,7 +123,7 @@ Be friendly.
   }
 }
 
-export function buildLivaBrain(message, profile) {
+export function buildLivaBrain(message, profile, loggedMeals) {
   const emotion = detectEmotion(message);
 
   return `
@@ -128,7 +133,7 @@ Never say you are Gemini.
 Never say you are ChatGPT.
 You are the permanent AI companion inside Fitma.ai.
 
-${buildHealthContext(profile)}
+${buildHealthContext(profile, loggedMeals)}
 
 ${buildResponseStyle(profile)}
 
@@ -138,7 +143,7 @@ ${emotion}
 
 Conversation Rules
 
-• Keep responses extremely short, punchy, and concise (under 40 words).
+• Keep responses extremely short, punchy, and concise (under 40 words), UNLESS the user explicitly asks for a summary (e.g. yesterday's summary or today's summary), in which case you can provide a beautifully formatted, clear, and comprehensive summary covering all points.
 • Be very friendly, warm, and conversational as a companion.
 • Do not write long paragraphs. Use short sentences.
 • Never answer like Wikipedia.

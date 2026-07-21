@@ -29,7 +29,8 @@ export default function LivaHomeScreen({
   onMealLogged,
   onWaterLogged,
   onMealDeleted,
-  remainingCalories = 0
+  remainingCalories = 0,
+  loggedMeals = []
 }: {
   onNavigate: (screen: Screen) => void;
   onStartLog: (mode: EntryMode) => void;
@@ -39,6 +40,7 @@ export default function LivaHomeScreen({
   onWaterLogged?: (data: any) => void;
   onMealDeleted?: (data: any) => void;
   remainingCalories?: number;
+  loggedMeals?: any[];
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
@@ -59,12 +61,59 @@ export default function LivaHomeScreen({
     }
   };
 
+  // --- Dynamic Quick Suggestions Logic ---
+  const hour = new Date().getHours();
+  let timeOfDay = "morning";
+  if (hour >= 12 && hour < 17) timeOfDay = "afternoon";
+  if (hour >= 17) timeOfDay = "evening";
+
+  // Check what meals have been logged today
+  const todayStr = new Date().toDateString();
+  const todaysMeals = loggedMeals.filter(m => {
+    // If timestamp is not standard date object, we might just check if it was created today
+    // Or we rely on App.tsx which passes all loggedMeals and we do a naive check if it was logged recently.
+    // Wait, let's assume we can check if it exists in todaysLoggedMeals if passed from App, or we just look at the last few meals.
+    // For simplicity, let's just check if 'breakfast', 'lunch', 'dinner' exist in today's meals.
+    // Let's assume the IDs in loggedMeals are timestamps in ms.
+    return new Date(parseInt(m.id)).toDateString() === todayStr;
+  });
+
+  const hasBreakfast = todaysMeals.some(m => m.mealType === "breakfast");
+  const hasLunch = todaysMeals.some(m => m.mealType === "lunch");
+  const hasDinner = todaysMeals.some(m => m.mealType === "dinner");
+
+  let mealSuggestions = [];
+
+  if (timeOfDay === "morning") {
+    if (!hasBreakfast) {
+      mealSuggestions.push({ label: "Log Breakfast", icon: UtensilsCrossed, action: () => handleSendText("Log my breakfast") });
+      mealSuggestions.push({ label: "Suggest Breakfast", icon: Sparkles, action: () => handleSendText("Suggest a healthy breakfast") });
+    } else {
+      mealSuggestions.push({ label: "Log Snack", icon: UtensilsCrossed, action: () => handleSendText("Log a morning snack") });
+      mealSuggestions.push({ label: "Suggest Lunch", icon: Soup, action: () => handleSendText("Suggest a healthy lunch") });
+    }
+  } else if (timeOfDay === "afternoon") {
+    if (!hasLunch) {
+      mealSuggestions.push({ label: "Log Lunch", icon: UtensilsCrossed, action: () => handleSendText("Log my lunch") });
+      mealSuggestions.push({ label: "Suggest Lunch", icon: Sparkles, action: () => handleSendText("Suggest a healthy lunch") });
+    } else {
+      mealSuggestions.push({ label: "Log Snack", icon: UtensilsCrossed, action: () => handleSendText("Log an afternoon snack") });
+      mealSuggestions.push({ label: "Suggest Dinner", icon: Soup, action: () => handleSendText("Suggest a healthy dinner") });
+    }
+  } else {
+    if (!hasDinner) {
+      mealSuggestions.push({ label: "Log Dinner", icon: UtensilsCrossed, action: () => handleSendText("Log my dinner") });
+      mealSuggestions.push({ label: "Suggest Dinner", icon: Sparkles, action: () => handleSendText("Suggest a healthy dinner") });
+    } else {
+      mealSuggestions.push({ label: "Log Late Snack", icon: UtensilsCrossed, action: () => handleSendText("Log a late night snack") });
+    }
+  }
+
   const quickSuggestions = [
-    { label: "Log Lunch", icon: UtensilsCrossed, action: () => handleSendText("Log my lunch") },
-    { label: "Suggest Dinner", icon: Soup, action: () => handleSendText("Suggest a healthy dinner") },
+    ...mealSuggestions,
     { label: "Today's Summary", icon: BarChart2, action: () => handleSendText("What's my summary for today?") },
-    { label: "Log Water", icon: Droplets, action: () => handleSendText("Log a glass of water") },
-    { label: "...", icon: MoreHorizontal, action: () => {} }
+    { label: "Yesterday's Summary", icon: PieChart, action: () => handleSendText("Give me a futuristic, concise, and clear summary of my yesterday's meals and food like a modern AI companion.") },
+    { label: "Log Water", icon: Droplets, action: () => handleSendText("Log a glass of water") }
   ];
 
   const scrollToBottom = () => {
@@ -107,7 +156,8 @@ export default function LivaHomeScreen({
             motivationStyle: "Friendly",
             language: "English"
           },
-          previousMessages: messages.map(m => ({ sender: m.sender, text: m.text }))
+          previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
+          loggedMeals: loggedMeals
         })
       });
 

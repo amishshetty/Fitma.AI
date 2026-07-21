@@ -12,7 +12,10 @@ export default function LivaChatScreen({
   userName,
   initialMessage,
   userProfile,
-  onMealLogged
+  onMealLogged,
+  onWaterLogged,
+  onMealDeleted,
+  loggedMeals = []
 }: { 
   onBack: () => void; 
   onNavigate: (screen: Screen) => void; 
@@ -29,6 +32,7 @@ export default function LivaChatScreen({
   onMealLogged?: (data: { calories: number; protein: number; items: string[]; mealType: string }) => void;
   onWaterLogged?: (data: { amountML: number }) => void;
   onMealDeleted?: (data: { mealType: string }) => void;
+  loggedMeals?: any[];
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
@@ -88,7 +92,8 @@ export default function LivaChatScreen({
             motivationStyle: "Friendly",
             language: "English"
           },
-          previousMessages: messages.map(m => ({ sender: m.sender, text: m.text }))
+          previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
+          loggedMeals: loggedMeals
         })
       });
 

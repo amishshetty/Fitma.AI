@@ -6,7 +6,7 @@ import {
 } from '../services/chatService.js';
 
 export const handleChat = async (req, res) => {
-  const { message, profile, previousMessages = [] } = req.body || {};
+  const { message, profile, previousMessages = [], loggedMeals = [] } = req.body || {};
 
   if (!message || message.trim() === "") {
     return res.status(400).json({
@@ -27,7 +27,7 @@ export const handleChat = async (req, res) => {
 
   try {
     // ---------- GEMINI MODEL ----------
-    const systemPrompt = buildLivaBrain(message, userProfile);
+    const systemPrompt = buildLivaBrain(message, userProfile, loggedMeals);
 
     const history = [];
 
