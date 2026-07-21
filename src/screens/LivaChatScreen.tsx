@@ -41,12 +41,45 @@ export default function LivaChatScreen({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  const suggestedPrompts = [
-    "I had two rotis and dal.",
-    "Suggest a healthy dinner.",
-    "How much protein should I eat?",
-    "Motivate me today."
-  ];
+  const dynamicPrompts = useMemo(() => {
+    const hour = new Date().getHours();
+    let prompts = [];
+
+    // 1. Time-based meal suggestion
+    let nextMeal = "snack";
+    let nextMealSuggest = "Suggest a healthy snack";
+    if (hour >= 5 && hour < 11) {
+      nextMeal = "breakfast";
+      nextMealSuggest = "Suggest a healthy breakfast";
+    } else if (hour >= 11 && hour < 15) {
+      nextMeal = "lunch";
+      nextMealSuggest = "Suggest a healthy lunch";
+    } else if (hour >= 15 && hour < 19) {
+      nextMeal = "snack";
+      nextMealSuggest = "Suggest a healthy snack";
+    } else {
+      nextMeal = "dinner";
+      nextMealSuggest = "Suggest a healthy dinner";
+    }
+
+    const today = new Date().setHours(0,0,0,0);
+    const loggedToday = (loggedMeals || []).filter(m => parseInt(m.id) >= today);
+    const hasLoggedNextMeal = loggedToday.some(m => m.mealType === nextMeal);
+
+    if (hasLoggedNextMeal) {
+      if (nextMeal === "breakfast") nextMealSuggest = "Suggest a healthy lunch";
+      else if (nextMeal === "lunch") nextMealSuggest = "Suggest a healthy snack";
+      else if (nextMeal === "snack") nextMealSuggest = "Suggest a healthy dinner";
+      else nextMealSuggest = "Suggest a healthy late-night snack";
+    }
+    
+    prompts.push(nextMealSuggest);
+    prompts.push("Show me yesterday's summary");
+    prompts.push("How am I doing on protein today?");
+    prompts.push("Motivate me to stay on track today.");
+
+    return prompts;
+  }, [loggedMeals]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -288,7 +321,7 @@ export default function LivaChatScreen({
             <div className="mt-8 w-full max-w-[280px] text-left">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Suggested Prompts</p>
               <div className="flex flex-col gap-2">
-                {suggestedPrompts.map((promptText) => (
+                {dynamicPrompts.map((promptText) => (
                   <button
                     key={promptText}
                     type="button"
