@@ -395,33 +395,43 @@ export function parseLogs(responseText) {
   let recommendationData = null;
 
   const recLogMatch = cleanResponse.match(/\[RECOMMENDATION_LOG:\s*(```json\s*)?(\[.*?\]|\{.*?\})(\s*```)?\s*\]/s);
+  let rawJsonStr = null;
+
   if (recLogMatch) {
-    try {
-      // Clean potential unescaped newlines within the string
-      let rawJson = recLogMatch[2].replace(/\n/g, '\\n');
-      // If the AI accidentally outputs literal \n instead of escaped, we clean it
-      // but wait, if we replace all newlines, it will break the formatting?
-      // Actually, standard JSON stringify handles \n by emitting \n. 
-      // If the model outputs a literal newline inside a string, we can try to fix it.
-      let parsed = JSON.parse(recLogMatch[2]);
-      if (!Array.isArray(parsed)) {
-        parsed = [parsed];
-      }
-      recommendationData = parsed;
-      cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
-    } catch (e) {
-      console.error("Failed to parse RECOMMENDATION_LOG", e);
-      try {
-        // Fallback: try removing all literal newlines that might break JSON
-        let fixedJson = recLogMatch[2].replace(/\n/g, ' ');
-        let parsed = JSON.parse(fixedJson);
-        if (!Array.isArray(parsed)) {
-          parsed = [parsed];
+    rawJsonStr = recLogMatch[2];
+    cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
+  } else {
+    // Fallback 1: Look for any JSON array containing "meal"
+    const arrayMatch = cleanResponse.match(/(```json\s*)?(\[\s*\{\s*"meal"[\s\S]*?\}\s*\])(\s*```)?/s);
+    if (arrayMatch) {
+      rawJsonStr = arrayMatch[2];
+      cleanResponse = cleanResponse.replace(arrayMatch[0], "").trim();
+    } else {
+      // Fallback 2: Look for multiple raw JSON objects containing "meal" (if AI forgot brackets)
+      const objects = cleanResponse.match(/\{\s*"meal"[\s\S]*?\}(?=\s*,|\s*$|\s*```)/g);
+      if (objects && objects.length > 0) {
+        rawJsonStr = "[" + objects.join(",") + "]";
+        for (const obj of objects) {
+          cleanResponse = cleanResponse.replace(obj, "").replace(/,\s*$/, "").trim();
         }
+        cleanResponse = cleanResponse.replace(/```json/g, "").replace(/```/g, "").trim();
+      }
+    }
+  }
+
+  if (rawJsonStr) {
+    try {
+      let parsed = JSON.parse(rawJsonStr.replace(/\n/g, '\\n'));
+      if (!Array.isArray(parsed)) parsed = [parsed];
+      recommendationData = parsed;
+    } catch (e) {
+      try {
+        let fixedJson = rawJsonStr.replace(/\n/g, ' ');
+        let parsed = JSON.parse(fixedJson);
+        if (!Array.isArray(parsed)) parsed = [parsed];
         recommendationData = parsed;
-        cleanResponse = cleanResponse.replace(/\[RECOMMENDATION_LOG:[\s\S]*?\]/s, "").trim();
       } catch (e2) {
-        console.error("Fallback parsing failed too", e2);
+        console.error("Failed to parse RECOMMENDATION JSON", e2);
       }
     }
   }
