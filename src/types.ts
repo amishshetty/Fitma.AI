@@ -10,8 +10,18 @@ export interface ChatMessage {
   nutritionSummary?: {
     calories: number;
     protein: number;
+    carbs?: number;
+    fat?: number;
+  };
+  recommendationData?: {
+    meal: string;
+    calories: number;
+    protein: number;
     carbs: number;
     fat: number;
+    why: string[];
+    alternatives: string[];
+    tip: string;
   };
 }
 

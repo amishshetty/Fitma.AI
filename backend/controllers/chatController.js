@@ -89,7 +89,7 @@ Remember:
 
     let response = data.candidates[0].content.parts[0].text;
 
-    const { cleanResponse, mealData, summaryData, waterData, deleteData } = parseLogs(response);
+    const { cleanResponse, mealData, summaryData, waterData, deleteData, recommendationData } = parseLogs(response);
 
     return res.json({
       success: true,
@@ -100,6 +100,7 @@ Remember:
       summaryData,
       waterData,
       deleteData,
+      recommendationData,
     });
   } catch (error) {
     console.error("Liva Error:", error.message || error);

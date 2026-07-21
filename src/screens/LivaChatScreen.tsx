@@ -135,6 +135,16 @@ export default function LivaChatScreen({
             protein: summaryToRender.protein || 0,
             carbs: summaryToRender.carbs || 0,
             fat: summaryToRender.fat || 0
+          } : undefined,
+          recommendationData: data.recommendationData ? {
+            meal: data.recommendationData.meal || "",
+            calories: data.recommendationData.calories || 0,
+            protein: data.recommendationData.protein || 0,
+            carbs: data.recommendationData.carbs || 0,
+            fat: data.recommendationData.fat || 0,
+            why: data.recommendationData.why || [],
+            alternatives: data.recommendationData.alternatives || [],
+            tip: data.recommendationData.tip || ""
           } : undefined
         }
       ]);
@@ -346,6 +356,74 @@ export default function LivaChatScreen({
                           <p className="text-xs font-extrabold text-slate-800">{msg.nutritionSummary.fat} <span className="text-[10px] font-semibold text-slate-400">g</span></p>
                         </div>
                       </div>
+                    </div>
+                  )}
+                  {msg.recommendationData && (
+                    <div className="mt-2 bg-white rounded-2xl border border-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.04)] animate-fadeIn overflow-hidden w-[280px]">
+                      {/* Header */}
+                      <div className="bg-[#f2faf5] px-4 py-3 border-b border-slate-100">
+                        <p className="text-[10px] font-bold text-[#34c759] uppercase tracking-wider mb-1">Recommended Meal</p>
+                        <h3 className="text-sm font-extrabold text-slate-800 whitespace-pre-wrap">{msg.recommendationData.meal}</h3>
+                      </div>
+                      
+                      {/* Macros */}
+                      <div className="px-4 py-3 border-b border-slate-100">
+                        <div className="flex justify-between items-center text-center">
+                          <div className="flex-1 border-r border-slate-100 px-1">
+                            <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Calories</p>
+                            <p className="text-xs font-extrabold text-slate-800">{msg.recommendationData.calories}</p>
+                          </div>
+                          <div className="flex-1 border-r border-slate-100 px-1">
+                            <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Protein</p>
+                            <p className="text-xs font-extrabold text-slate-800">{msg.recommendationData.protein}g</p>
+                          </div>
+                          <div className="flex-1 border-r border-slate-100 px-1">
+                            <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Carbs</p>
+                            <p className="text-xs font-extrabold text-slate-800">{msg.recommendationData.carbs}g</p>
+                          </div>
+                          <div className="flex-1 px-1">
+                            <p className="text-[10px] font-semibold text-slate-400 mb-0.5">Fat</p>
+                            <p className="text-xs font-extrabold text-slate-800">{msg.recommendationData.fat}g</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Why this? */}
+                      {msg.recommendationData.why && msg.recommendationData.why.length > 0 && (
+                        <div className="px-4 py-3 border-b border-slate-100">
+                          <p className="text-[10px] font-bold text-slate-500 mb-2">Why this?</p>
+                          <ul className="space-y-1.5">
+                            {msg.recommendationData.why.map((reason, i) => (
+                              <li key={i} className="flex items-start gap-1.5 text-xs font-semibold text-slate-600">
+                                <span className="text-[#34c759] mt-0.5">✓</span>
+                                <span>{reason}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Alternatives */}
+                      {msg.recommendationData.alternatives && msg.recommendationData.alternatives.length > 0 && (
+                        <div className="px-4 py-3 border-b border-slate-100 bg-[#fafafa]">
+                          <p className="text-[10px] font-bold text-slate-500 mb-2">Alternatives</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {msg.recommendationData.alternatives.map((alt, i) => (
+                              <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-md text-[10px] font-bold text-slate-600">
+                                {alt}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tip */}
+                      {msg.recommendationData.tip && (
+                        <div className="px-4 py-3 bg-[#e8f5e9]/50">
+                          <p className="text-[10px] font-bold text-[#2e7d32] mb-1">AI Tip</p>
+                          <p className="text-xs font-medium text-slate-700 leading-relaxed">{msg.recommendationData.tip}</p>
+                        </div>
+                      )}
                     </div>
                   )}
                   <span className={`text-[9px] font-semibold text-slate-400 px-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
