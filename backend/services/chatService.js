@@ -61,7 +61,7 @@ Never overload them.
 
 User's Logged Meals Context:
 ${loggedMeals && loggedMeals.length > 0 
-  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal) [Logged on: ${m.timestamp} - ID: ${m.id}]`).join("\n") 
+  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${m.dateString} - Time: ${m.timestamp}]`).join("\n") 
   : "No meals logged yet."}
 `;
 }
@@ -247,8 +247,11 @@ Never include it for general nutrition questions or meal suggestions.
 
 Summary Logging Rule
 
-When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary"), calculate the total nutrition for that specific day from the context provided, and append at the very end of your response:
+CRITICAL INSTRUCTION: When the user asks for a summary of their meals (e.g., "yesterday's summary", "today's summary"), you MUST mathematically calculate the exact total nutrition for that specific day from the "User's Logged Meals Context" block provided above. Pay very close attention to the [Date: ...] field for each meal to ensure you only sum meals from the requested day.
+You MUST append the following structured log at the very end of your response:
 [SUMMARY_LOG:{"calories":NUMBER,"protein":NUMBER,"carbs":NUMBER,"fat":NUMBER}]
+
+Failure to append [SUMMARY_LOG:...] will result in the UI breaking.
 
 Water Logging Rule
 
