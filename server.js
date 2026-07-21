@@ -74,12 +74,16 @@ app.use((req, res) => {
                     SERVER START
 --------------------------------------------------------- */
 
-app.listen(PORT, () => {
-  console.log("");
-  console.log("========================================");
-  console.log("💚 Fitma.ai");
-  console.log("🤖 Liva AI Companion");
-  console.log(`🚀 Server Running : ${PORT}`);
-  console.log(`🧠 AI : ${genAI ? "Gemini Connected" : "Mock Mode"}`);
-  console.log("========================================");
-});
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log("");
+    console.log("========================================");
+    console.log("💚 Fitma.ai");
+    console.log("🤖 Liva AI Companion");
+    console.log(`🚀 Server Running : ${PORT}`);
+    console.log(`🧠 AI : ${genAI ? "Gemini Connected" : "Mock Mode"}`);
+    console.log("========================================");
+  });
+}
+
+export default app;
