@@ -404,8 +404,18 @@ export function parseLogs(responseText) {
   let motivation = null;
 
   try {
-    // Clean up potential markdown formatting if the AI still includes it
-    let jsonStr = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+    let jsonStr = responseText;
+    
+    // Find the first { and the last }
+    const firstBrace = jsonStr.indexOf('{');
+    const lastBrace = jsonStr.lastIndexOf('}');
+    
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+    }
+    
+    // Clean up potential markdown formatting if the AI still includes it inside or around
+    jsonStr = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
     
     // Parse the JSON
     const parsedData = JSON.parse(jsonStr);

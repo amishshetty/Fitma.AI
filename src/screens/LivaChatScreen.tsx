@@ -5,6 +5,7 @@ import IconButton from "../components/ui/IconButton";
 import { ink } from "../constants";
 import { Screen } from "../types";
 import { ChatMessage } from "../types";
+import { FoodRecommendationCard, AlternativeFoodsCard, LivaTipCard, MotivationCard } from "../components/chat/LivaResponseCards";
 
 export default function LivaChatScreen({ 
   onBack, 
@@ -354,7 +355,7 @@ export default function LivaChatScreen({
                     }}
                   >
                     {msg.sender === "liva" && msg.greeting && (
-                      <div className="font-bold text-slate-800 text-[15px]">
+                      <div className="font-bold text-slate-800 text-[16px] mb-2 pb-2 border-b border-slate-100">
                         {msg.greeting}
                       </div>
                     )}
@@ -363,15 +364,8 @@ export default function LivaChatScreen({
                         {msg.text}
                       </div>
                     )}
-                    {msg.sender === "liva" && msg.motivation && (
-                      <div className="mt-1 bg-[#f2faf5] rounded-xl px-3 py-2 border border-[#34C759]/20 flex items-start gap-2">
-                        <span className="text-[#34c759] text-sm mt-0.5">✨</span>
-                        <p className="text-xs font-semibold text-[#2e7d32] italic leading-snug flex-1">
-                          {msg.motivation}
-                        </p>
-                      </div>
-                    )}
                   </div>
+
                   {msg.nutritionSummary && (
                     <div className="mt-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden w-[280px] animate-fadeIn">
                       <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200">
@@ -407,41 +401,33 @@ export default function LivaChatScreen({
                       </table>
                     </div>
                   )}
-                  {msg.recommendationData && msg.recommendationData.length > 0 && (
-                    <div className="mt-2 w-[300px] sm:w-[340px] bg-white rounded-2xl border border-slate-100 shadow-[0_4px_16px_rgba(0,0,0,0.04)] animate-fadeIn overflow-hidden">
-                      <div className="bg-[#f2faf5] px-4 py-3 border-b border-slate-100">
-                        <h3 className="text-sm font-extrabold text-[#2e7d32]">Meal Recommendations</h3>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs whitespace-nowrap">
-                          <thead className="bg-slate-50 text-slate-500 font-semibold">
-                            <tr>
-                              <th className="px-3 py-2">Option</th>
-                              <th className="px-3 py-2 text-right">Kcal</th>
-                              <th className="px-3 py-2 text-right">P</th>
-                              <th className="px-3 py-2 text-right">C</th>
-                              <th className="px-3 py-2 text-right">F</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100 text-slate-700">
-                            {msg.recommendationData.map((rec, index) => (
-                              <tr key={index} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-3 py-3 whitespace-normal min-w-[120px]">
-                                  <p className="font-bold text-slate-800 leading-tight">{rec.meal}</p>
-                                  {rec.tip && <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{rec.tip}</p>}
-                                </td>
-                                <td className="px-3 py-3 text-right font-medium">{rec.calories}</td>
-                                <td className="px-3 py-3 text-right font-medium">{rec.protein}g</td>
-                                <td className="px-3 py-3 text-right font-medium">{rec.carbs}g</td>
-                                <td className="px-3 py-3 text-right font-medium">{rec.fat}g</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+
+                  {/* Render Beautiful Recommendation Cards */}
+                  {msg.sender === "liva" && msg.recommendationData && msg.recommendationData.map((rec, index) => (
+                    <React.Fragment key={index}>
+                      <FoodRecommendationCard 
+                        meal={rec.meal}
+                        calories={rec.calories}
+                        protein={rec.protein}
+                        carbs={rec.carbs}
+                        fat={rec.fat}
+                        why={rec.why}
+                      />
+                      {rec.alternatives && rec.alternatives.length > 0 && (
+                        <AlternativeFoodsCard alternatives={rec.alternatives} />
+                      )}
+                      {rec.tip && (
+                        <LivaTipCard tip={rec.tip} />
+                      )}
+                    </React.Fragment>
+                  ))}
+
+                  {/* Render Beautiful Motivation Card */}
+                  {msg.sender === "liva" && msg.motivation && (
+                    <MotivationCard motivation={msg.motivation} />
                   )}
-                  <span className={`text-[9px] font-semibold text-slate-400 px-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
+
+                  <span className={`text-[9px] font-semibold text-slate-400 px-1 mt-1.5 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
                     {msg.timestamp}
                   </span>
                 </div>
