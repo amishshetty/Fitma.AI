@@ -111,12 +111,14 @@ Remember:
                     mealType: { type: "STRING" },
                     date: { type: "STRING" },
                     amountML: { type: "INTEGER" }
-                  }
+                  },
+                  required: ["calories", "protein", "carbs", "fat", "items", "mealType", "date", "amountML"]
                 }
-              }
+              },
+              required: ["type", "data"]
             }
           },
-          required: intent === "RECOMMENDATION" ? ["message", "recommendationData"] : ["message"]
+          required: intent === "RECOMMENDATION" ? ["message", "recommendations", "action"] : ["message", "action"]
         }
       }
     };
