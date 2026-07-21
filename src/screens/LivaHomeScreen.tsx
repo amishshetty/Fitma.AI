@@ -253,7 +253,7 @@ export default function LivaHomeScreen({
   return (
     <div className="flex min-h-0 flex-1 flex-col" style={{ background: "#f8faf8" }}>
       {/* Scrollable Main Content */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-11 pb-64">
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-11 pb-[350px]">
         
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
