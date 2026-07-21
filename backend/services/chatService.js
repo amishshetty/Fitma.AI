@@ -227,12 +227,16 @@ Your JSON object MUST follow this exact structure:
   "recommendations": [
     {
       "meal": "Name of meal with brief components (e.g. Paneer Bhurji, 2 Chapati, Salad)",
+      "message_suffix": "Short contextual suffix for this meal.",
       "calories": 520,
       "protein": 35,
       "carbs": 45,
       "fat": 16,
       "why": ["High Protein", "Fits calorie target"],
-      "alternatives": ["Dal Khichdi", "Grilled Chicken"],
+      "alternatives": [
+        "Dal Khichdi",
+        "Roti and Sabzi"
+      ],
       "tip": "Short AI contextual tip"
     }
   ]
@@ -431,8 +435,20 @@ export function parseLogs(responseText) {
       motivation = parsedData.motivation;
     }
 
-    if (parsedData.recommendations && Array.isArray(parsedData.recommendations)) {
-      recommendationData = parsedData.recommendations;
+    const recs = parsedData.recommendations || parsedData.recommendationData || parsedData.recommendation;
+    if (recs && Array.isArray(recs)) {
+      recommendationData = recs.map(rec => {
+        // Robust parsing: if AI returned strings instead of objects for alternatives
+        if (rec.alternatives && Array.isArray(rec.alternatives)) {
+          rec.alternatives = rec.alternatives.map(alt => {
+            if (typeof alt === 'string') {
+              return { name: alt, description: "A healthy alternative." };
+            }
+            return alt;
+          });
+        }
+        return rec;
+      });
     }
 
     if (parsedData.action && parsedData.action.type) {

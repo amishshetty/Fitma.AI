@@ -107,8 +107,9 @@ export default function LivaChatScreen({
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
+      // Use API_URL if defined, otherwise fallback to relative path for Vite proxy
       const API_URL = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
@@ -126,7 +127,7 @@ export default function LivaChatScreen({
             motivationStyle: "Friendly",
             language: "English"
           },
-          previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
+          previousMessages: messages.slice(-2).map(m => ({ sender: m.sender, text: m.text })),
           loggedMeals: (loggedMeals || []).map(m => {
             let dateStr = "";
             try {
@@ -182,6 +183,7 @@ export default function LivaChatScreen({
           } : undefined,
           recommendationData: data.recommendationData && Array.isArray(data.recommendationData) ? data.recommendationData.map((rec: any) => ({
             meal: rec.meal || "",
+            message_suffix: rec.message_suffix || "",
             calories: rec.calories || 0,
             protein: rec.protein || 0,
             carbs: rec.carbs || 0,
@@ -192,7 +194,7 @@ export default function LivaChatScreen({
           })) : undefined
         }
       ]);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error communicating with Liva backend, using local fallback:", err);
       const fallbackReplies: Record<string, string> = {
         "i had two rotis and dal.": `Hey ${userName || "Amish"}! 2 rotis and a bowl of dal provide roughly 360 kcal. This is a very clean, balanced vegetarian meal! Keep up the good work!`,
@@ -208,7 +210,7 @@ export default function LivaChatScreen({
         reply = fallbackReplies[lower];
       } else if (lower.includes("protein")) {
         reply = fallbackReplies["how much protein should i eat?"];
-      } else if (lower.includes("dinner") || lower.includes("suggest")) {
+      } else if (lower.includes("dinner") || lower.includes("suggest") || lower.includes("lunch")) {
         reply = fallbackReplies["suggest a healthy dinner."];
       } else if (lower.includes("roti") || lower.includes("dal")) {
         reply = fallbackReplies["i had two rotis and dal."];
@@ -218,6 +220,8 @@ export default function LivaChatScreen({
         reply = `I am your AI health companion, not a doctor. For specific medical concerns or conditions, please consult a qualified healthcare professional.`;
       }
       
+      reply = `(Network Error: ${err.message}) ` + reply;
+
       setMessages((prev) => [
         ...prev, 
         { 
@@ -355,7 +359,7 @@ export default function LivaChatScreen({
                     }}
                   >
                     {msg.sender === "liva" && msg.greeting && (
-                      <div className="font-bold text-slate-800 text-[16px] mb-2 pb-2 border-b border-slate-100">
+                      <div className="font-bold text-slate-800 text-[16px] mb-2">
                         {msg.greeting}
                       </div>
                     )}
@@ -363,6 +367,31 @@ export default function LivaChatScreen({
                       <div className={msg.sender === "user" ? "text-white" : "text-slate-600"}>
                         {msg.text}
                       </div>
+                    )}
+                    
+                    {msg.sender === "liva" && msg.recommendationData && msg.recommendationData.map((rec, index) => (
+                      <React.Fragment key={index}>
+                        <FoodRecommendationCard 
+                          meal={rec.meal}
+                          message_suffix={rec.message_suffix}
+                          calories={rec.calories}
+                          protein={rec.protein}
+                          carbs={rec.carbs}
+                          fat={rec.fat}
+                          why={rec.why}
+                          alternatives={rec.alternatives}
+                          tip={rec.tip}
+                        />
+                      </React.Fragment>
+                    ))}
+                    {msg.sender === "liva" && (
+                      <div className="text-[10px] text-red-500 font-mono mt-2 break-words">
+                        DEBUG recData: {JSON.stringify(msg.recommendationData)}
+                      </div>
+                    )}
+
+                    {msg.sender === "liva" && msg.motivation && (
+                      <MotivationCard motivation={msg.motivation} />
                     )}
                   </div>
 
@@ -400,31 +429,6 @@ export default function LivaChatScreen({
                         </tbody>
                       </table>
                     </div>
-                  )}
-
-                  {/* Render Beautiful Recommendation Cards */}
-                  {msg.sender === "liva" && msg.recommendationData && msg.recommendationData.map((rec, index) => (
-                    <React.Fragment key={index}>
-                      <FoodRecommendationCard 
-                        meal={rec.meal}
-                        calories={rec.calories}
-                        protein={rec.protein}
-                        carbs={rec.carbs}
-                        fat={rec.fat}
-                        why={rec.why}
-                      />
-                      {rec.alternatives && rec.alternatives.length > 0 && (
-                        <AlternativeFoodsCard alternatives={rec.alternatives} />
-                      )}
-                      {rec.tip && (
-                        <LivaTipCard tip={rec.tip} />
-                      )}
-                    </React.Fragment>
-                  ))}
-
-                  {/* Render Beautiful Motivation Card */}
-                  {msg.sender === "liva" && msg.motivation && (
-                    <MotivationCard motivation={msg.motivation} />
                   )}
 
                   <span className={`text-[9px] font-semibold text-slate-400 px-1 mt-1.5 ${msg.sender === "user" ? "text-right" : "text-left"}`}>

@@ -54,7 +54,8 @@ Remember:
 - Suggest healthy Indian/Indian-western food when asked.
 - Give a highly varied, unique response. Do NOT repeat previous answers!
 - End positively.
-- CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided in the instructions. DO NOT return plain text.
+- CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided. 
+- CRITICAL: If the user asks for food suggestions, dinner, lunch, or breakfast, you MUST provide at least 1 meal in the "recommendations" array and completely fill out all its fields including message_suffix, alternatives, and why.
 `;
 
     const contents = history.map(msg => ({
@@ -67,7 +68,56 @@ Remember:
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: contents,
       generationConfig: {
-        responseMimeType: "application/json"
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            message: { type: "STRING" },
+            greeting: { type: "STRING" },
+            motivation: { type: "STRING" },
+            recommendations: {
+              type: "ARRAY",
+              items: {
+                type: "OBJECT",
+                properties: {
+                  meal: { type: "STRING" },
+                  message_suffix: { type: "STRING" },
+                  calories: { type: "INTEGER" },
+                  protein: { type: "INTEGER" },
+                  carbs: { type: "INTEGER" },
+                  fat: { type: "INTEGER" },
+                  why: { type: "ARRAY", items: { type: "STRING" } },
+                  alternatives: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  },
+                  tip: { type: "STRING" }
+                },
+                required: ["meal", "calories", "protein", "carbs", "fat", "why"]
+              }
+            },
+            action: {
+              type: "OBJECT",
+              properties: {
+                type: { type: "STRING" },
+                data: { 
+                  type: "OBJECT",
+                  properties: {
+                    calories: { type: "INTEGER" },
+                    protein: { type: "INTEGER" },
+                    carbs: { type: "INTEGER" },
+                    fat: { type: "INTEGER" },
+                    items: { type: "ARRAY", items: { type: "STRING" } },
+                    mealType: { type: "STRING" },
+                    date: { type: "STRING" },
+                    amountML: { type: "INTEGER" }
+                  }
+                }
+              }
+            }
+          },
+          required: intent === "RECOMMENDATION" ? ["message", "recommendationData"] : ["message"]
+        }
       }
     };
 
