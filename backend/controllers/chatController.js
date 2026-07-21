@@ -52,6 +52,8 @@ Remember:
 - Use the user's motivation style.
 - Personalize the reply.
 - If this is meal logging, estimate nutrition.
+- Suggest healthy Indian/Indian-western food when asked.
+- Give a highly varied, unique response. Do NOT repeat previous answers!
 - End positively.
 `;
 
