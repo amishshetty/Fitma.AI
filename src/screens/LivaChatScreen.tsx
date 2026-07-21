@@ -1,11 +1,11 @@
-import { ArrowLeft, MicOff, Mic, Send, Flame, Egg, Leaf, Droplet } from "lucide-react";
+import { ArrowLeft, MicOff, Mic, Send, Flame, Egg, Leaf, Droplet, TrendingUp, Camera, Keyboard } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import LivaAvatar from "../components/layout/LivaAvatar";
 import IconButton from "../components/ui/IconButton";
 import { ink } from "../constants";
 import { Screen } from "../types";
 import { ChatMessage } from "../types";
-import { FoodRecommendationCard, AlternativeFoodsCard, LivaTipCard, MotivationCard } from "../components/chat/LivaResponseCards";
+import { FoodRecommendationCard, NutritionSummaryCard } from "../components/chat/LivaResponseCards";
 
 export default function LivaChatScreen({ 
   onBack, 
@@ -42,45 +42,16 @@ export default function LivaChatScreen({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
-  const dynamicPrompts = useMemo(() => {
+  const getGreetingTime = () => {
     const hour = new Date().getHours();
-    let prompts = [];
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
 
-    // 1. Time-based meal suggestion
-    let nextMeal = "snack";
-    let nextMealSuggest = "Suggest a healthy snack";
-    if (hour >= 5 && hour < 11) {
-      nextMeal = "breakfast";
-      nextMealSuggest = "Suggest a healthy breakfast";
-    } else if (hour >= 11 && hour < 15) {
-      nextMeal = "lunch";
-      nextMealSuggest = "Suggest a healthy lunch";
-    } else if (hour >= 15 && hour < 19) {
-      nextMeal = "snack";
-      nextMealSuggest = "Suggest a healthy snack";
-    } else {
-      nextMeal = "dinner";
-      nextMealSuggest = "Suggest a healthy dinner";
-    }
-
-    const today = new Date().setHours(0,0,0,0);
-    const loggedToday = (loggedMeals || []).filter(m => parseInt(m.id) >= today);
-    const hasLoggedNextMeal = loggedToday.some(m => m.mealType === nextMeal);
-
-    if (hasLoggedNextMeal) {
-      if (nextMeal === "breakfast") nextMealSuggest = "Suggest a healthy lunch";
-      else if (nextMeal === "lunch") nextMealSuggest = "Suggest a healthy snack";
-      else if (nextMeal === "snack") nextMealSuggest = "Suggest a healthy dinner";
-      else nextMealSuggest = "Suggest a healthy late-night snack";
-    }
-    
-    prompts.push(nextMealSuggest);
-    prompts.push("Show me yesterday's summary");
-    prompts.push("How am I doing on protein today?");
-    prompts.push("Motivate me to stay on track today.");
-
-    return prompts;
-  }, [loggedMeals]);
+  const dynamicPrompts = useMemo(() => {
+    return ["Log Lunch", "Suggest Dinner", "Today's Summary", "Log Water"];
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -289,87 +260,75 @@ export default function LivaChatScreen({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col" style={{ background: "#f8faf8" }}>
-      {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-11 pb-4 bg-white" style={{ borderBottom: "1px solid rgba(52,199,89,0.08)" }}>
-        <IconButton onClick={onBack} label="Back">
-          <ArrowLeft size={19} />
-        </IconButton>
-        <div className="flex items-center gap-2.5">
-          <LivaAvatar size={38} floating />
+      {/* Header (Mockup 1) */}
+      <div className="flex items-center justify-between px-6 pt-11 pb-4 bg-white" style={{ borderBottom: "1px solid rgba(52,199,89,0.08)" }}>
+        <div className="flex items-center gap-3">
+          <IconButton onClick={onBack} label="Back">
+            <ArrowLeft size={19} />
+          </IconButton>
           <div>
-            <h1 className="text-md font-bold" style={{ color: ink }}>Liva</h1>
-            <p className="text-[10px] font-semibold text-slate-400">Your AI Health Companion</p>
+            <h1 className="text-[17px] font-bold text-slate-800">{getGreetingTime()}, {userName || "Amish"}! 👋</h1>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#34C759]"></span>
+              <p className="text-[11px] font-semibold text-slate-500">Liva Coach Mode is active</p>
+            </div>
           </div>
         </div>
+        <LivaAvatar size={38} floating />
       </div>
 
       {/* Chat Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-        {messages.length === 0 ? (
-          /* EMPTY STATE */
-          <div className="flex flex-col items-center justify-center py-6 text-center animate-fadeIn">
-            <LivaAvatar size={74} floating />
-            <h2 className="text-xl font-extrabold text-slate-800 mt-4">Hi {userName || "Amish"} 👋</h2>
-            <p className="text-sm font-semibold text-slate-500 mt-1">I'm Liva.</p>
-
-            <div className="mt-6 w-full max-w-[280px] bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-left">
-              <p className="text-xs font-bold text-slate-600 mb-2">I can help you:</p>
-              <ul className="text-xs font-semibold text-slate-500 space-y-1.5 list-disc pl-4.5">
-                <li>Log meals</li>
-                <li>Answer nutrition questions</li>
-                <li>Recommend healthy meals</li>
-                <li>Track calories</li>
-                <li>Motivate you</li>
-                <li>Build healthier habits</li>
-              </ul>
-            </div>
-
-            {/* Suggested Prompts */}
-            <div className="mt-8 w-full max-w-[280px] text-left">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Suggested Prompts</p>
-              <div className="flex flex-col gap-2">
-                {dynamicPrompts.map((promptText) => (
-                  <button
-                    key={promptText}
-                    type="button"
-                    onClick={() => handleSendText(promptText)}
-                    className="w-full text-left rounded-xl bg-white border border-slate-100 hover:border-[#34c759]/40 hover:bg-[#f2faf5] px-3.5 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition-all cursor-pointer"
-                  >
-                    "{promptText}"
-                  </button>
-                ))}
-              </div>
-            </div>
+      <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+        
+        {/* Coach Insight (Mockup 1) - Always visible at top */}
+        <div className="bg-white mx-5 mt-5 mb-5 rounded-[20px] p-4 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-start gap-4">
+          <div className="w-10 h-10 rounded-full bg-[#f2faf5] flex items-center justify-center flex-shrink-0">
+            <TrendingUp size={20} className="text-[#34C759]" />
           </div>
-        ) : (
-          /* ACTIVE CONVERSATION */
-          <div className="space-y-4">
-            {messages.map((msg) => (
-              <div key={msg.id} className={`flex items-end gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}>
-                {msg.sender === "liva" && <LivaAvatar size={32} />}
-                <div className="flex flex-col gap-1 max-w-[76%]">
-                  <div
-                    className="rounded-[22px] px-4 py-3 text-sm leading-relaxed flex flex-col gap-2"
-                    style={{
-                      background: msg.sender === "user" ? "linear-gradient(135deg, #34C759 0%, #25ad48 100%)" : "white",
-                      color: msg.sender === "user" ? "white" : ink,
-                      boxShadow: msg.sender === "user" ? "0 4px 12px rgba(52,199,89,0.15)" : "0 4px 12px rgba(16,32,26,0.03)",
-                      borderRadius: msg.sender === "user" ? "22px 22px 4px 22px" : "22px 22px 22px 4px",
-                      border: msg.sender === "liva" ? "1px solid rgba(52, 199, 89, 0.08)" : "none"
-                    }}
-                  >
-                    {msg.sender === "liva" && msg.greeting && (
-                      <div className="font-bold text-slate-800 text-[16px] mb-2">
+          <div className="flex-1">
+            <h3 className="text-[11px] font-extrabold text-[#2a9d48] tracking-wider mb-1">COACH INSIGHT</h3>
+            <p className="text-[14px] font-semibold text-slate-700 leading-snug pr-4">
+              You have <span className="text-[#34C759] font-bold">480</span> calories remaining today. Would you like dinner suggestions?
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-5 px-5">
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex items-end gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}>
+              
+              {/* Liva Avatar only for Liva messages */}
+              {msg.sender === "liva" && <LivaAvatar size={32} />}
+              
+              <div className={`flex flex-col gap-1 ${msg.sender === "user" ? "max-w-[76%] items-end" : "max-w-[85%] items-start"}`}>
+                
+                {msg.sender === "user" ? (
+                  /* User Bubble (Mockup 1) */
+                  <div className="rounded-[20px] rounded-br-sm px-4 py-3 bg-[#34C759] text-white shadow-sm text-[15px] leading-relaxed font-medium">
+                    {msg.text}
+                  </div>
+                ) : (
+                  /* Liva Bubble (Mockup 2) */
+                  <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
+                    {msg.greeting && (
+                      <h3 className="text-[17px] font-bold text-slate-800 mb-2">
                         {msg.greeting}
-                      </div>
-                    )}
-                    {msg.text && (
-                      <div className={msg.sender === "user" ? "text-white" : "text-slate-600"}>
-                        {msg.text}
-                      </div>
+                      </h3>
                     )}
                     
-                    {msg.sender === "liva" && msg.recommendationData && msg.recommendationData.map((rec, index) => (
+                    {msg.text && (
+                      <p className="text-[15px] leading-relaxed text-slate-700 mb-3">
+                        {msg.text}
+                      </p>
+                    )}
+                    
+                    {msg.motivation && (
+                      <p className="text-[15px] leading-relaxed text-slate-700 font-medium">
+                        {msg.motivation}
+                      </p>
+                    )}
+                    
+                    {msg.recommendationData && msg.recommendationData.map((rec, index) => (
                       <React.Fragment key={index}>
                         <FoodRecommendationCard 
                           meal={rec.meal}
@@ -384,111 +343,93 @@ export default function LivaChatScreen({
                         />
                       </React.Fragment>
                     ))}
-                    {msg.sender === "liva" && (
-                      <div className="text-[10px] text-red-500 font-mono mt-2 break-words">
-                        DEBUG recData: {JSON.stringify(msg.recommendationData)}
-                      </div>
-                    )}
 
-                    {msg.sender === "liva" && msg.motivation && (
-                      <MotivationCard motivation={msg.motivation} />
+                    {msg.nutritionSummary && (
+                      <NutritionSummaryCard 
+                        calories={msg.nutritionSummary.calories}
+                        protein={msg.nutritionSummary.protein}
+                        carbs={msg.nutritionSummary.carbs}
+                        fat={msg.nutritionSummary.fat}
+                      />
                     )}
                   </div>
+                )}
+                
+                <span className={`text-[9px] font-semibold text-slate-400 px-1 mt-1 flex items-center gap-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
+                  {msg.timestamp} {msg.sender === "user" && <span className="text-[#34C759] text-[10px]">✓</span>}
+                </span>
+              </div>
+            </div>
+          ))}
 
-                  {msg.nutritionSummary && (
-                    <div className="mt-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden w-[280px] animate-fadeIn">
-                      <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200">
-                        <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">Nutrition Summary</p>
-                      </div>
-                      <table className="w-full text-left text-sm text-slate-600">
-                        <tbody className="divide-y divide-slate-100">
-                          <tr>
-                            <td className="px-4 py-2.5 font-medium flex items-center gap-2">
-                              <Flame size={14} className="text-orange-500"/> Calories
-                            </td>
-                            <td className="px-4 py-2.5 text-right font-bold text-slate-800">{msg.nutritionSummary.calories} <span className="text-[10px] font-semibold text-slate-400">kcal</span></td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2.5 font-medium flex items-center gap-2">
-                              <Egg size={14} className="text-amber-500"/> Protein
-                            </td>
-                            <td className="px-4 py-2.5 text-right font-bold text-slate-800">{msg.nutritionSummary.protein} <span className="text-[10px] font-semibold text-slate-400">g</span></td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2.5 font-medium flex items-center gap-2">
-                              <Leaf size={14} className="text-green-500"/> Carbs
-                            </td>
-                            <td className="px-4 py-2.5 text-right font-bold text-slate-800">{msg.nutritionSummary.carbs} <span className="text-[10px] font-semibold text-slate-400">g</span></td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-2.5 font-medium flex items-center gap-2">
-                              <Droplet size={14} className="text-blue-500"/> Fat
-                            </td>
-                            <td className="px-4 py-2.5 text-right font-bold text-slate-800">{msg.nutritionSummary.fat} <span className="text-[10px] font-semibold text-slate-400">g</span></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-
-                  <span className={`text-[9px] font-semibold text-slate-400 px-1 mt-1.5 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
-                    {msg.timestamp}
-                  </span>
+          {isTyping && (
+            <div className="flex items-end gap-2.5 justify-start animate-pulse">
+              <LivaAvatar size={32} />
+              <div className="rounded-[22px] px-4.5 py-3.5 bg-white border border-[#34C759]/10 shadow-sm">
+                <div className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
-            ))}
+            </div>
+          )}
 
-            {isTyping && (
-              <div className="flex items-end gap-2.5 justify-start animate-pulse">
-                <LivaAvatar size={32} />
-                <div className="rounded-[22px] px-4.5 py-3.5 bg-white border border-[#34C759]/10 shadow-sm">
-                  <div className="flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce" style={{ animationDelay: "300ms" }} />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-        )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Chat Input Bar */}
-      <div className="px-6 pb-8 pt-2 bg-white" style={{ borderTop: "1px solid rgba(52,199,89,0.06)" }}>
-        <div className="flex items-center gap-2 bg-[#f2faf5] rounded-[24px] px-3.5 py-2">
-          {/* Microphone Button - Real Voice Input */}
+      {/* Quick Prompts (Mockup 1) */}
+      <div className="px-5 pb-3 pt-2 flex gap-2 overflow-x-auto no-scrollbar">
+        {dynamicPrompts.map((promptText) => (
           <button
-            onClick={toggleVoiceInput}
-            className={`flex h-9 w-9 items-center justify-center rounded-full transition-all cursor-pointer ${
-              isListening
-                ? "bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/30"
-                : "text-[#34C759] hover:bg-[#34C759]/10"
-            }`}
+            key={promptText}
+            type="button"
+            onClick={() => handleSendText(promptText)}
+            className="whitespace-nowrap px-4 py-2.5 rounded-full bg-white border border-slate-200 text-[13px] font-bold text-slate-700 hover:border-[#34C759] hover:text-[#34C759] transition-colors shadow-sm cursor-pointer"
           >
-            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+            {promptText}
           </button>
+        ))}
+      </div>
 
-          <input
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none px-2"
-            style={{ color: ink }}
-            placeholder={isListening ? "Listening..." : "Ask Liva anything..."}
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSendText(inputText);
-            }}
-          />
-
-          <button
-            onClick={() => handleSendText(inputText)}
-            disabled={!inputText.trim()}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-white bg-[#34C759] disabled:opacity-50 hover:bg-[#25ad48] transition-colors cursor-pointer"
-          >
-            <Send size={15} />
-          </button>
+      {/* Chat Input Bar (Mockup 1) */}
+      <div className="px-5 pb-8 pt-2 bg-white" style={{ borderTop: "1px solid rgba(52,199,89,0.06)" }}>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2 bg-[#f8faf8] rounded-full px-4 py-2.5 border border-slate-100">
+            <input
+              className="min-w-0 flex-1 bg-transparent text-[15px] font-medium outline-none placeholder:text-slate-400"
+              style={{ color: ink }}
+              placeholder={isListening ? "Listening..." : "Ask Liva anything..."}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSendText(inputText);
+              }}
+            />
+            <button
+              onClick={() => handleSendText(inputText)}
+              disabled={!inputText.trim()}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[#34C759] disabled:opacity-30 hover:bg-[#34C759]/10 transition-colors cursor-pointer"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+          
+          <div className="flex items-center gap-6 px-4">
+            <button 
+              onClick={toggleVoiceInput}
+              className={`flex items-center justify-center transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-400 hover:text-[#34C759]'}`}
+            >
+              {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+            </button>
+            <button className="flex items-center justify-center text-slate-400 hover:text-[#34C759] transition-colors">
+              <Camera size={22} />
+            </button>
+            <button className="flex items-center justify-center text-slate-400 hover:text-[#34C759] transition-colors">
+              <Keyboard size={22} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

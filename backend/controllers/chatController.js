@@ -89,11 +89,18 @@ Remember:
                   why: { type: "ARRAY", items: { type: "STRING" } },
                   alternatives: {
                     type: "ARRAY",
-                    items: { type: "STRING" }
+                    items: {
+                      type: "OBJECT",
+                      properties: {
+                        name: { type: "STRING" },
+                        description: { type: "STRING" }
+                      },
+                      required: ["name", "description"]
+                    }
                   },
                   tip: { type: "STRING" }
                 },
-                required: ["meal", "calories", "protein", "carbs", "fat", "why"]
+                required: ["meal", "calories", "protein", "carbs", "fat", "why", "alternatives", "tip"]
               }
             },
             action: {
