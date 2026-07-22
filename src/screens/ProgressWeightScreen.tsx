@@ -6,15 +6,17 @@ import { Screen } from "../types";
 export default function ProgressWeightScreen({
   onBack,
   userWeight,
+  goals = {},
   onLogWeight,
 }: {
   onBack: () => void;
   userWeight: number;
+  goals?: any;
   onLogWeight: (w: number) => void;
 }) {
-  const goalWeight = 70.0;
-  const startWeight = 75.4;
-  const progressPercent = Math.min(100, Math.round(((startWeight - userWeight) / (startWeight - goalWeight)) * 100));
+  const goalWeight = goals.targetWeight || 70.0;
+  const startWeight = 75.4; // Usually fetched from profile history, assuming static here for demo
+  const progressPercent = Math.max(0, Math.min(100, Math.round(((startWeight - userWeight) / (startWeight - goalWeight)) * 100)));
 
   return (
     <ScreenShell

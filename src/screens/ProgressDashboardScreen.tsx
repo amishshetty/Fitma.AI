@@ -23,6 +23,7 @@ export default function ProgressDashboardScreen({
   completedHabits: { [key: string]: boolean };
   goals: GoalConfig;
   caloriesLogged: number;
+  proteinLogged?: number;
   loggedMealsCount: number;
 }) {
   const habitCompletionRate = useMemo(() => {
@@ -66,7 +67,7 @@ export default function ProgressDashboardScreen({
           {/* Core Nutrient Rings Row */}
           <div className="flex gap-2">
             <ProgressRing value={Math.round((caloriesLogged / (goals.calories || 2000)) * 100)} size={66} color={green} label="cal" />
-            <ProgressRing value={Math.min(100, Math.round(((Math.round((caloriesLogged / (goals.calories || 2000)) * (goals.protein || 100))) / (goals.protein || 100)) * 100))} size={66} color="#0EA5E9" label="protein" />
+            <ProgressRing value={Math.min(100, Math.round(((proteinLogged || 0) / (goals.protein || 100)) * 100))} size={66} color="#0EA5E9" label="protein" />
             <ProgressRing value={Math.round((waterLogged / (goals.water || 2500)) * 100)} size={66} color="#00C4B0" label="water" />
           </div>
         </div>

@@ -153,7 +153,8 @@ import { GoalConfig, MemoryItem, LoggedMeal } from "../types";
 export default function App() {
   const [screen, setScreen] = useState<Screen>("splash");
   const [entryMode, setEntryMode] = useState<EntryMode>("voice");
-  const [chatInitialMsg, setChatInitialMsg] = useState("");
+  const [chatInitialMsg, setChatInitialMsg] = useState<string | undefined>();
+  const [chatInitialResponse, setChatInitialResponse] = useState<any>(null);
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
   const [livaFlowActive, setLivaFlowActive] = useState(false);
   const [isTextDrawerOpen, setIsTextDrawerOpen] = useState(false);
@@ -681,8 +682,17 @@ export default function App() {
         if (activeSiriRecRef.current !== recognition) return; // double check after fetch
 
         const data = await response.json();
-        setSiriText(data.response);
 
+        // If AI generated recommendations, redirect to full chat screen
+        if (data.recommendationData && data.recommendationData.length > 0) {
+          setLivaSiriActive(false);
+          setChatInitialMsg(finalTranscript);
+          setChatInitialResponse(data);
+          go("liva-home");
+          return;
+        }
+
+        setSiriText(data.response);
         if (data.mealData && !data.deleteData) {
           if (data.mealData.mealType && data.mealData.mealType.toLowerCase() === "unknown") {
             setPendingMealData(data.mealData);
@@ -703,14 +713,12 @@ export default function App() {
           deleteLivaMealByType(data.deleteData.mealType);
         }
 
-        // Only auto-close if we are not asking for meal confirmation
-        if (!data.mealData || data.deleteData) {
-          setTimeout(() => {
-            if (activeSiriRecRef.current === recognition) {
-              setLivaSiriActive(false);
-            }
-          }, 3500);
-        }
+        // Auto-close after a few seconds so the user can see the result and then return to the app
+        setTimeout(() => {
+          if (activeSiriRecRef.current === recognition) {
+            setLivaSiriActive(false);
+          }
+        }, 3500);
       } catch {
         if (activeSiriRecRef.current !== recognition) return;
         setSiriText("Couldn't reach Liva right now. Try again later!");
@@ -1075,7 +1083,11 @@ export default function App() {
       case "liva-home":
         return (
           <LivaHomeScreen
-            onNavigate={go}
+            onNavigate={(screen) => {
+              setChatInitialMsg(undefined);
+              setChatInitialResponse(null);
+              go(screen);
+            }}
             onStartLog={(mode) => {
               setEntryMode(mode);
               if (mode === "camera") {
@@ -1083,7 +1095,7 @@ export default function App() {
               } else if (mode === "voice") {
                 go("liva-voice");
               } else {
-                go("liva-chat");
+                go("liva-home");
               }
             }}
             userName={userName}
@@ -1108,14 +1120,18 @@ export default function App() {
             }}
             remainingCalories={Math.max(0, goals.calories - caloriesLogged)}
             loggedMeals={loggedMeals}
+            initialMessage={chatInitialMsg}
+            initialResponse={chatInitialResponse}
           />
         );
       case "liva-chat":
         return (
           <LivaChatScreen
             initialMessage={chatInitialMsg}
+            initialResponse={chatInitialResponse}
             onBack={() => {
-              setChatInitialMsg("");
+              setChatInitialMsg(undefined);
+              setChatInitialResponse(null);
               go("liva-home");
             }}
             onNavigate={go}
@@ -1148,7 +1164,7 @@ export default function App() {
             onCancel={() => go("liva-home")}
             onDone={(spoken) => {
               setChatInitialMsg(spoken);
-              go("liva-chat");
+              go("liva-home");
             }}
           />
         );
@@ -1208,20 +1224,42 @@ export default function App() {
             completedHabits={completedHabits}
             goals={goals}
             caloriesLogged={caloriesLogged}
+            proteinLogged={proteinLogged}
             loggedMealsCount={todaysLoggedMeals.filter(m => m.mealType !== "snack").length}
           />
         );
       case "progress-weekly":
-        return <ProgressWeeklyScreen onBack={() => go("progress-dashboard")} onNavigate={go} />;
+        return (
+          <ProgressWeeklyScreen
+            onBack={() => go("progress-dashboard")}
+            onNavigate={go}
+            loggedMeals={loggedMeals}
+            goals={goals}
+          />
+        );
       case "progress-monthly":
-        return <ProgressMonthlyScreen onBack={() => go("progress-dashboard")} onNavigate={go} />;
+        return (
+          <ProgressMonthlyScreen
+            onBack={() => go("progress-dashboard")}
+            onNavigate={go}
+            loggedMeals={loggedMeals}
+            goals={goals}
+          />
+        );
       case "progress-nutrition":
-        return <ProgressNutritionScreen onBack={() => go("progress-dashboard")} />;
+        return (
+          <ProgressNutritionScreen
+            onBack={() => go("progress-dashboard")}
+            loggedMeals={loggedMeals}
+            goals={goals}
+          />
+        );
       case "progress-weight":
         return (
           <ProgressWeightScreen
             onBack={() => go("progress-dashboard")}
             userWeight={userWeight}
+            goals={goals}
             onLogWeight={(w) => {
               setUserWeight(w);
               syncProfile({ weight: w });

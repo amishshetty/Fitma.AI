@@ -6,7 +6,7 @@ import {
 } from '../services/chatService.js';
 
 export const handleChat = async (req, res) => {
-  const { message, profile, previousMessages = [], loggedMeals = [] } = req.body || {};
+  const { message, profile, previousMessages = [], loggedMeals = [], remainingCalories } = req.body || {};
 
   if (!message || message.trim() === "") {
     return res.status(400).json({
@@ -27,7 +27,7 @@ export const handleChat = async (req, res) => {
 
   try {
     // ---------- GEMINI MODEL ----------
-    const systemPrompt = buildLivaBrain(message, userProfile, loggedMeals);
+    const systemPrompt = buildLivaBrain(message, userProfile, loggedMeals, remainingCalories);
 
     const history = [];
 
@@ -54,8 +54,10 @@ Remember:
 - Suggest healthy Indian/Indian-western food when asked.
 - Give a highly varied, unique response. Do NOT repeat previous answers!
 - End positively.
-- CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided. 
-- CRITICAL: If the user asks for food suggestions, dinner, lunch, or breakfast, you MUST provide at least 1 meal in the "recommendations" array and completely fill out all its fields including message_suffix, alternatives, and why.
+- CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided.
+- CRITICAL: If the user asks for food suggestions, you MUST provide at least 1 meal in the "recommendations" array.
+- CRITICAL: If the user asks for a summary of their meals, you MUST set action.type to "SUMMARY_LOG" and leave "recommendations" EMPTY.
+- CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". DO NOT use "unknown".
 `;
 
     const contents = history.map(msg => ({
@@ -119,7 +121,7 @@ Remember:
                     date: { type: "STRING" },
                     amountML: { type: "INTEGER" }
                   },
-                  required: ["calories", "protein", "carbs", "fat", "items", "mealType", "date", "amountML"]
+                  required: ["mealType"]
                 }
               },
               required: ["type", "data"]

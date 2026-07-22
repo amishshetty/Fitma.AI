@@ -41,12 +41,16 @@ export function buildGreeting(profile) {
   }
 }
 
-export function buildHealthContext(profile, loggedMeals) {
+export function buildHealthContext(profile, loggedMeals, remainingCalories = null) {
   // We use placeholder data for future-proofing if they don't exist yet
   const waterIntake = profile.waterIntake || "Not tracked today";
   const sleepQuality = profile.sleepQuality || "Unknown";
   const workoutStatus = profile.workoutStatus || "Not logged yet";
   const weightGoal = profile.weightGoal || profile.goal || "Maintain weight";
+  
+  const caloriesLeftText = remainingCalories !== null 
+    ? `\nCalories Remaining for Today : ${remainingCalories} kcal (CRITICAL: Meal suggestions MUST STRICTLY fit within this calorie limit!)`
+    : "";
 
   return `
 USER PROFILE
@@ -59,7 +63,7 @@ Language : ${profile.language}
 Motivation Style : ${profile.motivationStyle}
 Water Intake : ${waterIntake}
 Sleep Quality : ${sleepQuality}
-Workout Status : ${workoutStatus}
+Workout Status : ${workoutStatus}${caloriesLeftText}
 
 Today's Objective
 
@@ -70,7 +74,7 @@ Never overload them.
 
 User's Logged Meals Context:
 ${loggedMeals && loggedMeals.length > 0 
-  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${m.dateString} - Time: ${m.timestamp}]`).join("\n") 
+  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${m.id ? new Date(parseInt(m.id)).toDateString() : 'Unknown'} - Time: ${m.timestamp}]`).join("\n") 
   : "No meals logged yet."}
 `;
 }
@@ -132,7 +136,7 @@ Be friendly.
   }
 }
 
-export function buildLivaBrain(message, profile, loggedMeals) {
+export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null) {
   const emotion = detectEmotion(message);
 
   return `
@@ -143,7 +147,7 @@ Never say you are ChatGPT.
 You are the permanent AI companion inside Fitma.ai.
 You are a highly intelligent, futuristic personal diet manager.
 
-${buildHealthContext(profile, loggedMeals)}
+${buildHealthContext(profile, loggedMeals, remainingCalories)}
 
 ${buildResponseStyle(profile)}
 
@@ -153,12 +157,12 @@ ${emotion}
 
 Conversation Rules
 
-• Keep responses extremely short, punchy, and concise (under 40 words), UNLESS the user explicitly asks for a summary (e.g. yesterday's summary or today's summary).
-• Be very friendly, warm, and conversational as a companion.
-• Do not write long paragraphs. Use short sentences.
-• Never answer like Wikipedia.
-• Keep conversations engaging.
-• CRITICAL: ALWAYS vary your responses! Do NOT repeat the exact same meals or phrases. Be highly creative, spontaneous, and diverse in your wording. Always maintain variety.
+• CRITICAL: Keep responses extremely short and punchy. Your \`message\` must be a MAXIMUM of 1 to 2 short sentences (under 20 words).
+• Do NOT repeat the user's name. If you use a \`greeting\`, do not say "Hey [Name]" again in the \`message\`.
+• Never write long paragraphs, fluff, or filler text. Get straight to the point.
+• If you provide a \`motivation\`, it must be a single short phrase (under 10 words).
+• Be very friendly, warm, and conversational as a companion, but prioritize brevity.
+• ALWAYS vary your responses! Do NOT repeat the exact same meals or phrases.
 • Check what the user has eaten today or this week. DO NOT recommend the exact same meal repeatedly.
 • Never shame users.
 • If they log meals, give a very brief estimate (Calories, Protein) and Health Score. Keep it to one short sentence.
@@ -260,12 +264,15 @@ Your JSON object MUST follow this exact structure:
 
 ## Action Logging Rules
 
+CRITICAL RULE FOR RECOMMENDATIONS: If the user is asking for a SUMMARY, logging a meal, logging water, deleting a meal, or asking a general question, you MUST leave the \`recommendations\` array EMPTY (\`[]\`). ONLY provide recommendations if the user explicitly asks for food suggestions, meal ideas, or "what should I eat".
+
 If the user is NOT logging anything, set "action": { "type": "NONE", "data": {} }.
 
-1. MEAL LOGGING CONFIRMATION FLOW:
-If the user says "Log this meal: [Meal Name]" or similar, DO NOT log it immediately. 
+1. MEAL LOGGING CONFIRMATION FLOW (ONLY FOR BUTTON CLICKS):
+If the user's message starts EXACTLY with the text "Log this meal: ", DO NOT log it immediately. 
 Instead, set "action": { "type": "NONE", "data": {} } and respond with exactly: "Would you like me to log this meal?".
 ONLY if the user confirms by saying "Yes" or "Yeah" to that question, proceed to step 2.
+For any other natural language command (e.g. "I ate 2 rotis", "Log 2 rotis for breakfast"), LOG IT IMMEDIATELY (action: MEAL_LOG). DO NOT ask for confirmation.
 
 2. MEAL_LOG: If user confirms logging a meal, or says they ate something.
 "action": {
@@ -283,11 +290,12 @@ ONLY if the user confirms by saying "Yes" or "Yeah" to that question, proceed to
 - You MUST mathematically calculate calories, protein, carbs, and fat based on exact quantities.
 - mealType is "unknown" unless they explicitly say breakfast, lunch, dinner, or snack.
 
-3. SUMMARY_LOG: If user asks for a summary of their meals (e.g., "today's summary").
+3. SUMMARY_LOG: If user asks for a summary of their meals (e.g., "today's summary", "yesterday's summary").
 "action": {
   "type": "SUMMARY_LOG",
   "data": { "calories": NUMBER, "protein": NUMBER, "carbs": NUMBER, "fat": NUMBER }
 }
+- You MUST mathematically calculate the sum from the "User's Logged Meals Context" for the requested date. If no meals are logged for that date, return 0 for all values. DO NOT hallucinate numbers.
 
 4. WATER_LOG: If user logs drinking water (e.g., "add 1 glass of water").
 "action": {
@@ -388,6 +396,13 @@ export function detectIntent(message) {
     text.includes("meal plan")
   )
     return "RECOMMENDATION";
+
+  if (
+    text.includes("summary") ||
+    text.includes("recap") ||
+    text.includes("overview")
+  )
+    return "SUMMARY";
 
   if (
     text.includes("doctor") ||

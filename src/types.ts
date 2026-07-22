@@ -17,6 +17,7 @@ export interface ChatMessage {
   };
   recommendationData?: {
     meal: string;
+    message_suffix?: string;
     calories: number;
     protein: number;
     carbs: number;

@@ -13,12 +13,14 @@ import {
   Droplets,
   MoreHorizontal,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Trash2
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import BottomNav from "../components/layout/BottomNav";
 import LivaAvatar from "../components/layout/LivaAvatar";
 import { ink, muted } from "../constants";
+import { FoodRecommendationCard, NutritionSummaryCard } from "../components/chat/LivaResponseCards";
 import { Screen, EntryMode, ChatMessage } from "../types";
 
 export default function LivaHomeScreen({
@@ -30,7 +32,9 @@ export default function LivaHomeScreen({
   onWaterLogged,
   onMealDeleted,
   remainingCalories = 0,
-  loggedMeals = []
+  loggedMeals = [],
+  initialMessage,
+  initialResponse
 }: {
   onNavigate: (screen: Screen) => void;
   onStartLog: (mode: EntryMode) => void;
@@ -41,8 +45,23 @@ export default function LivaHomeScreen({
   onMealDeleted?: (data: any) => void;
   remainingCalories?: number;
   loggedMeals?: any[];
+  initialMessage?: string;
+  initialResponse?: any;
 }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem("liva_chat_history");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.timestamp && (Date.now() - parsed.timestamp < 6 * 60 * 60 * 1000)) {
+          return parsed.messages || [];
+        }
+      }
+    } catch (e) {
+      console.error("Error loading chat history", e);
+    }
+    return [];
+  });
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -60,6 +79,18 @@ export default function LivaHomeScreen({
       });
     }
   };
+
+  // Save to local storage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("liva_chat_history", JSON.stringify({
+        timestamp: Date.now(),
+        messages
+      }));
+    } else {
+      localStorage.removeItem("liva_chat_history");
+    }
+  }, [messages]);
 
   // --- Dynamic Quick Suggestions Logic ---
   const hour = new Date().getHours();
@@ -157,7 +188,8 @@ export default function LivaHomeScreen({
             language: "English"
           },
           previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
-          loggedMeals: loggedMeals
+          loggedMeals: loggedMeals,
+          remainingCalories: remainingCalories
         })
       });
 
@@ -180,13 +212,34 @@ export default function LivaHomeScreen({
         onMealDeleted(data.deleteData);
       }
 
+      const summaryToRender = data.mealData || data.summaryData || null;
+
       setMessages((prev) => [
         ...prev, 
         { 
           id: (Date.now() + 1).toString(),
           sender: "liva", 
           text: livaReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          greeting: data.greeting,
+          motivation: data.motivation,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          nutritionSummary: summaryToRender ? {
+            calories: summaryToRender.calories || 0,
+            protein: summaryToRender.protein || 0,
+            carbs: summaryToRender.carbs || 0,
+            fat: summaryToRender.fat || 0
+          } : undefined,
+          recommendationData: data.recommendationData && Array.isArray(data.recommendationData) ? data.recommendationData.map((rec: any) => ({
+            meal: rec.meal || "",
+            message_suffix: rec.message_suffix || "",
+            calories: rec.calories || 0,
+            protein: rec.protein || 0,
+            carbs: rec.carbs || 0,
+            fat: rec.fat || 0,
+            why: rec.why || [],
+            alternatives: rec.alternatives || [],
+            tip: rec.tip || ""
+          })) : undefined
         }
       ]);
     } catch (err) {
@@ -250,6 +303,57 @@ export default function LivaHomeScreen({
     recognition.start();
   };
 
+  const processedInitialResponseRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (initialMessage && initialResponse && processedInitialResponseRef.current !== initialResponse) {
+      processedInitialResponseRef.current = initialResponse;
+      // If we already have the AI response from the overlay, inject it directly instead of fetching
+      const userMsg: ChatMessage = { 
+        id: Date.now().toString(),
+        sender: "user", 
+        text: initialMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      const summaryToRender = initialResponse.mealData || initialResponse.summaryData || null;
+      const livaMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: "liva", 
+        text: initialResponse.response || "I'm here for you! Try asking me something about nutrition or log a meal.",
+        greeting: initialResponse.greeting,
+        motivation: initialResponse.motivation,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        nutritionSummary: summaryToRender ? {
+          calories: summaryToRender.calories || 0,
+          protein: summaryToRender.protein || 0,
+          carbs: summaryToRender.carbs || 0,
+          fat: summaryToRender.fat || 0
+        } : undefined,
+        recommendationData: initialResponse.recommendationData && Array.isArray(initialResponse.recommendationData) ? initialResponse.recommendationData.map((rec: any) => ({
+          meal: rec.meal || "",
+          message_suffix: rec.message_suffix || "",
+          calories: rec.calories || 0,
+          protein: rec.protein || 0,
+          carbs: rec.carbs || 0,
+          fat: rec.fat || 0,
+          why: rec.why || [],
+          alternatives: rec.alternatives || [],
+          tip: rec.tip || ""
+        })) : undefined
+      };
+
+      setMessages((prev) => {
+        // Prevent injecting the same messages multiple times
+        const alreadyHasUserMsg = prev.some(m => m.text === userMsg.text && m.sender === "user");
+        if (alreadyHasUserMsg) {
+          return prev;
+        }
+        return [...prev, userMsg, livaMsg];
+      });
+    }
+  }, [initialMessage, initialResponse]);
+
   return (
     <div className="flex min-h-0 flex-1 flex-col" style={{ background: "#f8faf8" }}>
       {/* Scrollable Main Content */}
@@ -265,7 +369,18 @@ export default function LivaHomeScreen({
               Liva Coach Mode is active
             </p>
           </div>
-          <LivaAvatar size={54} floating />
+          <div className="flex items-center gap-3">
+            {messages.length > 0 && (
+              <button 
+                onClick={() => setMessages([])}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                title="Clear Chat"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+            <LivaAvatar size={54} floating />
+          </div>
         </div>
 
         {/* Coach Insight */}
@@ -307,21 +422,63 @@ export default function LivaHomeScreen({
           {messages.map((msg) => (
             <div key={msg.id} className={`flex items-end gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-fadeIn`}>
               {msg.sender === "liva" && <LivaAvatar size={32} />}
-              <div className="flex flex-col gap-1 max-w-[76%]">
-                <div
-                  className="rounded-[22px] px-4 py-3 text-sm leading-relaxed"
-                  style={{
-                    background: msg.sender === "user" ? "linear-gradient(135deg, #34C759 0%, #25ad48 100%)" : "white",
-                    color: msg.sender === "user" ? "white" : ink,
-                    boxShadow: msg.sender === "user" ? "0 4px 12px rgba(52,199,89,0.15)" : "0 4px 12px rgba(16,32,26,0.04)",
-                    borderRadius: msg.sender === "user" ? "22px 22px 4px 22px" : "22px 22px 22px 4px",
-                    border: msg.sender === "liva" ? "1px solid rgba(52, 199, 89, 0.08)" : "none"
-                  }}
-                >
-                  {msg.text}
-                </div>
-                <span className={`text-[9px] font-semibold text-slate-400 px-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
-                  {msg.timestamp}
+              <div className={`flex flex-col gap-1 ${msg.sender === "user" ? "max-w-[76%] items-end" : "max-w-[85%] items-start"}`}>
+                {msg.sender === "user" ? (
+                  /* User Bubble (Mockup 1) */
+                  <div className="rounded-[20px] rounded-br-sm px-4 py-3 bg-[#34C759] text-white shadow-sm text-[15px] leading-relaxed font-medium">
+                    {msg.text}
+                  </div>
+                ) : (
+                  /* Liva Bubble (Mockup 2) */
+                  <div className="bg-white rounded-3xl p-3.5 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
+                    {msg.greeting && (
+                      <h3 className="text-[15px] font-bold text-slate-800 mb-1.5">
+                        {msg.greeting}
+                      </h3>
+                    )}
+                    
+                    {msg.text && (
+                      <p className="text-[14px] leading-snug text-slate-700 mb-2">
+                        {msg.text}
+                      </p>
+                    )}
+                    
+                    {msg.motivation && (
+                      <p className="text-[14px] leading-snug text-slate-700 font-medium">
+                        {msg.motivation}
+                      </p>
+                    )}
+                    
+                    {msg.recommendationData && msg.recommendationData.map((rec, index) => (
+                      <React.Fragment key={index}>
+                        <FoodRecommendationCard 
+                          meal={rec.meal}
+                          message_suffix={rec.message_suffix}
+                          calories={rec.calories}
+                          protein={rec.protein}
+                          carbs={rec.carbs}
+                          fat={rec.fat}
+                          why={rec.why}
+                          alternatives={rec.alternatives}
+                          tip={rec.tip}
+                          onQuickAction={handleSendText}
+                        />
+                      </React.Fragment>
+                    ))}
+
+                    {msg.nutritionSummary && (
+                      <NutritionSummaryCard 
+                        calories={msg.nutritionSummary.calories}
+                        protein={msg.nutritionSummary.protein}
+                        carbs={msg.nutritionSummary.carbs}
+                        fat={msg.nutritionSummary.fat}
+                      />
+                    )}
+                  </div>
+                )}
+                
+                <span className={`text-[9px] font-semibold text-slate-400 px-1 mt-1 flex items-center gap-1 ${msg.sender === "user" ? "text-right" : "text-left"}`}>
+                  {msg.timestamp} {msg.sender === "user" && <span className="text-[#34C759] text-[10px]">✓</span>}
                 </span>
               </div>
             </div>
@@ -414,7 +571,7 @@ export default function LivaHomeScreen({
                 disabled={!inputText.trim() && !isListening}
                 className={`flex items-center justify-center transition-colors flex-shrink-0 ${isListening ? 'text-red-500 animate-pulse' : 'text-[#34C759] hover:text-[#25ad48] disabled:opacity-40'}`}
               >
-                {isListening ? <Mic size={20} /> : <Send size={20} className="transform -rotate-45" />}
+                {isListening ? <Mic size={20} /> : <Send size={20} className="transform rotate-45" />}
               </button>
             </div>
 

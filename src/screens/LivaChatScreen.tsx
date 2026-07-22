@@ -12,6 +12,7 @@ export default function LivaChatScreen({
   onNavigate, 
   userName,
   initialMessage,
+  initialResponse,
   userProfile,
   onMealLogged,
   onWaterLogged,
@@ -22,6 +23,7 @@ export default function LivaChatScreen({
   onNavigate: (screen: Screen) => void; 
   userName: string;
   initialMessage?: string;
+  initialResponse?: any;
   userProfile?: {
     name: string;
     goal: string;
@@ -35,12 +37,35 @@ export default function LivaChatScreen({
   onMealDeleted?: (data: { mealType: string }) => void;
   loggedMeals?: any[];
 }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem("liva_chat_history");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.timestamp && (Date.now() - parsed.timestamp < 6 * 60 * 60 * 1000)) {
+          return parsed.messages || [];
+        }
+      }
+    } catch (e) {
+      console.error("Error loading chat history", e);
+    }
+    return [];
+  });
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+
+  // Save to local storage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("liva_chat_history", JSON.stringify({
+        timestamp: Date.now(),
+        messages
+      }));
+    }
+  }, [messages]);
 
   const getGreetingTime = () => {
     const hour = new Date().getHours();
@@ -252,11 +277,51 @@ export default function LivaChatScreen({
     recognition.start();
   };
 
+  const processedInitialResponseRef = useRef<any>(null);
+
   useEffect(() => {
-    if (initialMessage) {
+    if (initialMessage && initialResponse && processedInitialResponseRef.current !== initialResponse) {
+      processedInitialResponseRef.current = initialResponse;
+      // If we already have the AI response from the overlay, inject it directly instead of fetching
+      const userMsg: ChatMessage = { 
+        id: Date.now().toString(),
+        sender: "user", 
+        text: initialMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      const summaryToRender = initialResponse.mealData || initialResponse.summaryData || null;
+      const livaMsg: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        sender: "liva", 
+        text: initialResponse.response || "I'm here for you! Try asking me something about nutrition or log a meal.",
+        greeting: initialResponse.greeting,
+        motivation: initialResponse.motivation,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        nutritionSummary: summaryToRender ? {
+          calories: summaryToRender.calories || 0,
+          protein: summaryToRender.protein || 0,
+          carbs: summaryToRender.carbs || 0,
+          fat: summaryToRender.fat || 0
+        } : undefined,
+        recommendationData: initialResponse.recommendationData && Array.isArray(initialResponse.recommendationData) ? initialResponse.recommendationData.map((rec: any) => ({
+          meal: rec.meal || "",
+          message_suffix: rec.message_suffix || "",
+          calories: rec.calories || 0,
+          protein: rec.protein || 0,
+          carbs: rec.carbs || 0,
+          fat: rec.fat || 0,
+          why: rec.why || [],
+          alternatives: rec.alternatives || [],
+          tip: rec.tip || ""
+        })) : undefined
+      };
+      
+      setMessages(prev => [...prev, userMsg, livaMsg]);
+    } else if (initialMessage && !initialResponse && messages.length === 0) {
       handleSendText(initialMessage);
     }
-  }, [initialMessage]);
+  }, [initialMessage, initialResponse]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col" style={{ background: "#f8faf8" }}>
