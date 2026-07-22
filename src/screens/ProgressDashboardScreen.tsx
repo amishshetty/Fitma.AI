@@ -15,6 +15,7 @@ export default function ProgressDashboardScreen({
   completedHabits,
   goals,
   caloriesLogged,
+  proteinLogged,
   loggedMealsCount,
 }: {
   onNavigate: (screen: Screen) => void;

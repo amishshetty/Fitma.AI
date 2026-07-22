@@ -15,6 +15,47 @@ export default function PermissionsScreen({ onNext }: { onNext: () => void }) {
     { title: "Notifications", description: "Meal reminders, hydration prompts, and weekly insights.", icon: Bell, color: "#f59e0b" },
   ];
 
+  const handleToggle = async (index: number) => {
+    if (granted.has(index)) {
+      setGranted((prev) => {
+        const next = new Set(prev);
+        next.delete(index);
+        return next;
+      });
+      return;
+    }
+
+    try {
+      if (index === 0) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+      } else if (index === 1) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+      } else if (index === 2) {
+        if ("Notification" in window) {
+          const permission = await Notification.requestPermission();
+          if (permission !== "granted") {
+            alert("Notification permission was denied.");
+            return;
+          }
+        } else {
+          alert("Notifications are not supported in this browser.");
+          return;
+        }
+      }
+      
+      setGranted((prev) => {
+        const next = new Set(prev);
+        next.add(index);
+        return next;
+      });
+    } catch (err: any) {
+      console.error(err);
+      alert(`Permission request failed: ${err.message}`);
+    }
+  };
+
   return (
     <ScreenShell
       title="Make Liva smarter for you"
@@ -34,13 +75,7 @@ export default function PermissionsScreen({ onNext }: { onNext: () => void }) {
           return (
             <button
               key={permission.title}
-              onClick={() =>
-                setGranted((previous) => {
-                  const next = new Set(previous);
-                  next.has(index) ? next.delete(index) : next.add(index);
-                  return next;
-                })
-              }
+              onClick={() => handleToggle(index)}
               className="flex w-full items-start gap-4 rounded-[24px] bg-white p-4 text-left"
               style={{ border: active ? `1.5px solid ${permission.color}` : "1.5px solid rgba(16,32,26,0.06)" }}
             >

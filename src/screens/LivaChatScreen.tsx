@@ -22,6 +22,7 @@ export default function LivaChatScreen({
   onBack: () => void; 
   onNavigate: (screen: Screen) => void; 
   userName: string;
+  userId?: string;
   initialMessage?: string;
   initialResponse?: any;
   userProfile?: {
@@ -37,9 +38,10 @@ export default function LivaChatScreen({
   onMealDeleted?: (data: { mealType: string }) => void;
   loggedMeals?: any[];
 }) {
+  const chatStorageKey = `liva_chat_history_${userId || "guest"}`;
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
-      const saved = localStorage.getItem("liva_chat_history");
+      const saved = localStorage.getItem(chatStorageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.timestamp && (Date.now() - parsed.timestamp < 6 * 60 * 60 * 1000)) {
@@ -60,12 +62,12 @@ export default function LivaChatScreen({
   // Save to local storage whenever messages change
   useEffect(() => {
     if (messages.length > 0) {
-      localStorage.setItem("liva_chat_history", JSON.stringify({
+      localStorage.setItem(chatStorageKey, JSON.stringify({
         timestamp: Date.now(),
         messages
       }));
     }
-  }, [messages]);
+  }, [messages, chatStorageKey]);
 
   const getGreetingTime = () => {
     const hour = new Date().getHours();

@@ -271,6 +271,43 @@ export default function LoginScreen({
         changeView("profile-complete");
       }, 1000);
     } catch (err: any) {
+      if (err.code === "auth/email-already-in-use" || err.message?.includes("email-already-in-use")) {
+        try {
+          // Attempt to sign them in instead if they already exist
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          const profileSnapshot = await get(ref(db, `users/${user.uid}`));
+          let profileData = profileSnapshot.val();
+          
+          if (!profileData) {
+             profileData = { email: email.toLowerCase(), profileCompleted: false };
+          }
+          
+          if (rememberMe) {
+            localStorage.setItem("fitma_token", user.uid);
+          } else {
+            sessionStorage.setItem("fitma_token", user.uid);
+          }
+          
+          setActiveSessionToken(user.uid);
+          setActiveSessionUser(profileData);
+          setSuccessMsg("Account exists. Signing you in...");
+          
+          setTimeout(() => {
+            if (!profileData.profileCompleted) {
+              changeView("profile-complete");
+            } else {
+              onAuthSuccess(user.uid, profileData, false);
+            }
+          }, 1000);
+          return;
+        } catch (signInErr: any) {
+          setError("This email is already registered. Please sign in instead.");
+          setLoading(false);
+          return;
+        }
+      }
+
       if (isPlaceholderConfig() && email && password) {
         console.warn("Firebase sign up failed, falling back to local storage profile creation:", err);
         const mockUid = "mock_" + email.replace(/[@.]/g, "_");
@@ -732,13 +769,22 @@ export default function LoginScreen({
                 <input
                   type="password"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl border outline-none font-semibold text-xs transition-all ${
+                    confirmPassword.length > 0 && password !== confirmPassword 
+                      ? "bg-rose-50 border-rose-200 text-rose-700"
+                      : "bg-slate-50 border-slate-100 text-slate-700 placeholder-slate-300"
+                  }`}
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <Lock size={12} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Lock size={12} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
+                  confirmPassword.length > 0 && password !== confirmPassword ? "text-rose-400" : "text-slate-400"
+                }`} />
               </div>
+              {confirmPassword.length > 0 && password !== confirmPassword && (
+                <p className="text-[9px] font-bold text-rose-500 mt-1">Passwords do not match.</p>
+              )}
             </div>
 
             <div className="flex items-start gap-2 py-1">
@@ -833,13 +879,22 @@ export default function LoginScreen({
                 <input
                   type="password"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700"
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl border outline-none font-semibold text-xs transition-all ${
+                    confirmPassword.length > 0 && password !== confirmPassword 
+                      ? "bg-rose-50 border-rose-200 text-rose-700"
+                      : "bg-slate-50 border-slate-100 text-slate-700"
+                  }`}
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <Lock size={12} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Lock size={12} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
+                  confirmPassword.length > 0 && password !== confirmPassword ? "text-rose-400" : "text-slate-400"
+                }`} />
               </div>
+              {confirmPassword.length > 0 && password !== confirmPassword && (
+                <p className="text-[9px] font-bold text-rose-500 mt-1">Passwords do not match.</p>
+              )}
             </div>
 
             <button
@@ -897,85 +952,71 @@ export default function LoginScreen({
             </div>
 
             {/* What should Liva call you? */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">What should Liva call you?</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Preferred Name</label>
               <div className="relative">
                 <input
                   type="text"
                   required
-                  className="w-full bg-white pl-9 pr-3 py-2 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm transition-all focus:border-[#34c759]/40 focus:ring-2 focus:ring-[#34c759]/10"
-                  placeholder="Enter your preferred name"
+                  className="w-full bg-white/60 backdrop-blur-md pl-10 pr-4 py-2.5 rounded-2xl border border-white outline-none font-bold text-sm text-slate-800 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all focus:border-[#34c759]/50 focus:shadow-[0_4px_16px_rgba(52,199,89,0.1)]"
+                  placeholder="What should I call you?"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
-                <User size={13} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               </div>
             </div>
 
-            {/* Date of Birth */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">Date of Birth</label>
-              <div className="grid grid-cols-3 gap-2">
-                <select
-                  className="bg-white px-1 py-2 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm cursor-pointer text-center"
-                  value={dobDay}
-                  onChange={(e) => setDobDay(e.target.value)}
-                >
-                  {Array.from({ length: 31 }, (_, i) => {
-                    const dayStr = String(i + 1).padStart(2, "0");
-                    return <option key={dayStr} value={dayStr}>{dayStr}</option>;
-                  })}
-                </select>
-                <select
-                  className="bg-white px-1 py-2 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm cursor-pointer text-center"
-                  value={dobMonth}
-                  onChange={(e) => setDobMonth(e.target.value)}
-                >
-                  {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((m, index) => {
-                    const monthVal = String(index + 1).padStart(2, "0");
-                    return <option key={monthVal} value={monthVal}>{m}</option>;
-                  })}
-                </select>
-                <select
-                  className="bg-white px-1 py-2 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm cursor-pointer text-center"
-                  value={dobYear}
-                  onChange={(e) => setDobYear(e.target.value)}
-                >
-                  {Array.from({ length: 60 }, (_, i) => {
-                    const y = 2015 - i;
-                    return <option key={y} value={String(y)}>{y}</option>;
-                  })}
-                </select>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              {/* Gender */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Gender</label>
+                <div className="relative">
+                  <select 
+                    className="w-full bg-white/60 backdrop-blur-md pl-4 pr-8 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)] appearance-none cursor-pointer"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Prefer not to say">Other</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">▼</div>
+                </div>
               </div>
-            </div>
 
-            {/* Gender */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">Gender</label>
-              <select 
-                className="w-full bg-white px-3 py-2 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm cursor-pointer"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>
+              {/* Date of Birth - Simplified for modern look */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Birth Year</label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-white/60 backdrop-blur-md pl-4 pr-8 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)] appearance-none cursor-pointer"
+                    value={dobYear}
+                    onChange={(e) => setDobYear(e.target.value)}
+                  >
+                    {Array.from({ length: 60 }, (_, i) => {
+                      const y = 2015 - i;
+                      return <option key={y} value={String(y)}>{y}</option>;
+                    })}
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">▼</div>
+                </div>
+              </div>
             </div>
 
             {/* Language */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">Language</label>
-              <div className="grid grid-cols-3 gap-2">
-                {["English", "Hindi", "Marathi"].map((item) => (
+            <div className="space-y-1.5 mt-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Language</label>
+              <div className="flex flex-wrap gap-2 pb-1">
+                {["English", "Hindi", "Marathi", "Gujarati"].map((item) => (
                   <button
                     key={item}
                     type="button"
                     onClick={() => setLanguage(item)}
-                    className={`py-2 rounded-xl text-[10px] font-bold border transition-all text-center ${
+                    className={`shrink-0 px-4 py-2 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
                       language === item
-                        ? "bg-[#34c759] border-[#34c759] text-white shadow-sm"
-                        : "bg-white border-slate-100 text-slate-600 hover:bg-slate-50"
+                        ? "bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]"
+                        : "bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white"
                     }`}
                   >
                     {item}
@@ -985,18 +1026,18 @@ export default function LoginScreen({
             </div>
 
             {/* Motivation */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">Motivation</label>
-              <div className="grid grid-cols-4 gap-1.5">
+            <div className="space-y-1.5 mt-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Coaching Style</label>
+              <div className="flex flex-wrap gap-2 pb-1">
                 {["Friendly", "Tough", "Data", "Supportive"].map((item) => (
                   <button
                     key={item}
                     type="button"
                     onClick={() => setMotivationStyle(item)}
-                    className={`py-2 rounded-xl text-[10px] font-bold border transition-all text-center ${
+                    className={`shrink-0 px-4 py-2 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
                       motivationStyle === item
-                        ? "bg-[#34c759] border-[#34c759] text-white shadow-sm"
-                        : "bg-white border-slate-100 text-slate-600 hover:bg-slate-50"
+                        ? "bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]"
+                        : "bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white"
                     }`}
                   >
                     {item}
@@ -1006,39 +1047,28 @@ export default function LoginScreen({
             </div>
 
             {/* Workout */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-baseline">
-                <label className="text-[11px] font-bold text-slate-600 block">Workout</label>
-                <span className="text-[10px] text-slate-500 font-semibold">Do you currently work out?</span>
-              </div>
+            <div className="space-y-1.5 mt-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">Activity Level</label>
               <div className="grid grid-cols-3 gap-2">
-                {["Yes", "Sometimes", "No"].map((item) => (
+                {[
+                  { label: "Active", value: "Yes" },
+                  { label: "Moderate", value: "Sometimes" },
+                  { label: "Sedentary", value: "No" }
+                ].map((item) => (
                   <button
-                    key={item}
+                    key={item.label}
                     type="button"
-                    onClick={() => setWorkoutStatus(item)}
-                    className={`py-2 rounded-xl text-[10px] font-bold border transition-all text-center ${
-                      workoutStatus === item
-                        ? "bg-[#34c759] border-[#34c759] text-white shadow-sm"
-                        : "bg-white border-slate-100 text-slate-600 hover:bg-slate-50"
+                    onClick={() => setWorkoutStatus(item.value)}
+                    className={`py-2.5 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
+                      workoutStatus === item.value
+                        ? "bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]"
+                        : "bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white"
                     }`}
                   >
-                    {item}
+                    {item.label}
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* About You */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 block">About You</label>
-              <textarea
-                rows={2}
-                className="w-full bg-white px-3 py-1.5 rounded-xl border border-slate-100 outline-none font-bold text-xs text-slate-700 shadow-sm transition-all focus:border-[#34c759]/40 focus:ring-2 focus:ring-[#34c759]/10 resize-none overflow-hidden h-12"
-                placeholder="Tell Liva about your health goals..."
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-              />
             </div>
 
             {/* Submit & Trust Footnote */}
@@ -1046,9 +1076,9 @@ export default function LoginScreen({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#34c759] text-white py-2.5 rounded-xl text-xs font-bold hover:bg-[#25ad48] transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#34c759]/10 cursor-pointer"
+                className="w-full bg-[#34c759] text-white py-3.5 rounded-2xl text-xs font-extrabold hover:bg-[#25ad48] transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(52,199,89,0.2)] cursor-pointer mt-4"
               >
-                {loading ? <Loader2 size={14} className="animate-spin" /> : "Save Profile & Meet Liva"}
+                {loading ? <Loader2 size={16} className="animate-spin" /> : "Save & Continue"}
               </button>
               
               <p className="text-center text-[8px] font-bold text-slate-500 mt-2 leading-none">

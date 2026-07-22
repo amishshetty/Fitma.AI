@@ -81,6 +81,7 @@ import CameraAIProcessingScreen from "../screens/CameraAIProcessingScreen";
 import CameraLoggingScreen from "../screens/CameraLoggingScreen";
 import CameraMealSelectionScreen from "../screens/CameraMealSelectionScreen";
 import GoalsScreen from "../screens/GoalsScreen";
+import BodyMetricsScreen from "../screens/BodyMetricsScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LivaChatScreen from "../screens/LivaChatScreen";
 import LivaHomeScreen from "../screens/LivaHomeScreen";
@@ -519,7 +520,12 @@ export default function App() {
             setLanguage(u.language || "English");
             setMotivationStyle(u.motivationStyle || "Friendly");
             setLoggedMeals(u.meals || []);
-            setScreen("home");
+            
+            if (u.onboardingCompleted === true) {
+              setScreen("home");
+            } else {
+              setScreen("meet-liva");
+            }
           } else {
             throw new Error("No profile document found in Realtime Database.");
           }
@@ -823,7 +829,7 @@ export default function App() {
     setLoggedMeals(user.meals || []);
     setProteinLogged(user.protein || 0);
 
-    if (isNew) {
+    if (isNew || user.onboardingCompleted !== true) {
       go("meet-liva");
     } else {
       go("home");
@@ -969,6 +975,52 @@ export default function App() {
             onNext={(selectedGoal) => {
               setPrimaryGoal(selectedGoal);
               syncProfile({ primaryGoal: selectedGoal });
+              go("body-metrics");
+            }}
+            onSkip={() => go("body-metrics")}
+          />
+        );
+      case "body-metrics":
+        return (
+          <BodyMetricsScreen
+            initialWeight={userWeight}
+            initialHeight={Number(userHeight.replace(" cm", "")) || 178}
+            onNext={(weight, height) => {
+              setUserWeight(weight);
+              setUserHeight(`${height} cm`);
+              
+              // Calculate default goals based on height and weight
+              const bmr = 10 * weight + 6.25 * height - 5 * 25 + 5;
+              const tdee = bmr * 1.55;
+              let cals = tdee;
+              let proteinMultiplier = 1.8;
+              
+              if (primaryGoal === "Lose Weight") {
+                cals -= 500;
+                proteinMultiplier = 2.0;
+              } else if (primaryGoal === "Gain Muscle") {
+                cals += 500;
+                proteinMultiplier = 2.2;
+              } else if (primaryGoal === "Improve Energy") {
+                cals = tdee;
+                proteinMultiplier = 1.6;
+              }
+              
+              const calculatedGoals = {
+                weight: weight,
+                height: height,
+                calories: Math.round(cals / 50) * 50,
+                protein: Math.round((weight * proteinMultiplier) / 5) * 5,
+                water: Math.round((weight * 35) / 250) * 250,
+              };
+              
+              setGoals(calculatedGoals);
+              syncProfile({ 
+                weight, 
+                height: `${height} cm`,
+                goals: calculatedGoals
+              });
+              
               go("permissions");
             }}
             onSkip={() => go("permissions")}
@@ -977,7 +1029,10 @@ export default function App() {
       case "permissions":
         return <PermissionsScreen onNext={() => go("onboarding-success")} />;
       case "onboarding-success":
-        return <OnboardingSuccessScreen onFinish={() => go("home")} />;
+        return <OnboardingSuccessScreen onFinish={() => {
+          syncProfile({ onboardingCompleted: true });
+          go("home");
+        }} />;
       case "home": {
         const targetStart = new Date().setHours(0,0,0,0);
         const targetEnd = new Date().setHours(23,59,59,999);
@@ -1135,6 +1190,7 @@ export default function App() {
               go("liva-home");
             }}
             onNavigate={go}
+            userId={activeSessionToken || "guest"}
             userName={userName}
             userProfile={{
               name: userName || "Amish",
@@ -1262,7 +1318,9 @@ export default function App() {
             goals={goals}
             onLogWeight={(w) => {
               setUserWeight(w);
-              syncProfile({ weight: w });
+              const updatedGoals = { ...goals, weight: w };
+              setGoals(updatedGoals);
+              syncProfile({ weight: w, goals: updatedGoals });
             }}
           />
         );
@@ -1291,7 +1349,13 @@ export default function App() {
             goals={goals}
             onUpdateGoals={(updated) => {
               setGoals(updated);
-              syncProfile({ goals: updated });
+              if (updated.weight) setUserWeight(updated.weight);
+              if (updated.height) setUserHeight(`${updated.height} cm`);
+              syncProfile({ 
+                goals: updated,
+                ...(updated.weight ? { weight: updated.weight } : {}),
+                ...(updated.height ? { height: `${updated.height} cm` } : {})
+              });
             }}
           />
         );
@@ -1357,7 +1421,12 @@ export default function App() {
               setUserGender(gender);
               setUserHeight(height);
               setUserUnits(units);
-              syncProfile({ name, email, phone, gender, height, units });
+              
+              const parsedHeight = Number(height.replace(" cm", "")) || 178;
+              const updatedGoals = { ...goals, height: parsedHeight };
+              setGoals(updatedGoals);
+
+              syncProfile({ name, email, phone, gender, height, units, goals: updatedGoals });
             }}
           />
         );
@@ -1383,7 +1452,18 @@ export default function App() {
             goals={goals}
             onUpdateGoals={(updated) => {
               setGoals(updated);
-              syncProfile({ goals: updated });
+              if (updated.weight) setUserWeight(updated.weight);
+              if (updated.height) setUserHeight(`${updated.height} cm`);
+              syncProfile({ 
+                goals: updated,
+                ...(updated.weight ? { weight: updated.weight } : {}),
+                ...(updated.height ? { height: `${updated.height} cm` } : {})
+              });
+            }}
+            primaryGoal={primaryGoal}
+            onUpdatePrimaryGoal={(goal) => {
+              setPrimaryGoal(goal);
+              syncProfile({ primaryGoal: goal });
             }}
           />
         );

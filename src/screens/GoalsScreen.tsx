@@ -7,7 +7,7 @@ import ScreenShell from "./ScreenShell";
 import { ink, green } from "../constants";
 import { Screen } from "../types";
 
-export default function GoalsScreen({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
+export default function GoalsScreen({ onNext, onSkip }: { onNext: (goal: string) => void; onSkip: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
   const goals = [
     { label: "Lose Weight", icon: Flame, color: "#fb923c" },
@@ -24,7 +24,7 @@ export default function GoalsScreen({ onNext, onSkip }: { onNext: () => void; on
       subtitle="Liva will personalize your experience based on your goal."
       footer={
         <div className="space-y-3">
-          <PrimaryButton onClick={onNext} disabled={selected === null}>
+          <PrimaryButton onClick={() => selected !== null && onNext(goals[selected].label)} disabled={selected === null}>
             Continue
           </PrimaryButton>
           <SecondaryButton onClick={onSkip}>Skip for now</SecondaryButton>
