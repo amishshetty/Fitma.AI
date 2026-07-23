@@ -57,8 +57,41 @@ Remember:
 - End positively.
 - CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided.
 - CRITICAL: If the user asks for food suggestions, you MUST provide at least 1 meal in the "recommendations" array.
-- CRITICAL: If the user asks for a summary of their meals, you MUST set action.type to "SUMMARY_LOG" and leave "recommendations" EMPTY.
-- CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". DO NOT use "unknown".
+- CRITICAL: If the user is just logging a meal or water, or asking for a summary, you MUST leave "recommendations" EMPTY. Only provide recommendations if EXPLICITLY asked.
+- CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), you MUST set mealType to "unknown" so the app can ask them.
+
+EXPECTED JSON FORMAT:
+{
+  "message": "A nice conversational response...",
+  "greeting": "Optional greeting",
+  "motivation": "Optional motivation",
+  "recommendations": [
+    {
+      "meal": "Paneer Tikka",
+      "message_suffix": "is great",
+      "calories": 300,
+      "protein": 15,
+      "carbs": 10,
+      "fat": 20,
+      "why": ["High protein"],
+      "alternatives": [{ "name": "Tofu", "description": "Vegan option" }],
+      "tip": "Eat with salad"
+    }
+  ],
+  "action": {
+    "type": "MEAL_LOG",
+    "data": {
+      "calories": 400,
+      "protein": 20,
+      "carbs": 40,
+      "fat": 15,
+      "items": ["2 rotis", "paneer"],
+      "mealType": "unknown",
+      "date": "today",
+      "amountML": 0
+    }
+  }
+}
 `;
 
     const contents = history.map(msg => ({
@@ -71,65 +104,7 @@ Remember:
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: contents,
       generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            message: { type: "STRING" },
-            greeting: { type: "STRING" },
-            motivation: { type: "STRING" },
-            recommendations: {
-              type: "ARRAY",
-              items: {
-                type: "OBJECT",
-                properties: {
-                  meal: { type: "STRING" },
-                  message_suffix: { type: "STRING" },
-                  calories: { type: "INTEGER" },
-                  protein: { type: "INTEGER" },
-                  carbs: { type: "INTEGER" },
-                  fat: { type: "INTEGER" },
-                  why: { type: "ARRAY", items: { type: "STRING" } },
-                  alternatives: {
-                    type: "ARRAY",
-                    items: {
-                      type: "OBJECT",
-                      properties: {
-                        name: { type: "STRING" },
-                        description: { type: "STRING" }
-                      },
-                      required: ["name", "description"]
-                    }
-                  },
-                  tip: { type: "STRING" }
-                },
-                required: ["meal", "calories", "protein", "carbs", "fat", "why", "alternatives", "tip"]
-              }
-            },
-            action: {
-              type: "OBJECT",
-              properties: {
-                type: { type: "STRING" },
-                data: { 
-                  type: "OBJECT",
-                  properties: {
-                    calories: { type: "INTEGER" },
-                    protein: { type: "INTEGER" },
-                    carbs: { type: "INTEGER" },
-                    fat: { type: "INTEGER" },
-                    items: { type: "ARRAY", items: { type: "STRING" } },
-                    mealType: { type: "STRING" },
-                    date: { type: "STRING" },
-                    amountML: { type: "INTEGER" }
-                  },
-                  required: ["mealType"]
-                }
-              },
-              required: ["type", "data"]
-            }
-          },
-          required: intent === "RECOMMENDATION" ? ["message", "recommendations", "action"] : ["message", "action"]
-        }
+        responseMimeType: "application/json"
       }
     };
 
@@ -176,7 +151,7 @@ Remember:
     let customResponse = "I'm having a little trouble connecting to my brain right now. Can you try again in a moment?";
     
     if (errorMessage.includes("API key not valid")) {
-      customResponse = "It looks like the Gemini API Key is invalid! Please check the key in Render.";
+      customResponse = "It looks like the Gemini API Key is invalid! Please check the key in Vercel.";
     } else {
       // Temporarily send the raw error to the frontend so we can see what's wrong!
       customResponse = `System Error: ${errorMessage}`;

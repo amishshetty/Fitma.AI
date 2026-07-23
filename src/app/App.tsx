@@ -662,7 +662,7 @@ export default function App() {
       
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
 
         const API_URL = import.meta.env.VITE_API_URL || '';
         const response = await fetch(`${API_URL}/api/chat`, {
@@ -687,8 +687,22 @@ export default function App() {
         
         if (activeSiriRecRef.current !== recognition) return; // double check after fetch
 
-        const data = await response.json();
+        let data;
+        let responseText = "";
+        try {
+          responseText = await response.text();
+          data = JSON.parse(responseText);
+        } catch (e) {
+          console.error("Failed to parse JSON. Raw response:", responseText);
+          throw new Error(`API Error: ${response.status} - ${responseText.substring(0, 50)}`);
+        }
 
+        if (!response.ok) {
+          console.error("API Error Response:", data);
+          setSiriText(data?.response || data?.error || `Server Error ${response.status}`);
+          setTimeout(() => setLivaSiriActive(false), 4000);
+          return;
+        }
         // If AI generated recommendations, redirect to full chat screen
         if (data.recommendationData && data.recommendationData.length > 0) {
           setLivaSiriActive(false);
@@ -720,14 +734,20 @@ export default function App() {
         }
 
         // Auto-close after a few seconds so the user can see the result and then return to the app
-        setTimeout(() => {
-          if (activeSiriRecRef.current === recognition) {
-            setLivaSiriActive(false);
-          }
-        }, 3500);
-      } catch {
+        const isUnknownMeal = data.mealData && data.mealData.mealType && data.mealData.mealType.toLowerCase() === "unknown";
+        if (!isUnknownMeal) {
+          setTimeout(() => {
+            if (activeSiriRecRef.current === recognition) {
+              setLivaSiriActive(false);
+            }
+          }, 3500);
+        }
+      } catch (err: any) {
+        console.error("Fetch Catch:", err);
         if (activeSiriRecRef.current !== recognition) return;
-        setSiriText("Couldn't reach Liva right now. Try again later!");
+        
+        const errorMessage = err instanceof Error ? err.message : "Try again later!";
+        setSiriText(errorMessage.includes("API Error") ? errorMessage : "Couldn't reach Liva right now. Try again later!");
         setTimeout(() => {
           if (activeSiriRecRef.current === recognition) {
             setLivaSiriActive(false);
