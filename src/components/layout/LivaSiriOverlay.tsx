@@ -28,7 +28,7 @@ export default function LivaSiriOverlay({
         
         <div className="space-y-1">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liva Assistant</p>
-          <p className="text-sm font-bold text-slate-800 leading-relaxed px-4">
+          <p className="text-sm font-bold text-slate-800 leading-relaxed px-4 whitespace-pre-wrap">
             {text}
           </p>
         </div>

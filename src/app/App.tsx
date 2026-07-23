@@ -674,7 +674,7 @@ export default function App() {
         // Ignore if already stopped
       }
       
-      setSiriText("Thinking...");
+      setSiriText(finalTranscript + "\n\nThinking...");
       
       try {
         const controller = new AbortController();
@@ -775,9 +775,18 @@ export default function App() {
     recognition.onresult = (event: any) => {
       if (activeSiriRecRef.current !== recognition) return;
       if (isProcessing) return;
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join("");
+      let transcript = "";
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      if (isAndroid) {
+        // Android Chrome often duplicates results by appending the full sentence to new indices.
+        // The most accurate representation is usually just the very last result.
+        transcript = event.results[event.results.length - 1][0].transcript;
+      } else {
+        transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join("");
+      }
       
       setSiriText(transcript || "Listening...");
       finalTranscript = transcript;
