@@ -551,11 +551,17 @@ export default function App() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
-    const wakeWordRecognition = new SpeechRecognition();
-    wakeWordRecognition.lang = "en-US";
-    wakeWordRecognition.continuous = true;
-    wakeWordRecognition.interimResults = true;
-    wakeWordRecRef.current = wakeWordRecognition;
+    let wakeWordRecognition: any = null;
+    try {
+      wakeWordRecognition = new SpeechRecognition();
+      wakeWordRecognition.lang = "en-US";
+      wakeWordRecognition.continuous = true;
+      wakeWordRecognition.interimResults = true;
+      wakeWordRecRef.current = wakeWordRecognition;
+    } catch (e) {
+      console.warn("SpeechRecognition not fully supported:", e);
+      return;
+    }
 
     wakeWordRecognition.onresult = (event: any) => {
       if (livaSiriActive) return;
@@ -637,7 +643,15 @@ export default function App() {
     setSiriText("Listening...");
     setLivaSiriActive(true);
 
-    const recognition = new SpeechRecognition();
+    let recognition: any = null;
+    try {
+      recognition = new SpeechRecognition();
+    } catch (e) {
+      console.warn("SpeechRecognition not fully supported:", e);
+      setSiriText("Voice not supported on this device. Use text chat.");
+      setTimeout(() => setLivaSiriActive(false), 3000);
+      return;
+    }
     activeSiriRecRef.current = recognition; // Register as the current active instance
     recognition.lang = language === "Hindi" ? "hi-IN" : language === "Marathi" ? "mr-IN" : "en-US";
     recognition.interimResults = true;

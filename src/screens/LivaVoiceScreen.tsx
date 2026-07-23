@@ -18,7 +18,14 @@ export default function LivaVoiceScreen({ onCancel, onDone }: { onCancel: () => 
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    let recognition: any = null;
+    try {
+      recognition = new SpeechRecognition();
+    } catch (e) {
+      console.warn("SpeechRecognition not supported:", e);
+      setVoiceStatus("error");
+      return;
+    }
     recognition.lang = "en-US";
     recognition.interimResults = true;
     recognition.continuous = true;

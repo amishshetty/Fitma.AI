@@ -278,7 +278,14 @@ export default function LivaHomeScreen({
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    let recognition: any = null;
+    try {
+      recognition = new SpeechRecognition();
+    } catch (e) {
+      console.warn("SpeechRecognition not supported:", e);
+      alert("Voice input is restricted by your browser. Please use a different browser like Safari.");
+      return;
+    }
     recognition.lang = userProfile?.language === "Hindi" ? "hi-IN" : userProfile?.language === "Marathi" ? "mr-IN" : "en-US";
     recognition.interimResults = true;
     recognition.continuous = true; 
