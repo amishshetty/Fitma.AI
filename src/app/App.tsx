@@ -660,11 +660,13 @@ export default function App() {
     let finalTranscript = "";
     let hasError = false;
     let isProcessing = false;
+    let silenceTimeout: any = null;
 
     const finishListening = async () => {
       if (activeSiriRecRef.current !== recognition) return;
       if (isProcessing || hasError) return;
       isProcessing = true;
+      if (silenceTimeout) clearTimeout(silenceTimeout);
       
       try {
         recognition.stop();
@@ -780,20 +782,23 @@ export default function App() {
       setSiriText(transcript || "Listening...");
       finalTranscript = transcript;
       
-      const currentResult = event.results[event.resultIndex];
-      if (currentResult && currentResult.isFinal) {
+      // Clear previous silence timeout
+      if (silenceTimeout) clearTimeout(silenceTimeout);
+      
+      // Auto-submit after 2.5 seconds of silence
+      silenceTimeout = setTimeout(() => {
         if (finalTranscript.trim()) {
           finishListening();
         } else {
           setSiriText("I didn't catch that. Tap to try again.");
-          recognition.stop();
+          try { recognition.stop(); } catch(e) {}
           setTimeout(() => {
             if (activeSiriRecRef.current === recognition) {
               setLivaSiriActive(false);
             }
           }, 2500);
         }
-      }
+      }, 2500);
     };
 
     recognition.onerror = (event: any) => {
@@ -824,6 +829,7 @@ export default function App() {
     recognition.onend = () => {
       if (activeSiriRecRef.current !== recognition) return;
       if (!isProcessing && !hasError) {
+        if (silenceTimeout) clearTimeout(silenceTimeout);
         if (finalTranscript.trim()) {
           finishListening();
         } else {
