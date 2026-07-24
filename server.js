@@ -25,12 +25,13 @@ if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
 }
 
+
 /* ---------------------------------------------------------
                     ROUTES
 --------------------------------------------------------- */
 
-// Chat API Route
 app.use("/api", chatRoutes);
+
 
 // Vision API Route
 app.use("/api/vision", visionRoutes);
@@ -73,6 +74,7 @@ app.use((req, res) => {
 /* ---------------------------------------------------------
                     SERVER START
 --------------------------------------------------------- */
+
 
 if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
   app.listen(PORT, () => {

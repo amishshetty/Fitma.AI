@@ -134,8 +134,11 @@ import SaveMealScreen from "../screens/SaveMealScreen";
 import SearchFoodScreen from "../screens/SearchFoodScreen";
 import SplashScreen from "../screens/SplashScreen";
 import TextLoggingScreen from "../screens/TextLoggingScreen";
+import UserSettingsScreen from "../screens/UserSettingsScreen";
 import VoiceLoggingScreen from "../screens/VoiceLoggingScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
+import { getDeviceId } from "../utils/deviceInfo";
+import { requestPushPermission } from "../utils/pushManager";
 import { ink, green, muted, softGreen, mealItems, rotatingFacts, screenVariants } from "../constants";
 import { Screen, EntryMode } from "../types";
 import { screens } from "../constants";
@@ -303,6 +306,7 @@ export default function App() {
       const nextUpdates = typeof updater === 'function' ? updater(current) : updater;
       const nextDay = { ...current, ...nextUpdates };
       const nextHistory = { ...prev, [dateStr]: nextDay };
+      // State derived from history is calculated dynamically during render
       
       // Delay syncing slightly to allow batching
       setTimeout(() => syncProfile({ history: nextHistory }), 0);
@@ -355,7 +359,7 @@ export default function App() {
     if (isYesterday) {
       mealDate.setDate(mealDate.getDate() - 1);
     }
-    const mealDateStr = mealDate.toDateString();
+    const mealDateStr = new Date(mealDate.getTime() - mealDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const newId = isYesterday ? (Date.now() - 86400000).toString() : Date.now().toString();
 
     const newMeal: LoggedMeal = {
@@ -519,7 +523,11 @@ export default function App() {
             setPrimaryGoal(u.primaryGoal || "Weight Loss");
             setLanguage(u.language || "English");
             setMotivationStyle(u.motivationStyle || "Friendly");
-            setLoggedMeals(u.meals || []);
+            let parsedMeals = u.meals || [];
+            if (parsedMeals && !Array.isArray(parsedMeals)) {
+              parsedMeals = Object.values(parsedMeals);
+            }
+            setLoggedMeals(parsedMeals);
             
             if (u.onboardingCompleted === true) {
               setScreen("home");
@@ -541,6 +549,9 @@ export default function App() {
       // Ping the Render backend to wake it up in the background!
       const API_URL = import.meta.env.VITE_API_URL || '';
       fetch(`${API_URL}/api/health`).catch(() => {});
+      
+      // Request push permissions
+      setTimeout(() => requestPushPermission(), 3000);
     }
   }, []);
 
@@ -687,6 +698,7 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             message: finalTranscript,
+            deviceId: getDeviceId(),
             profile: {
               name: userName || "Amish",
               goal: primaryGoal,
@@ -695,7 +707,17 @@ export default function App() {
               motivationStyle: motivationStyle,
               language: language
             },
-            previousMessages: []
+            previousMessages: [],
+            loggedMeals: (loggedMeals || []).map(m => {
+              let dateStr = "";
+              try {
+                dateStr = new Date(parseInt(m.id)).toDateString();
+              } catch (e) {
+                dateStr = "Unknown";
+              }
+              return { ...m, dateString: dateStr };
+            }),
+            remainingCalories: Math.max(0, goals.calories - caloriesLogged)
           }),
         });
 
@@ -875,7 +897,11 @@ export default function App() {
     setPrimaryGoal(user.primaryGoal || "Weight Loss");
     setLanguage(user.language || "English");
     setMotivationStyle(user.motivationStyle || "Friendly");
-    setLoggedMeals(user.meals || []);
+    let parsedMeals = user.meals || [];
+    if (parsedMeals && !Array.isArray(parsedMeals)) {
+      parsedMeals = Object.values(parsedMeals);
+    }
+    setLoggedMeals(parsedMeals);
     setProteinLogged(user.protein || 0);
 
     if (isNew || user.onboardingCompleted !== true) {

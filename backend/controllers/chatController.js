@@ -8,6 +8,12 @@ import {
 export const handleChat = async (req, res) => {
   const { message, profile, previousMessages = [], loggedMeals = [], remainingCalories } = req.body || {};
 
+  console.log("=== INCOMING CHAT REQUEST ===");
+  console.log("Message:", message);
+  console.log("LoggedMeals:", JSON.stringify(loggedMeals, null, 2));
+  console.log("LocalDateStr:", req.body.localDateStr);
+  console.log("===============================");
+
   if (!message || message.trim() === "") {
     return res.status(400).json({
       error: "Message is required.",
@@ -25,9 +31,37 @@ export const handleChat = async (req, res) => {
 
   const intent = detectIntent(message);
 
+  // Use frontend loggedMeals to ensure Liva's context perfectly matches the user's UI
+  // The frontend sends them as { id (timestamp), name, calories, protein, carbs, fat, mealType, dateString, timestamp (time string) }
+  const combinedMeals = (loggedMeals || []).map(m => ({
+    mealType: m.mealType,
+    foodItem: m.name,
+    calories: m.calories || 0,
+    protein: m.protein || 0,
+    carbs: m.carbs || 0,
+    fat: m.fat || 0,
+    loggedAt: new Date(parseInt(m.id)),
+    dateString: m.dateString // provided by frontend
+  }));
+
+  // Calculate dynamic remaining calories based on frontend meals (only for today)
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const todaysMeals = combinedMeals.filter(meal => meal.loggedAt >= startOfToday);
+  
+  const consumedCalories = todaysMeals.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+  const dynamicRemainingCalories = Math.max(0, userProfile.dailyCalories - consumedCalories);
+
+  // Pass the user's local date from the frontend to avoid timezone discrepancies
+  const userLocalDateStr = req.body.localDateStr || new Date().toDateString();
+
   try {
     // ---------- GEMINI MODEL ----------
-    const systemPrompt = buildLivaBrain(message, userProfile, loggedMeals, remainingCalories);
+    const systemPrompt = buildLivaBrain(message, userProfile, combinedMeals, dynamicRemainingCalories, userLocalDateStr);
+
+    console.log("=== SYSTEM PROMPT ===");
+    console.log(systemPrompt);
+    console.log("=====================");
 
     const history = [];
 

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import BottomNav from "../components/layout/BottomNav";
+import { getDeviceId } from "../utils/deviceInfo";
 import LivaAvatar from "../components/layout/LivaAvatar";
 import { ink, muted } from "../constants";
 import { FoodRecommendationCard, NutritionSummaryCard } from "../components/chat/LivaResponseCards";
@@ -179,6 +180,7 @@ export default function LivaHomeScreen({
         },
         body: JSON.stringify({
           message: textToSend,
+          deviceId: getDeviceId(),
           profile: userProfile || {
             name: userName || "Amish",
             goal: "Weight Loss",
@@ -188,7 +190,15 @@ export default function LivaHomeScreen({
             language: "English"
           },
           previousMessages: messages.map(m => ({ sender: m.sender, text: m.text })),
-          loggedMeals: loggedMeals,
+          loggedMeals: (loggedMeals || []).map(m => {
+            let dateStr = "";
+            try {
+              dateStr = new Date(parseInt(m.id)).toDateString();
+            } catch (e) {
+              dateStr = "Unknown";
+            }
+            return { ...m, dateString: dateStr };
+          }),
           remainingCalories: remainingCalories
         })
       });

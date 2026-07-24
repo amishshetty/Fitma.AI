@@ -34,11 +34,11 @@ export default function ProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-sm font-bold" style={{ color: ink }}>
+        <span className="text-sm font-bold" style={{ color: color }}>
           {value}%
         </span>
         {label && (
-          <span className="text-[10px] font-semibold" style={{ color: muted }}>
+          <span className="text-[10px] font-semibold" style={{ color: color }}>
             {label}
           </span>
         )}

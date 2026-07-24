@@ -41,7 +41,7 @@ export function buildGreeting(profile) {
   }
 }
 
-export function buildHealthContext(profile, loggedMeals, remainingCalories = null) {
+export function buildHealthContext(profile, loggedMeals, remainingCalories = null, userLocalDateStr = null) {
   // We use placeholder data for future-proofing if they don't exist yet
   const waterIntake = profile.waterIntake || "Not tracked today";
   const sleepQuality = profile.sleepQuality || "Unknown";
@@ -52,12 +52,19 @@ export function buildHealthContext(profile, loggedMeals, remainingCalories = nul
     ? `\nCalories Remaining for Today : ${remainingCalories} kcal (CRITICAL: Meal suggestions MUST STRICTLY fit within this calorie limit!)`
     : "";
 
+  const currentDateStr = userLocalDateStr || new Date().toDateString();
+  const todayDateObj = new Date(currentDateStr);
+  const yesterdayDateObj = new Date(todayDateObj);
+  yesterdayDateObj.setDate(yesterdayDateObj.getDate() - 1);
+  const yesterdayDateStr = yesterdayDateObj.toDateString();
+
   return `
 USER PROFILE
 
 Name : ${profile.name}
 Goal : ${weightGoal}
 Diet : ${profile.diet}
+Current Date: ${currentDateStr}
 Daily Calories : ${profile.dailyCalories}
 Language : ${profile.language}
 Motivation Style : ${profile.motivationStyle}
@@ -72,9 +79,16 @@ Keep them motivated.
 Keep answers practical.
 Never overload them.
 
-User's Logged Meals Context:
+User's Recent Logged Meals (Last 3 Days):
 ${loggedMeals && loggedMeals.length > 0 
-  ? loggedMeals.map((m) => `- ${m.mealType || 'snack'}: ${m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${m.id ? new Date(parseInt(m.id)).toDateString() : 'Unknown'} - Time: ${m.timestamp}]`).join("\n") 
+  ? loggedMeals.map((m) => {
+      const dStr = m.dateString || (m.loggedAt ? new Date(m.loggedAt).toDateString() : 'Unknown');
+      let label = "";
+      if (dStr === currentDateStr) label = " (Today)";
+      else if (dStr === yesterdayDateStr) label = " (Yesterday)";
+      const tStr = m.timestamp || (m.loggedAt ? new Date(m.loggedAt).toLocaleTimeString() : 'Unknown');
+      return `- ${m.mealType || 'snack'}: ${m.foodItem || m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${dStr}${label} - Time: ${tStr}]`;
+    }).join("\n") 
   : "No meals logged yet."}
 `;
 }
@@ -136,7 +150,7 @@ Be friendly.
   }
 }
 
-export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null) {
+export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null, userLocalDateStr = null) {
   const emotion = detectEmotion(message);
 
   return `
@@ -147,7 +161,7 @@ Never say you are ChatGPT.
 You are the permanent AI companion inside Fitma.ai.
 You are a highly intelligent, futuristic personal diet manager.
 
-${buildHealthContext(profile, loggedMeals, remainingCalories)}
+${buildHealthContext(profile, loggedMeals, remainingCalories, userLocalDateStr)}
 
 ${buildResponseStyle(profile)}
 
@@ -168,6 +182,15 @@ Conversation Rules
 • If they log meals, give a very brief estimate (Calories, Protein) and Health Score. Keep it to one short sentence.
 • CRITICAL: When estimating calories and protein, you MUST mathematically calculate it based on the EXACT QUANTITY the user provides.
 • Always finish positively.
+
+Meal Recommendation Rule
+
+When the user asks for meal ideas, recipes, or what they should eat:
+1. Analyze their Diet (${profile.diet}), Goal (${profile.goal}), and Daily Calories (${profile.dailyCalories}).
+2. Provide specific, tasty, and practical meal recommendations.
+3. Do NOT repeat the exact same meals. Keep variety high.
+4. If you have suggested meals recently in the conversation, give completely new and different options this time.
+5. Provide a rough calorie/protein estimate for your suggestions.
 
 ---
 
@@ -290,11 +313,14 @@ For any other natural language command (e.g. "I ate 2 rotis", "Log 2 rotis for b
 - You MUST mathematically calculate calories, protein, carbs, and fat based on exact quantities.
 - mealType is "unknown" unless they explicitly say breakfast, lunch, dinner, or snack.
 
-3. SUMMARY_LOG: If user asks for a summary of their meals (e.g., "today's summary", "yesterday's summary").
+3. SUMMARY_LOG: If user asks for a summary of their meals (e.g., "today's summary", "yesterday's summary") OR asks what they ate (e.g., "What did I have for lunch yesterday?").
 "action": {
   "type": "SUMMARY_LOG",
   "data": { "calories": NUMBER, "protein": NUMBER, "carbs": NUMBER, "fat": NUMBER }
 }
+- You MUST look at the "User's Recent Logged Meals" section to see what they ate.
+- Answer their question naturally in the "message" (e.g., "Yesterday for lunch you had 4 Roti and Egg.").
+- DO NOT say they didn't log a meal if it is clearly listed in the recent logged meals!
 - You MUST mathematically calculate the sum from the "User's Logged Meals Context" for the requested date. If no meals are logged for that date, return 0 for all values. DO NOT hallucinate numbers.
 
 4. WATER_LOG: If user logs drinking water (e.g., "add 1 glass of water").

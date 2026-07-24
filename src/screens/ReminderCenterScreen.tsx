@@ -43,36 +43,44 @@ export default function ReminderCenterScreen({
       onBack={onBack}
       footer={
         <div className="flex gap-3">
-          <SecondaryButton onClick={handleMarkAllRead}>Mark All Read</SecondaryButton>
-          <PrimaryButton onClick={() => onNavigate("reminder-settings")} icon={<TrendingUp size={16} />}>Smart Reminders</PrimaryButton>
+          <button 
+            onClick={handleMarkAllRead}
+            className="flex-1 flex items-center justify-center rounded-xl bg-white text-[13px] font-semibold transition-all hover:bg-slate-50"
+            style={{ color: "#475569", border: "1px solid #dcf4e6", minHeight: "56px" }}
+          >
+            Mark All Read
+          </button>
+          <button
+            onClick={() => onNavigate("reminder-settings")}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl text-white text-[13px] font-semibold transition-all hover:opacity-90"
+            style={{ background: "#34C759", minHeight: "56px", boxShadow: "0 8px 16px rgba(52,199,89,0.2)" }}
+          >
+            <div className="text-left leading-tight">
+              Smart<br/>Reminders
+            </div>
+            <TrendingUp size={14} />
+          </button>
         </div>
       }
     >
       <div className="space-y-4 pb-8">
         {/* Tab Selectors */}
-        <div className="flex bg-[#f2faf5] p-1 rounded-2xl">
-          <button
-            onClick={() => setActiveTab("today")}
-            className="flex-1 py-2 text-xs font-bold rounded-xl transition-all"
+        <div className="flex bg-[#f4f9f6] p-1 rounded-2xl relative mb-6">
+          <div 
+            className="absolute top-1 bottom-1 w-1/2 bg-[#34C759] rounded-xl transition-transform duration-300 shadow-sm"
             style={{
-              background: activeTab === "today" ? "white" : "transparent",
-              color: activeTab === "today" ? green : muted,
-              boxShadow: activeTab === "today" ? "0 2px 8px rgba(16,32,26,0.04)" : "none",
+              transform: `translateX(${activeTab === 'today' ? '0%' : '100%'})`,
             }}
-          >
-            Today
-          </button>
-          <button
-            onClick={() => setActiveTab("earlier")}
-            className="flex-1 py-2 text-xs font-bold rounded-xl transition-all"
-            style={{
-              background: activeTab === "earlier" ? "white" : "transparent",
-              color: activeTab === "earlier" ? green : muted,
-              boxShadow: activeTab === "earlier" ? "0 2px 8px rgba(16,32,26,0.04)" : "none",
-            }}
-          >
-            Earlier
-          </button>
+          />
+          {["today", "earlier"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as "today" | "earlier")}
+              className={`flex-1 py-2.5 text-xs font-bold rounded-xl relative z-10 transition-colors duration-300 capitalize ${activeTab === tab ? 'text-white' : 'text-[#6d8779]'}`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
         {/* Notifications Feed */}
@@ -101,18 +109,18 @@ export default function ReminderCenterScreen({
                     {item.text}
                   </p>
                   
-                  <div className="mt-2.5 flex gap-2">
+                  <div className="mt-3 flex gap-2.5">
                     {item.screen && (
                       <button
                         onClick={() => onNavigate(item.screen!)}
-                        className="text-[10px] font-bold text-[#34C759] bg-[#f2faf5] px-2.5 py-1 rounded-full hover:bg-[#e4f4ea]"
+                        className="text-[11px] font-bold text-[#34C759] bg-white border border-[#dcf4e6] px-3.5 py-1.5 rounded-xl hover:bg-[#f4f9f6] transition-colors"
                       >
                         Act Now
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="text-[10px] font-bold text-[#f43f5e] bg-rose-50 px-2.5 py-1 rounded-full hover:bg-rose-100"
+                      className="text-[11px] font-bold text-slate-400 bg-slate-50 px-3.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors"
                     >
                       Clear
                     </button>

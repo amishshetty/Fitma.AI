@@ -6,6 +6,7 @@ import { ink } from "../constants";
 import { Screen } from "../types";
 import { ChatMessage } from "../types";
 import { FoodRecommendationCard, NutritionSummaryCard } from "../components/chat/LivaResponseCards";
+import { getDeviceId } from "../utils/deviceInfo";
 
 export default function LivaChatScreen({ 
   onBack, 
@@ -117,6 +118,7 @@ export default function LivaChatScreen({
         },
         body: JSON.stringify({
           message: textToSend,
+          deviceId: getDeviceId(),
           profile: userProfile || {
             name: userName || "Amish",
             goal: "Weight Loss",
@@ -134,7 +136,8 @@ export default function LivaChatScreen({
               dateStr = "Unknown";
             }
             return { ...m, dateString: dateStr };
-          })
+          }),
+          localDateStr: new Date().toDateString()
         })
       });
 
@@ -147,9 +150,11 @@ export default function LivaChatScreen({
       const data = await response.json();
       const livaReply = data.response || "I'm here for you! Try asking me something about nutrition or log a meal.";
 
-      // If meal data was detected by Gemini, notify parent
-      if (data.mealData && onMealLogged) {
-        onMealLogged(data.mealData);
+      // If meal data was detected by Gemini, notify parent (safety check included)
+      if (data.mealData && !data.deleteData && data.mealData.mealType && data.mealData.mealType.toLowerCase() !== "unknown") {
+        if (onMealLogged) {
+          onMealLogged(data.mealData);
+        }
       }
       
       // If water data was detected by Gemini, notify parent
