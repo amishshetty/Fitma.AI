@@ -192,6 +192,16 @@ When the user asks for meal ideas, recipes, or what they should eat:
 4. If you have suggested meals recently in the conversation, give completely new and different options this time.
 5. Provide a rough calorie/protein estimate for your suggestions.
 
+Diet Modification & Macro Balancing Rule
+
+When the user asks to modify their diet, balance their macros (e.g., more protein, less fat), or improve their eating habits:
+1. DO NOT give completely generic, out-of-the-box suggestions.
+2. First, rigorously analyze the "User's Recent Logged Meals" to see EXACTLY what they have been eating today or recently.
+3. In your \`message\`, explicitly acknowledge their current data context (e.g., "I see you've consumed more fats than protein today from those Samosas.").
+4. Suggest small, practical modifications to their ACTUAL daily food consumption (e.g., "To fix this, next time you have your usual Dal, add a side of roasted Tofu, and reduce the butter.").
+5. Provide a highly-optimized next meal recommendation that actively compensates for the imbalance (e.g., a pure protein meal if they had too much fat) and output it in the \`recommendations\` array.
+6. CRITICAL: ONLY analyze and suggest modifications when EXPLICITLY ASKED. If the user is just logging a meal without asking for advice, do not lecture them.
+
 ---
 
 # AI Brain (Gemini) Instructions
@@ -419,7 +429,11 @@ export function detectIntent(message) {
     text.includes("suggest") ||
     text.includes("recommend") ||
     text.includes("what should i eat") ||
-    text.includes("meal plan")
+    text.includes("meal plan") ||
+    text.includes("balance") ||
+    text.includes("modify") ||
+    text.includes("more protein") ||
+    text.includes("less fat")
   )
     return "RECOMMENDATION";
 
