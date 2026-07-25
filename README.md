@@ -1,4 +1,4 @@
-# 🍏 Fitma.ai
+# Fitma.ai
 
 > **Your AI-powered nutrition companion that understands you, reminds you, and helps you build healthier eating habits—without making food tracking feel like work.**
 
