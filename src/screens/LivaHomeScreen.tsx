@@ -68,6 +68,7 @@ export default function LivaHomeScreen({
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const silenceTimeoutRef = useRef<any>(null);
   const suggestionsScrollRef = useRef<HTMLDivElement>(null);
   const [showKeyboard, setShowKeyboard] = useState(false);
 
@@ -277,8 +278,12 @@ export default function LivaHomeScreen({
     }
 
     if (isListening) {
+      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
       recognitionRef.current?.stop();
       setIsListening(false);
+      if (inputText.trim()) {
+        handleSendText(inputText);
+      }
       return;
     }
 
@@ -303,19 +308,34 @@ export default function LivaHomeScreen({
 
     recognition.onstart = () => setIsListening(true);
     recognition.onresult = (event: any) => {
-      const transcript = Array.from(event.results)
-        .map((result: any) => result[0].transcript)
-        .join("");
+      let transcript = "";
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (isAndroid) {
+        transcript = event.results[event.results.length - 1][0].transcript;
+      } else {
+        transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join("");
+      }
       setInputText(transcript);
       
-      const currentResult = event.results[event.resultIndex];
-      if (currentResult && currentResult.isFinal) {
-        recognition.stop(); 
-        setIsListening(false);
-        handleSendText(transcript);
-      }
+      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+      
+      silenceTimeoutRef.current = setTimeout(() => {
+        if (transcript.trim()) {
+          try { recognition.stop(); } catch(e) {}
+          setIsListening(false);
+          handleSendText(transcript);
+        } else {
+          try { recognition.stop(); } catch(e) {}
+          setIsListening(false);
+        }
+      }, 1500);
     };
-    recognition.onerror = () => setIsListening(false);
+    recognition.onerror = () => {
+      setIsListening(false);
+      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+    };
     recognition.onend = () => setIsListening(false);
     recognition.start();
   };

@@ -1,0 +1,126 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><title>Fitma.ai Product Requirements Document</title>
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml>
+<![endif]-->
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+  h1 { color: #2C3E50; border-bottom: 2px solid #3498DB; padding-bottom: 10px; }
+  h2 { color: #34495E; border-bottom: 1px solid #BDC3C7; padding-bottom: 5px; margin-top: 30px; }
+  h3 { color: #2980B9; margin-top: 20px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 15px; margin-bottom: 15px; }
+  th, td { border: 1px solid #BDC3C7; padding: 10px; text-align: left; vertical-align: top; }
+  th { background-color: #ECF0F1; color: #2C3E50; }
+  p, li { font-size: 11pt; }
+</style>
+</head>
+<body>
+
+<h1>Product Requirements Document (PRD)</h1>
+<p>
+<strong>Product Name:</strong> Fitma.ai<br>
+<strong>Document Version:</strong> 1.0<br>
+<strong>Status:</strong> Approved<br>
+<strong>Date:</strong> July 25, 2026
+</p>
+
+<h2>1. Executive Summary</h2>
+<p>Fitma.ai is a comprehensive health and nutrition tracking application designed to simplify the fitness journey through AI. The core differentiator is <strong>Liva</strong>, an integrated AI Health Companion powered by Google's Gemini. Rather than treating health tracking as a mundane chore, Fitma.ai offers a conversational interface where users interact with a supportive, personalized AI friend who understands their goals, diet, and motivation style.</p>
+
+<h2>2. Problem Statement & Market Context</h2>
+<p>Traditional calorie counters and fitness trackers suffer from high user churn due to the tedious nature of manual data entry and lack of personalized engagement. Users often feel overwhelmed by complex interfaces and unsupported in their journey. Fitma.ai solves this by replacing rigid forms with natural language processing—allowing users to simply tell Liva what they ate or did, while Liva handles the data logging and provides immediate, empathetic feedback.</p>
+
+<h2>3. Target Audience & User Personas</h2>
+<ul>
+  <li><strong>The Busy Professional (Persona: Alex):</strong> Wants to stay healthy but lacks the time to search for foods in a database. Needs quick, voice/text-based logging.</li>
+  <li><strong>The Fitness Enthusiast (Persona: Jamie):</strong> Strictly monitors macros and calories. Needs accurate data parsing and progress visualization.</li>
+  <li><strong>The Health Beginner (Persona: Sam):</strong> Easily intimidated by fitness jargon. Needs a supportive companion (Liva) to guide them gently towards better habits without judgment.</li>
+</ul>
+
+<h2>4. Goals & Success Metrics (KPIs)</h2>
+<ul>
+  <li><strong>User Engagement:</strong> Daily Active Users (DAU) and Monthly Active Users (MAU).</li>
+  <li><strong>Retention Rate:</strong> Percentage of users who continue using the app after 7, 30, and 90 days.</li>
+  <li><strong>AI Accuracy:</strong> Percentage of user inputs correctly parsed into structured nutritional logs without manual correction.</li>
+  <li><strong>Session Length:</strong> Average time spent interacting with Liva per session.</li>
+</ul>
+
+<h2>5. Scope & Requirements</h2>
+
+<h3>5.1 Functional Requirements (FR)</h3>
+<ul>
+  <li><strong>FR1 - User Onboarding:</strong> The system shall collect user baseline data (age, weight, height, activity level, dietary preferences) and fitness goals.</li>
+  <li><strong>FR2 - AI Chat Interface (Liva):</strong> The system shall provide a chat interface where users can interact via natural language.</li>
+  <li><strong>FR3 - Intent Parsing & Logging:</strong> Liva must extract intents (meal logs, water intake, workouts) from chat and save them to the user's daily record.</li>
+  <li><strong>FR4 - Nutritional Database/Estimation:</strong> The system must calculate or estimate calories and macros (Protein, Carbs, Fat) based on the food mentioned.</li>
+  <li><strong>FR5 - Dashboard & Visualization:</strong> The system shall display daily progress rings/bars for calories, macros, and water.</li>
+  <li><strong>FR6 - Authentication:</strong> Secure email/password and social login via Firebase.</li>
+</ul>
+
+<h3>5.2 Non-Functional Requirements (NFR)</h3>
+<ul>
+  <li><strong>NFR1 - Performance:</strong> The AI response time should be under 2.5 seconds. The UI must maintain 60fps for animations.</li>
+  <li><strong>NFR2 - Responsiveness:</strong> The UI must be fully mobile-first, rendering perfectly on iOS and Android browsers.</li>
+  <li><strong>NFR3 - Security & Privacy:</strong> All personal health data must be encrypted in transit (HTTPS) and at rest (Firestore rules). No PII should be used to train public AI models.</li>
+  <li><strong>NFR4 - Availability:</strong> The system should target 99.9% uptime.</li>
+</ul>
+
+<h2>6. User Stories & Acceptance Criteria</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>User Story</th>
+      <th>Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Onboarding</strong></td>
+      <td>As a new user, I want to set my fitness goals so that Liva can personalize my experience.</td>
+      <td>- Must capture weight, height, goals.<br>- Must calculate daily caloric needs.</td>
+    </tr>
+    <tr>
+      <td><strong>Meal Logging</strong></td>
+      <td>As a busy user, I want to text Liva "I had a chicken salad" so that I don't have to search for ingredients manually.</td>
+      <td>- Liva parses "chicken salad".<br>- Automatically logs estimated macros.<br>- Asks for confirmation or portion size if ambiguous.</td>
+    </tr>
+    <tr>
+      <td><strong>Water Tracking</strong></td>
+      <td>As a health beginner, I want a quick way to log water so I stay hydrated.</td>
+      <td>- Quick "add glass" button in UI.<br>- Also supports "I drank 2 cups of water" in chat.</td>
+    </tr>
+    <tr>
+      <td><strong>Progress View</strong></td>
+      <td>As a fitness enthusiast, I want to see my daily macros so I know if I need more protein.</td>
+      <td>- Visual dashboard displays protein, carbs, fat limits vs. consumed.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>7. System Architecture & Tech Stack</h2>
+<ul>
+  <li><strong>Frontend Layer:</strong> React 18 (SPA), Vite, TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion.</li>
+  <li><strong>Backend/API Layer:</strong> Node.js, Express.js. API routes under <code>/api</code>.</li>
+  <li><strong>AI Integration Layer:</strong> Google Generative AI (Gemini) SDK.</li>
+  <li><strong>Data Persistence Layer:</strong> Firebase (Auth & Firestore) combined with MongoDB (via Mongoose) for complex document storage.</li>
+  <li><strong>Hosting:</strong> Vercel (Frontend) and Render/Heroku (Backend).</li>
+</ul>
+
+<h2>8. Out of Scope (For V1)</h2>
+<ul>
+  <li>Wearable device integration (Apple Health, Garmin, Fitbit).</li>
+  <li>Image-based food recognition (taking a photo to log food).</li>
+  <li>Social features and leaderboards.</li>
+</ul>
+
+<h2>9. Future Roadmap</h2>
+<ul>
+  <li><strong>Q3 2026:</strong> Launch Beta, gather feedback on Liva's accuracy.</li>
+  <li><strong>Q4 2026:</strong> Introduce Image-based logging via Gemini Vision.</li>
+  <li><strong>Q1 2027:</strong> Wearable integrations and automated health insights.</li>
+  <li><strong>Q2 2027:</strong> Premium subscription tier with personalized workout generation.</li>
+</ul>
+
+</body>
+</html>

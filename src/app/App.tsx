@@ -816,7 +816,7 @@ export default function App() {
       // Clear previous silence timeout
       if (silenceTimeout) clearTimeout(silenceTimeout);
       
-      // Auto-submit after 2.5 seconds of silence
+      // Auto-submit after 1.5 seconds of silence
       silenceTimeout = setTimeout(() => {
         if (finalTranscript.trim()) {
           finishListening();
@@ -829,7 +829,7 @@ export default function App() {
             }
           }, 2500);
         }
-      }, 2500);
+      }, 1500);
     };
 
     recognition.onerror = (event: any) => {

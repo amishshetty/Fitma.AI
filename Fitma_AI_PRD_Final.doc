@@ -1,0 +1,281 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="UTF-8">
+<title>PRODUCT REQUIREMENTS DOCUMENT (PRD) - Fitma.ai</title>
+<!--[if gte mso 9]>
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml>
+<![endif]-->
+<style>
+  body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }
+  h1 { color: #2C3E50; border-bottom: 2px solid #3498DB; padding-bottom: 10px; text-align: center; }
+  h2 { color: #34495E; border-bottom: 1px solid #BDC3C7; padding-bottom: 5px; margin-top: 30px; }
+  h3 { color: #2980B9; margin-top: 20px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 15px; margin-bottom: 15px; }
+  th, td { border: 1px solid #BDC3C7; padding: 10px; text-align: left; vertical-align: top; }
+  th { background-color: #ECF0F1; color: #2C3E50; }
+  ul, ol { margin-top: 10px; margin-bottom: 10px; }
+  li { margin-bottom: 5px; }
+  hr { border: 0; border-top: 1px solid #BDC3C7; margin: 20px 0; }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>PRODUCT REQUIREMENTS DOCUMENT (PRD)</h1>
+<h2 class="center" style="border: none;">Fitma.ai<br>Your Personal AI Health Companion</h2>
+
+<hr>
+<ul>
+  <li><strong>Document Version:</strong> 1.0</li>
+  <li><strong>Prepared By:</strong> Product Management (Amish Shetty)</li>
+  <li><strong>Document Status:</strong> Draft</li>
+  <li><strong>AI Assistant:</strong> Liva</li>
+  <li><strong>Platforms:</strong> Android (MVP), iOS (Phase 2), Web Dashboard (Future)</li>
+  <li><strong>Document Type:</strong> Product Requirements Document (PRD)</li>
+</ul>
+<hr>
+
+<h2>Table of Contents</h2>
+<ol>
+  <li>Document Information</li>
+  <li>Executive Summary</li>
+  <li>Product Vision</li>
+  <li>Problem Statement</li>
+  <li>Product Objectives</li>
+  <li>Business Goals</li>
+  <li>Target Audience</li>
+  <li>User Personas</li>
+  <li>User Journey Maps</li>
+  <li>Product Scope</li>
+  <li>Feature Overview</li>
+  <li>Functional Requirements</li>
+  <li>AI Product Requirements</li>
+  <li>Non-Functional Requirements</li>
+  <li>Information Architecture</li>
+  <li>Screen List</li>
+  <li>Wireframe Specifications</li>
+  <li>Database Requirements</li>
+  <li>API Requirements</li>
+  <li>Analytics & Success Metrics</li>
+  <li>MVP Definition</li>
+  <li>Future Roadmap</li>
+  <li>Risks & Assumptions</li>
+  <li>Conclusion</li>
+  <li>Appendix</li>
+</ol>
+
+<h2>1. Document Information</h2>
+<table>
+  <tr><th>Field</th><th>Details</th></tr>
+  <tr><td>Product Name</td><td>Fitma.ai</td></tr>
+  <tr><td>AI Assistant</td><td>Liva</td></tr>
+  <tr><td>Version</td><td>1.0</td></tr>
+  <tr><td>Document Type</td><td>Product Requirements Document</td></tr>
+  <tr><td>Document Owner</td><td>Product Management (Amish Shetty)</td></tr>
+  <tr><td>Status</td><td>Draft</td></tr>
+  <tr><td>Target Release</td><td>MVP</td></tr>
+  <tr><td>Platforms</td><td>Android (Primary), iOS (Future), Web Dashboard (Future)</td></tr>
+  <tr><td>Primary Audience</td><td>Product Team, Design Team, Engineering Team, QA Team, Stakeholders</td></tr>
+</table>
+
+<h2>2. Executive Summary</h2>
+<h3>Overview</h3>
+<p>Fitma.ai is an AI-powered, voice-first health companion designed to help users build and maintain healthy eating habits with minimal effort. Unlike traditional calorie-tracking applications that rely heavily on manual input, Fitma.ai enables users to interact naturally through voice, receive proactive reminders, and obtain personalized nutritional guidance throughout the day.</p>
+<p>The application leverages Artificial Intelligence to understand user behaviour, remember eating patterns, recommend healthy meals, and provide continuous coaching. It acts as a personal dietitian that not only tracks nutrition but also actively supports users in making healthier choices.</p>
+<p>At the heart of Fitma.ai is <strong>Liva</strong>, an intelligent AI health companion that interacts with users through natural conversations. Rather than expecting users to remember to log meals, Liva proactively reminds them, understands their eating habits, answers nutrition-related questions, and provides personalized coaching throughout the day.</p>
+<p>The long-term vision is to transform diet management from a manual tracking process into a seamless conversational experience where users can simply speak to Liva as they would to a personal nutrition coach.</p>
+
+<h3>Purpose</h3>
+<p>The purpose of Fitma.ai is to simplify healthy living by reducing the effort required to manage nutrition and diet. The application aims to help users stay accountable to their health goals through intelligent automation, personalized recommendations, and proactive engagement. Rather than focusing only on calorie counting, Fitma.ai aims to build long-term healthy habits by making nutrition tracking effortless, conversational, and personalized.</p>
+
+<h3>Value Proposition</h3>
+<p>Fitma.ai offers users a personalized AI-powered health companion that:</p>
+<ul>
+  <li>Simplifies meal tracking using natural voice commands.</li>
+  <li>Automatically calculates calories and nutritional values.</li>
+  <li>Provides intelligent reminders for meals and hydration.</li>
+  <li>Learns user habits and offers personalized recommendations.</li>
+  <li>Tracks long-term nutrition trends and health progress.</li>
+  <li>Encourages sustainable healthy habits instead of restrictive dieting.</li>
+  <li>Provides instant answers to nutrition-related questions.</li>
+  <li>Helps users make informed food choices based on their remaining calorie allowance and health goals.</li>
+</ul>
+
+<h2>3. Product Vision</h2>
+<p>Fitma.ai envisions a future where maintaining a healthy lifestyle becomes effortless through intelligent AI assistance. Instead of requiring users to manually log meals or navigate through multiple screens, the application enables them to manage their entire diet using simple and natural voice conversations with Liva.</p>
+<p>Liva is designed to function as a personal AI dietitian that stays with the user throughout the day. Users can simply say, <em>"Liva, I just had two rotis, dal, and one bowl of rice."</em> Liva will automatically understand the meal, calculate nutritional values, estimate calories, record the meal, and update the user's daily nutrition log without requiring any manual effort.</p>
+<p>Unlike traditional diet applications, Fitma.ai is designed to proactively engage with users rather than waiting for them to open the application. If a user forgets to eat, skips a meal, or forgets to log their food intake, Liva will initiate conversations through intelligent reminders and contextual prompts.</p>
+<p><strong>Examples include:</strong></p>
+<ul>
+  <li>"Good Morning! Don't forget to have your breakfast."</li>
+  <li>"Did you have your lunch today?"</li>
+  <li>"You're running behind your water intake goal."</li>
+  <li>"It's almost dinner time. Don't forget to log your meal."</li>
+</ul>
+<p>Beyond tracking meals, Fitma.ai acts as an intelligent nutrition coach. If a user asks, <em>"Liva, I'm feeling hungry. What can I eat?"</em> Liva will analyze Remaining calories, Protein target, Daily nutritional balance, User preferences, Dietary restrictions, Previous meals, and Health goals to suggest options.</p>
+<p>The application also supports cheat meals without discouraging users. Rather than creating guilt, Liva promotes balance by recording cheat meals, adjusting calorie calculations, and encouraging users to return to their healthy routine.</p>
+<p>The ultimate vision of Fitma.ai is not to become another calorie-tracking application but to become an AI health companion that understands users, learns their habits, motivates them, and helps them build healthier lifestyles through continuous personalized support.</p>
+
+<h2>4. Problem Statement</h2>
+<p><strong>Samar</strong> is a 26-year-old working professional with a busy and unpredictable schedule. Long working hours, frequent meetings, and personal responsibilities leave him with very little time to focus on maintaining a healthy lifestyle. As a result, he often skips meals, eats unhealthy food due to convenience, and struggles to maintain consistent meal timings.</p>
+<p>Although Samar wants to improve his health and manage his weight, he finds it difficult to consistently track his daily food intake and nutritional consumption. He often forgets what he has eaten throughout the day and lacks a simple way to understand whether he is meeting his calorie and nutrition goals. While several diet and fitness applications are available, most require extensive manual effort to log meals, provide generic recommendations, and fail to adapt to his daily routine.</p>
+<p>Over time, these inconsistent eating habits have contributed to weight gain, reduced energy levels, poor dietary consistency, and lower productivity. Samar needs a simple, personalized, and effortless way to stay accountable to his nutrition goals and build healthier eating habits.</p>
+
+<h2>5. Product Objectives</h2>
+<h3>Primary Objectives</h3>
+<ul>
+  <li>Simplify meal tracking through natural voice interactions.</li>
+  <li>Reduce manual effort involved in calorie and nutrition tracking.</li>
+  <li>Help users build sustainable healthy eating habits.</li>
+  <li>Improve long-term user engagement through proactive AI coaching.</li>
+  <li>Provide personalized nutrition guidance based on user goals.</li>
+  <li>Build an AI companion that users can rely on every day.</li>
+</ul>
+
+<h3>Secondary Objectives</h3>
+<ul>
+  <li>Improve awareness of daily nutritional intake.</li>
+  <li>Encourage healthier food choices.</li>
+  <li>Increase consistency through intelligent reminders.</li>
+  <li>Enable users to easily access historical meal data.</li>
+  <li>Increase motivation through personalized coaching and positive reinforcement.</li>
+</ul>
+
+<h2>6. Business Goals</h2>
+<h3>Short-Term Goals</h3>
+<ul>
+  <li>Launch a functional MVP with core AI capabilities.</li>
+  <li>Achieve strong user engagement through voice-first interactions.</li>
+  <li>Validate product-market fit and collect user feedback.</li>
+  <li>Establish Fitma.ai as a differentiated AI-first health application.</li>
+</ul>
+<h3>Long-Term Goals</h3>
+<ul>
+  <li>Become the preferred AI-powered nutrition companion.</li>
+  <li>Expand into preventive healthcare and holistic wellness.</li>
+  <li>Integrate with wearable devices and health ecosystems.</li>
+  <li>Build a scalable AI platform for personalized health management.</li>
+</ul>
+
+<h2>7. Target Audience</h2>
+<p><strong>Primary Users:</strong> Working professionals with busy schedules, individuals aiming for weight management, fitness enthusiasts, people seeking healthier eating habits.</p>
+<p><strong>Secondary Users:</strong> Students, busy parents, individuals following medical diets, senior citizens requiring meal reminders, beginners.</p>
+
+<h2>8. User Personas</h2>
+<ul>
+  <li><strong>Persona 1 – Samar (Busy Working Professional):</strong> Age 27, wants to lose weight, busy schedule, frequently skips meals. Needs voice meal logging, smart reminders, personalized coaching.</li>
+  <li><strong>Persona 2 – Priya (Fitness Enthusiast):</strong> Age 25, works out 5 days a week, goal is muscle gain. Needs accurate macro calculations, protein tracking, voice logging.</li>
+  <li><strong>Persona 3 – Rahul (College Student):</strong> Age 21, budget limited, irregular lifestyle. Needs affordable meal suggestions, easy logging, daily reminders.</li>
+  <li><strong>Persona 4 – Sneha (Working Mother):</strong> Age 34, balances work and family. Needs meal reminders, quick logging, personalized coaching.</li>
+  <li><strong>Persona 5 – Rajesh (Senior Citizen):</strong> Age 62, manages diabetes, moderate tech proficiency. Needs large simple UI, voice interaction, meal reminders.</li>
+</ul>
+
+<h2>9. User Journey Maps</h2>
+<ul>
+  <li><strong>Journey 1 – Daily Healthy Routine:</strong> Wake Up ➔ Liva greets ➔ Breakfast Reminder ➔ User logs via voice ➔ Calories updated ➔ Lunch Reminder ➔ Snacks ➔ Dinner ➔ Daily Summary.</li>
+  <li><strong>Journey 2 – Voice Meal Logging:</strong> User Speaks ("I had two rotis and dal") ➔ Speech to Text ➔ Meal identified ➔ Nutrition calculated ➔ Calories logged ➔ Confirmation shown.</li>
+  <li><strong>Journey 3 – Smart Recommendation:</strong> User says "I'm hungry" ➔ Liva checks Remaining Calories, Protein, Previous Meals, Goals ➔ Suggests Healthy Foods ➔ User selects option ➔ Meal Logged.</li>
+</ul>
+
+<h2>10. Product Scope</h2>
+<p><strong>In Scope (MVP):</strong> User Registration/Auth, Profile Management, Goal Setup, Voice/Manual Meal Logging, Calorie/Macro Tracking, Cheat Meal/Water tracking, AI Voice interaction, Smart Reminders, Daily/Weekly Summaries, Dashboards, Streaks.</p>
+<p><strong>Out of Scope (MVP):</strong> Dietitian consultation, Food delivery, Wearable sync, Barcode scanner, Image-based food recognition, Smart kitchen appliances.</p>
+
+<h2>11. Feature Overview</h2>
+<ul>
+  <li><strong>Module 1 – Authentication & User Management</strong></li>
+  <li><strong>Module 2 – AI Assistant (Liva)</strong></li>
+  <li><strong>Module 3 – Meal Tracking</strong></li>
+  <li><strong>Module 4 – Smart Recommendations</strong></li>
+  <li><strong>Module 5 – Health Analytics</strong></li>
+</ul>
+
+<h2>12. Functional Requirements</h2>
+<ul>
+  <li><strong>FR-001 (User Registration):</strong> Register using Email, Mobile (OTP), Google, Apple.</li>
+  <li><strong>FR-002 (Login):</strong> Secure login for existing users.</li>
+  <li><strong>FR-003 (Profile Setup):</strong> Configure Name, Age, Height, Weight, Goal, Activity Level, Dietary Preference.</li>
+  <li><strong>FR-004 (Voice Meal Logging):</strong> Log meals using natural voice conversations. AI estimates nutrition and auto-logs.</li>
+  <li><strong>FR-005 (Manual Meal Logging):</strong> Search and log meals manually.</li>
+  <li><strong>FR-006 (AI Health Assistant):</strong> Conversational interactions, context awareness, historical querying.</li>
+  <li><strong>FR-007 (Smart Meal Recommendation):</strong> AI recommends meals based on macros, limits, and preferences.</li>
+  <li><strong>FR-008 & FR-009 (Smart Reminders & Habit Detection):</strong> Proactively remind users to eat; detect habits (skipped breakfast, late dinners).</li>
+  <li><strong>FR-010 (Daily Summary):</strong> Nightly health summary (calories, protein, score, suggestions).</li>
+  <li><strong>FR-012 (Cheat Meal Tracking):</strong> Support for cheat meals without shaming users.</li>
+</ul>
+
+<h2>13. AI Product Requirements</h2>
+<p>Liva should Understand, Remember, Recommend, Coach, Motivate, Learn, Predict, and Encourage.</p>
+<p><strong>Guardrails:</strong> Liva must never shame users, diagnose diseases, replace doctors, or recommend dangerous diets. Liva should always encourage users, promote balanced eating, and motivate positive behavior.</p>
+<p><strong>AI Personality:</strong> Friendly, Supportive, Positive, Encouraging, Professional, Conversational. Never robotic. Never judgmental.</p>
+
+<h2>14. Non-Functional Requirements</h2>
+<ul>
+  <li><strong>Performance:</strong> App Launch &le; 3s, AI Response &le; 4s, Voice Processing &le; 5s.</li>
+  <li><strong>Availability & Scalability:</strong> 99.9% uptime, Cloud-native deployment, Horizontal scaling.</li>
+  <li><strong>Security & Privacy:</strong> JWT Auth, End-to-End Encryption, User Consent Management.</li>
+  <li><strong>Accessibility:</strong> Voice Navigation, Large Text Support.</li>
+  <li><strong>Compatibility:</strong> Android 10+, iOS 16+.</li>
+</ul>
+
+<h2>15. Information Architecture</h2>
+<ul>
+  <li><strong>Authentication:</strong> Login, Register, OTP, Forgot Password</li>
+  <li><strong>Onboarding:</strong> Personal Details, Health Profile, Goals, Dietary Preferences, AI Introduction (Liva)</li>
+  <li><strong>Home Dashboard:</strong> Today's Progress, Remaining Calories, Water Intake, AI Suggestions, Meal Timeline, Quick Actions</li>
+  <li><strong>Voice Assistant (Liva):</strong> Chat, Voice, History, Recommendations</li>
+  <li><strong>Meals:</strong> Breakfast, Lunch, Snacks, Dinner, Cheat Meals</li>
+  <li><strong>Analytics:</strong> Daily, Weekly, Monthly, Nutrition, Habits</li>
+  <li><strong>Notifications</strong></li>
+  <li><strong>Profile:</strong> Goals, Preferences, Health Data, Account</li>
+  <li><strong>Settings:</strong> Notifications, Voice, Privacy, Security, About</li>
+</ul>
+
+<h2>16. Screen List</h2>
+<p>The MVP includes 45-60 screens spanning Authentication, Onboarding, Home, Voice Assistant, Meals, Analytics, Profile, and Settings.</p>
+
+<h2>17. Wireframe Specifications</h2>
+<p><strong>Dashboard:</strong> Components include Greeting, Calories Consumed/Remaining, Water, AI Recommendations, Quick Voice Button.</p>
+<p><strong>Voice Assistant:</strong> Voice Wave Animation, Conversation, Suggested Prompts, Microphone Button.</p>
+
+<h2>18. Database Requirements</h2>
+<p><strong>Core Entities:</strong> User, Meals, Food Items, Nutrition Summary, Goals, Conversations, Notifications, Reports.</p>
+
+<h2>19. API Requirements</h2>
+<p>Auth APIs, User APIs, Meal APIs, AI APIs (Voice Processing, Chat, Recommendations), Dashboard APIs, Notification APIs.</p>
+
+<h2>20. Analytics & Success Metrics</h2>
+<p><strong>North Star Metric:</strong> Weekly Healthy Days per Active User (WHD/AU).</p>
+<p><strong>Business KPIs (MVP):</strong> 10,000+ Sign-ups, &ge;70% Activation Rate, CSAT &ge;4.5/5.</p>
+<p><strong>Product KPIs:</strong> Day-7 Retention &ge;40%, Voice Logging Adoption &ge;60%, Meals Logged per Day &ge;3.</p>
+
+<h2>21. MVP Definition</h2>
+<p><strong>P0 (Must Have):</strong> Auth, Profile Creation, Voice/Manual Meal Tracking, AI Liva (Conversations, Recognition, Reminders), Dashboard.</p>
+<p><strong>P1 (Should Have):</strong> Weekly Reports, Habit Detection, Cheat Meal Tracking, Achievement Badges.</p>
+<p><strong>P2 (Could Have):</strong> Image-based Food Recognition, Barcode Scanner, Wearable Integration.</p>
+
+<h2>22. Future Roadmap</h2>
+<ul>
+  <li><strong>Phase 1:</strong> MVP</li>
+  <li><strong>Phase 2:</strong> Enhanced Intelligence (Habit Detection, AI Coaching)</li>
+  <li><strong>Phase 3:</strong> AI Personalization (Image Recognition, Grocery Assistant)</li>
+  <li><strong>Phase 4:</strong> Health Ecosystem (Wearables, Family Accounts)</li>
+  <li><strong>Phase 5:</strong> Preventive Healthcare (Corporate Wellness, Risk Predictions)</li>
+</ul>
+
+<h2>23. Risks & Mitigation</h2>
+<ul>
+  <li><strong>Inaccurate AI meal recognition (High):</strong> Human review options, continuous model improvement.</li>
+  <li><strong>Low user retention (High):</strong> Personalized reminders, gamification, AI coaching.</li>
+  <li><strong>Privacy concerns (High):</strong> Strong encryption, transparent privacy controls.</li>
+</ul>
+
+<h2>24. Conclusion</h2>
+<p>Fitma.ai aims to redefine diet and nutrition management by introducing Liva, an AI-powered health companion that makes healthy living simple, personalized, and effortless. Through voice-first interactions, intelligent reminders, and proactive coaching, the product focuses on helping users build sustainable healthy habits rather than simply tracking calories.</p>
+<p><em>"Fitma.ai is not just a diet tracking app—it is your AI health companion, helping you build healthier habits, one conversation at a time."</em></p>
+
+<h2>25. Appendix</h2>
+<p>Includes Glossary, Abbreviations, Assumptions, Dependencies, Future Enhancements, References, Revision History, Related Documents, and Sample Liva Conversations.</p>
+
+</body>
+</html>

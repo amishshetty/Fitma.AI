@@ -178,4 +178,13 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
+
+  /* Hide scrollbar globally but keep functionality */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 }
