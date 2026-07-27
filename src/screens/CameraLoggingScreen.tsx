@@ -7,7 +7,8 @@ import { green } from "../constants";
 import { Screen } from "../types";
 
 export default function CameraLoggingScreen({ onBack, onCapture }: { onBack: () => void; onCapture: (base64: string) => void }) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,11 +71,11 @@ export default function CameraLoggingScreen({ onBack, onCapture }: { onBack: () 
         <motion.div animate={{ y: [-120, 120, -120] }} transition={{ duration: 2.4, repeat: Infinity }} className="absolute h-0.5 w-72 rounded-full bg-[#34C759]" />
       </div>
       <div className="grid grid-cols-3 gap-3 bg-black/20 px-6 pb-9 pt-5 backdrop-blur">
-        <SecondaryButton icon={<Image size={18} />} onClick={() => fileInputRef.current?.click()}>Gallery</SecondaryButton>
+        <SecondaryButton icon={<Image size={18} />} onClick={() => galleryInputRef.current?.click()}>Gallery</SecondaryButton>
         <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white" style={{ boxShadow: "0 0 0 6px rgba(255,255,255,0.18)" }}>
           <span className="h-12 w-12 rounded-full" style={{ background: green }} />
           <input
-            ref={fileInputRef}
+            ref={cameraInputRef}
             type="file"
             accept="image/*"
             capture="environment"
@@ -82,6 +83,13 @@ export default function CameraLoggingScreen({ onBack, onCapture }: { onBack: () 
             onChange={handleFileChange}
           />
         </div>
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileChange}
+        />
         <SecondaryButton icon={<Flashlight size={18} />}>Flash</SecondaryButton>
       </div>
     </div>
