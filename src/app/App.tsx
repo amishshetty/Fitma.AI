@@ -386,12 +386,9 @@ export default function App() {
       let calAdjustment = addedCal;
       let protAdjustment = addedProt;
 
-      if (existingMealIndex !== -1 && mealType !== "snack") {
-        const oldMeal = updatedMeals[existingMealIndex];
-        calAdjustment -= oldMeal.calories;
-        protAdjustment -= oldMeal.protein;
-        updatedMeals.splice(existingMealIndex, 1);
-      }
+      // Allow multiple items to be logged in the same meal category without overwriting
+      // (e.g., logging rice, then logging salad separately for dinner)
+
 
       updatedMeals.push(newMeal);
 

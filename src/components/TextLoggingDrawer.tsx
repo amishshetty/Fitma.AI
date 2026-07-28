@@ -8,79 +8,59 @@ export default function TextLoggingDrawer({ onClose, onLogMeal }: { onClose: () 
   const [text, setText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
 
-  const handleParseAndSave = () => {
+  const handleParseAndSave = async () => {
     if (!text.trim()) return;
     setIsParsing(true);
     
-    setTimeout(() => {
-      // Basic NLP parser simulation
-      const lower = text.toLowerCase();
-      
-      // Determine category
-      let mealType = "snack";
-      if (lower.includes("breakfast") || lower.includes("morning")) mealType = "breakfast";
-      else if (lower.includes("lunch") || lower.includes("afternoon")) mealType = "lunch";
-      else if (lower.includes("dinner") || lower.includes("night")) mealType = "dinner";
-
-      // Simple extraction of items and quantities
-      const items: string[] = [];
-      let totalCal = 0;
-      let totalProt = 0;
-
-      const foodDB = [
-        { regex: /(\d+)\s*(roti|rotis|chapati)/, name: "Roti", cal: 104, prot: 3 },
-        { regex: /(\d+)\s*(egg|eggs)/, name: "Egg", cal: 70, prot: 6 },
-        { regex: /(\d+)\s*(apple|apples)/, name: "Apple", cal: 95, prot: 0.5 },
-        { regex: /(chicken)/, name: "Chicken", cal: 250, prot: 25 },
-        { regex: /(paneer)/, name: "Paneer", cal: 265, prot: 14 },
-        { regex: /(rice)/, name: "Rice", cal: 130, prot: 2.7 },
-      ];
-
-      foodDB.forEach(food => {
-        const match = lower.match(food.regex);
-        if (match) {
-          let qty = 1;
-          if (match[1] && !isNaN(parseInt(match[1]))) {
-            qty = parseInt(match[1]);
-          }
-          items.push(`${qty > 1 ? qty + ' ' : ''}${food.name}`);
-          totalCal += food.cal * qty;
-          totalProt += food.prot * qty;
-        }
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${API_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          deviceId: "text-logger",
+          profile: {
+            name: "User",
+            goal: "maintenance",
+            diet: "any",
+            dailyCalories: 2000,
+            motivationStyle: "friendly",
+            language: "english"
+          },
+          previousMessages: [],
+          loggedMeals: [],
+          remainingCalories: 2000
+        }),
       });
-      
-      if (items.length === 0) {
-        // Fallback: Strip common conversational words to extract just the food name
-        const stopWords = ["i", "have", "had", "ate", "eaten", "some", "a", "an", "the", "and", "with", "for", "in", "today", "this", "morning", "afternoon", "evening", "night", "breakfast", "lunch", "dinner", "snack", "snacks", "my", "is", "was", "written", "wriiten", "got", "took", "just"];
-        let cleaned = lower;
-        
-        // Remove punctuation
-        cleaned = cleaned.replace(/[.,!?\"'’]/g, "");
-        
-        const words = cleaned.split(/\s+/).filter(w => !stopWords.includes(w) && w.length > 0);
-        
-        if (words.length > 0) {
-          // Capitalize each remaining word
-          const extractedName = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-          items.push(extractedName);
-        } else {
-          items.push(text.trim()); // Absolute fallback
-        }
-        
-        totalCal = 250;
-        totalProt = 5;
-      }
 
+      if (!response.ok) throw new Error("API Error");
+      
+      const data = await response.json();
+      
+      if (data.mealData) {
+        if (!data.mealData.name && data.mealData.items) {
+          data.mealData.name = data.mealData.items.join(", ");
+        }
+        onLogMeal(data.mealData);
+        setIsParsing(false);
+        onClose();
+      } else {
+        throw new Error("No meal data found in AI response");
+      }
+    } catch (e) {
+      console.error(e);
+      // Fallback if AI fails
       onLogMeal({
-        mealType: mealType,
-        items: items,
-        calories: totalCal,
-        protein: totalProt,
-        name: items.join(", ")
+        mealType: "snack",
+        items: [text],
+        calories: 250,
+        protein: 5,
+        name: text
       });
       setIsParsing(false);
-      onClose(); // Close drawer after saving
-    }, 800);
+      onClose();
+    }
   };
 
   const suggestions = ["Add 2 roti 2 egg in breakfast", "Had chicken and rice for lunch", "Ate 1 apple for snack"];

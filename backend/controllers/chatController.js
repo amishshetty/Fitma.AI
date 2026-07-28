@@ -93,6 +93,8 @@ Remember:
 - CRITICAL: If the user asks for food suggestions, you MUST provide at least 1 meal in the "recommendations" array.
 - CRITICAL: If the user is just logging a meal or water, or asking for a summary, you MUST leave "recommendations" EMPTY. Only provide recommendations if EXPLICITLY asked.
 - CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), you MUST set mealType to "unknown" so the app can ask them.
+- CRITICAL: When the user logs multiple items at once, you MUST include ALL of them in the "action.data.items" array and calculate the total combined calories and macros for all items.
+- CRITICAL MEAL UPDATE RULE: The frontend completely REPLACES an existing meal with your new output. So if the user ADDS an item to a meal they already logged (e.g. "add salad to my dinner"), you MUST check their "User's Recent Logged Meals", find their existing dinner, and output the COMBINED items (e.g. ["rice and dal", "salad"]) and COMBINED calories/macros. If you only output "salad", their previous food will be deleted!
 
 EXPECTED JSON FORMAT:
 {
