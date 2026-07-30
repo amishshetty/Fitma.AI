@@ -1,4 +1,4 @@
-import { Mic, Camera, Keyboard, Bell, MessageCircle, Send, Plus, Sparkles, Droplets, Minus, Sunrise, Sun, Moon, Coffee, Leaf, Trash2 } from "lucide-react";
+import { Mic, Camera, Keyboard, Bell, MessageCircle, Send, Plus, Sparkles, Droplets, Minus, Sunrise, Sun, Moon, Coffee, Leaf, Trash2, ArrowRight, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import BottomNav from "../components/layout/BottomNav";
@@ -42,6 +42,87 @@ export default function HomeScreen({
   const waterPercent = Math.min(100, Math.round((waterLogged / (goals?.water || 2500)) * 100));
   
   const proteinPercent = Math.min(100, Math.round((proteinLogged / (goals?.protein || 100)) * 100));
+
+  const insights = useMemo(() => {
+    const hour = new Date().getHours();
+    const generated = [];
+
+    const calTarget = goals?.calories || 2000;
+    const protTarget = goals?.protein || 100;
+    const calRemaining = Math.max(0, calTarget - caloriesLogged);
+    const protRemaining = Math.max(0, protTarget - proteinLogged);
+    
+    // 1. Time-based Logic (Most immediate context)
+    if (hour >= 17) {
+      generated.push({
+        id: "time-dinner",
+        icon: <Moon size={16} />,
+        title: "Evening Update",
+        text: calRemaining > 800 
+          ? "You have enough calories left. Enjoy a good dinner!"
+          : "Calories are low. Try a light dinner like soup or salad.",
+        actionText: "Log dinner",
+        onClick: () => onStartLog("text"),
+        color: "#00C4B0"
+      });
+    } else if (hour < 11) {
+      generated.push({
+        id: "time-morning",
+        icon: <Sunrise size={16} />,
+        title: "Morning Routine",
+        text: waterGlasses < 3 
+          ? "You need more water today. Drink a glass now!"
+          : "Great start today! Keep up the good work.",
+        actionText: waterGlasses < 3 ? "Add water" : "Log snack",
+        onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
+        color: "#00C4B0"
+      });
+    } else {
+      generated.push({
+        id: "time-lunch",
+        icon: <Sun size={16} />,
+        title: "Mid-day Check",
+        text: caloriesLogged < calTarget * 0.3 
+          ? "You've barely eaten today! Make sure to grab a nutritious lunch."
+          : "You're doing great on your meals! A quick walk can give you a mid-day energy boost.",
+        color: "#00C4B0"
+      });
+    }
+
+    // 2. Macro Logic
+    if (proteinPercent < calPercent - 15) {
+      generated.push({
+        id: "macro-protein",
+        icon: <Sparkles size={16} />,
+        title: "Protein Check",
+        text: `You need ${protRemaining}g more protein, but only have ${calRemaining} calories left. Try to eat lean meat.`,
+        actionText: "High-protein snacks",
+        onClick: () => onNavigate("liva-home"),
+        color: "#0EA5E9"
+      });
+    } else {
+      generated.push({
+        id: "macro-track",
+        icon: <Sparkles size={16} />,
+        title: "Macro Balance",
+        text: "Your protein and calories look great today. Keep it up! 💪",
+        color: "#0EA5E9"
+      });
+    }
+
+    // 3. Weekly Fat Trend Nudge
+    generated.push({
+      id: "trend-fat",
+      icon: <Zap size={16} />,
+      title: "Weekly Trend",
+      text: "You ate a lot of fats this week. Try eating more veggies today. 🌱",
+      actionText: "Get light recipes",
+      onClick: () => onNavigate("liva-home"),
+      color: "#34C759"
+    });
+    
+    return generated.slice(0, 3);
+  }, [caloriesLogged, proteinLogged, waterGlasses, goals, proteinPercent, calPercent, onNavigate, onStartLog, onLogWater]);
 
   const nutrition = [
     { 
@@ -90,7 +171,6 @@ export default function HomeScreen({
     { label: "Dinner", time: "8:00 PM", calories: dinnerData.calories, status: dinnerData.status, active: dinnerData.active },
     { label: "Snack", time: "Anytime", calories: snackData.calories, status: snackData.status, active: snackData.active },
   ];
-  const suggestions = ["You're low on protein.", "You usually eat lunch around 1 PM.", "Need dinner ideas?"];
 
   return (
     <div className="flex min-h-0 flex-1 flex-col" style={{ background: "linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)" }}>
@@ -343,37 +423,52 @@ export default function HomeScreen({
           </div>
         </section>
 
-        <section className="mb-5">
-          <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
-            AI Suggestions
-          </h2>
-          <div className="space-y-2.5">
-            {suggestions.map((suggestion) => (
-              <div key={suggestion} className="flex items-center gap-3 rounded-2xl bg-white p-3" style={{ border: "1px solid rgba(52,199,89,0.12)" }}>
-                <span className="flex h-8 w-8 items-center justify-center rounded-full" style={{ background: softGreen, color: green }}>
-                  <Sparkles size={15} />
-                </span>
-                <p className="text-xs font-semibold" style={{ color: ink }}>
-                  {suggestion}
-                </p>
+        <section className="mb-8 relative">
+          <div className="flex items-center gap-2 mb-4 relative z-10">
+            <div className="bg-white/80 backdrop-blur-md rounded-full p-1.5 flex items-center justify-center border border-slate-100 shadow-sm">
+              <Sparkles size={14} className="text-[#00C4B0]" />
+            </div>
+            <h2 className="text-[15px] font-bold text-slate-800">
+              Liva's Active Analysis
+            </h2>
+          </div>
+          
+          <div className="space-y-3 relative z-10">
+            {insights.map((insight) => (
+              <div 
+                key={insight.id} 
+                className="relative overflow-hidden rounded-[24px] p-4 border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] transition-all active:scale-[0.98]"
+              >
+                <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: insight.color, transform: "translate(30%, -30%)" }} />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/30 to-transparent pointer-events-none" />
+                
+                <div className="relative z-10 flex flex-col gap-2.5">
+                  <div className="flex gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white/80" style={{ color: insight.color }}>
+                      {insight.icon}
+                    </span>
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <p className="text-[13px] font-bold mb-0.5" style={{ color: insight.color }}>
+                        {insight.title}
+                      </p>
+                      <p className="text-[13px] leading-snug text-slate-600 pr-2">
+                        {insight.text}
+                      </p>
+                    </div>
+                  </div>
+                  {insight.actionText && insight.onClick && (
+                    <button 
+                      onClick={insight.onClick}
+                      className="self-start ml-[52px] flex items-center gap-1.5 text-[12px] font-bold transition-all px-3 py-1.5 rounded-xl bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm hover:bg-white"
+                      style={{ color: insight.color }}
+                    >
+                      {insight.actionText}
+                      <ArrowRight size={12} />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        <section className="rounded-[26px] p-4" style={{ background: "linear-gradient(135deg, #e9faef, #ffffff)", border: "1px solid rgba(52,199,89,0.18)" }}>
-          <div className="flex gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white" style={{ color: green }}>
-              <Leaf size={21} />
-            </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: ink }}>
-                Daily Tip
-              </p>
-              <p className="mt-1 text-sm leading-relaxed" style={{ color: muted }}>
-                Pair carbs with protein at lunch to keep energy steady through the afternoon.
-              </p>
-            </div>
           </div>
         </section>
       </div>

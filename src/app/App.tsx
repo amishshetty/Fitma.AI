@@ -1262,7 +1262,7 @@ export default function App() {
               go("liva-home");
             }}
             onNavigate={go}
-            userId={activeSessionToken || "guest"}
+            userId={getDeviceId() || "guest"}
             userName={userName}
             userProfile={{
               name: userName || "Amish",

@@ -12,6 +12,7 @@ export default function LivaChatScreen({
   onBack, 
   onNavigate, 
   userName,
+  userId,
   initialMessage,
   initialResponse,
   userProfile,
