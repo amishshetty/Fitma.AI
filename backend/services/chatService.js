@@ -87,7 +87,7 @@ ${loggedMeals && loggedMeals.length > 0
       if (dStr === currentDateStr) label = " (Today)";
       else if (dStr === yesterdayDateStr) label = " (Yesterday)";
       const tStr = m.timestamp || (m.loggedAt ? new Date(m.loggedAt).toLocaleTimeString() : 'Unknown');
-      return `- ${m.mealType || 'snack'}: ${m.foodItem || m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${dStr}${label} - Time: ${tStr}]`;
+      return `- [ID: ${m.id}] ${m.mealType || 'snack'}: ${m.foodItem || m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${dStr}${label} - Time: ${tStr}]`;
     }).join("\n") 
   : "No meals logged yet."}
 `;
@@ -345,7 +345,11 @@ For any other natural language command (e.g. "I ate 2 rotis", "Log 2 rotis for b
 5. DELETE_LOG: If user asks to delete, remove, or undo a logged meal.
 "action": {
   "type": "DELETE_LOG",
-  "data": { "mealType": "breakfast" | "lunch" | "dinner" | "snack" }
+  "data": { 
+    "mealType": "breakfast" | "lunch" | "dinner" | "snack",
+    "date": "yesterday" | "today",
+    "id": "17392817293"
+  }
 }
 
 If user asks to CHANGE or REPLACE an already logged meal, just use MEAL_LOG, the frontend will handle replacement based on context.

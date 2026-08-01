@@ -40,10 +40,10 @@ export default function LivaHomeScreen({
   onNavigate: (screen: Screen) => void;
   onStartLog: (mode: EntryMode) => void;
   userName: string;
-  userProfile?: any;
-  onMealLogged?: (data: any) => void;
-  onWaterLogged?: (data: any) => void;
-  onMealDeleted?: (data: any) => void;
+  userProfile?: { name: string, goal: string, diet: string, dailyCalories: number, motivationStyle?: string, language?: string };
+  onMealLogged?: (mealData: any) => void;
+  onWaterLogged?: (waterData: any) => void;
+  onMealDeleted?: (deleteData: {id?: string, date?: string, mealType: string}) => void;
   remainingCalories?: number;
   loggedMeals?: any[];
   initialMessage?: string;
@@ -380,14 +380,15 @@ export default function LivaHomeScreen({
         })) : undefined
       };
 
-      setMessages((prev) => {
-        // Prevent injecting the same messages multiple times
-        const alreadyHasUserMsg = prev.some(m => m.text === userMsg.text && m.sender === "user");
-        if (alreadyHasUserMsg) {
+      setMessages(prev => {
+        // Check if we already added this pair to avoid duplicates
+        if (prev.length > 0 && prev[prev.length - 1].text === livaMsg.text) {
           return prev;
         }
         return [...prev, userMsg, livaMsg];
       });
+    } else if (initialMessage && !initialResponse && messages.length === 0) {
+      handleSendText(initialMessage);
     }
   }, [initialMessage, initialResponse]);
 

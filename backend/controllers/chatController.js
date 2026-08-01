@@ -34,6 +34,7 @@ export const handleChat = async (req, res) => {
   // Use frontend loggedMeals to ensure Liva's context perfectly matches the user's UI
   // The frontend sends them as { id (timestamp), name, calories, protein, carbs, fat, mealType, dateString, timestamp (time string) }
   const combinedMeals = (loggedMeals || []).map(m => ({
+    id: m.id,
     mealType: m.mealType,
     foodItem: m.name,
     calories: m.calories || 0,
@@ -95,6 +96,7 @@ Remember:
 - CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), you MUST set mealType to "unknown" so the app can ask them.
 - CRITICAL: When the user logs multiple items at once, you MUST include ALL of them in the "action.data.items" array and calculate the total combined calories and macros for all items.
 - CRITICAL MEAL UPDATE RULE: The frontend completely REPLACES an existing meal with your new output. So if the user ADDS an item to a meal they already logged (e.g. "add salad to my dinner"), you MUST check their "User's Recent Logged Meals", find their existing dinner, and output the COMBINED items (e.g. ["rice and dal", "salad"]) and COMBINED calories/macros. If you only output "salad", their previous food will be deleted!
+- CRITICAL DELETE RULE: If the user asks to delete, remove, or undo a logged meal (e.g., "remove yesterday's pani puri"), set action.type to "DELETE_LOG", set action.data.mealType to the type to delete (e.g., "snack"), set action.data.date to "yesterday" if specified, AND CRITICALLY set action.data.id to the EXACT numeric [ID: ...] of that specific meal from "User's Recent Logged Meals". (e.g., "id": "17392817293").
 
 EXPECTED JSON FORMAT:
 {
@@ -115,7 +117,7 @@ EXPECTED JSON FORMAT:
     }
   ],
   "action": {
-    "type": "MEAL_LOG",
+    "type": "MEAL_LOG", // or DELETE_LOG
     "data": {
       "calories": 400,
       "protein": 20,
@@ -124,6 +126,7 @@ EXPECTED JSON FORMAT:
       "items": ["2 rotis", "paneer"],
       "mealType": "unknown",
       "date": "today",
+      "id": "17067823932",
       "amountML": 0
     }
   }

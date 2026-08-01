@@ -374,23 +374,9 @@ export default function App() {
     };
 
     setLoggedMeals((prevMeals) => {
-      const targetStart = new Date(mealDate).setHours(0,0,0,0);
-      const targetEnd = new Date(mealDate).setHours(23,59,59,999);
-      
-      const existingMealIndex = prevMeals.findIndex(m => {
-        const time = parseInt(m.id);
-        return time >= targetStart && time <= targetEnd && m.mealType === mealType;
-      });
-
-      let updatedMeals = [...prevMeals];
-      let calAdjustment = addedCal;
-      let protAdjustment = addedProt;
-
       // Allow multiple items to be logged in the same meal category without overwriting
       // (e.g., logging rice, then logging salad separately for dinner)
-
-
-      updatedMeals.push(newMeal);
+      const updatedMeals = [...prevMeals, newMeal];
 
       syncDailyData(mealDateStr, (curr: any) => {
         const nextHabits = { ...(curr.completedHabits || {}) };
@@ -398,8 +384,10 @@ export default function App() {
           nextHabits.breakfast = true;
         }
         return {
-          calories: Math.max(0, (curr.calories || 0) + calAdjustment),
-          protein: Math.max(0, (curr.protein || 0) + protAdjustment),
+          calories: Math.max(0, (curr.calories || 0) + addedCal),
+          protein: Math.max(0, (curr.protein || 0) + addedProt),
+          carbs: Math.max(0, (curr.carbs || 0) + addedCarbs),
+          fat: Math.max(0, (curr.fat || 0) + addedFat),
           completedHabits: nextHabits
         };
       });
@@ -427,20 +415,34 @@ export default function App() {
     });
   };
 
-  const deleteLivaMealByType = (rawMealType: string) => {
-    const mealType = (rawMealType || "").toLowerCase();
+  const deleteLivaMealByType = (rawMealType: string, rawDate?: string, exactId?: string | number) => {
     setLoggedMeals((prevMeals) => {
-      const targetStart = new Date().setHours(0,0,0,0);
-      const targetEnd = new Date().setHours(23,59,59,999);
-      
-      const mealsToday = prevMeals.filter(m => {
-        const time = parseInt(m.id);
-        return time >= targetStart && time <= targetEnd && m.mealType === mealType;
-      });
+      let mealToDelete: any = null;
 
-      if (mealsToday.length === 0) return prevMeals;
-      
-      const mealToDelete = mealsToday[mealsToday.length - 1];
+      if (exactId) {
+        // Precise deletion if AI provided the exact ID
+        mealToDelete = prevMeals.find(m => m.id === exactId || m.id === parseInt(exactId as string, 10) || m.id === String(exactId));
+      }
+
+      if (!mealToDelete) {
+        // Fallback to time-based + mealType deletion if exact ID wasn't provided or found
+        const mealType = (rawMealType || "").toLowerCase();
+        const now = new Date();
+        if (rawDate === "yesterday") {
+          now.setDate(now.getDate() - 1);
+        }
+        const targetStart = now.setHours(0,0,0,0);
+        const targetEnd = now.setHours(23,59,59,999);
+        
+        const mealsInTargetDate = prevMeals.filter(m => {
+          const time = parseInt(m.id);
+          return time >= targetStart && time <= targetEnd && m.mealType === mealType;
+        });
+
+        if (mealsInTargetDate.length === 0) return prevMeals;
+        mealToDelete = mealsInTargetDate[mealsInTargetDate.length - 1];
+      }
+
       const updatedMeals = prevMeals.filter(m => m.id !== mealToDelete.id);
       
       const dateStr = new Date(parseInt(mealToDelete.id) - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
@@ -448,6 +450,32 @@ export default function App() {
         calories: Math.max(0, (curr.calories || 0) - mealToDelete.calories),
         protein: Math.max(0, (curr.protein || 0) - mealToDelete.protein)
       }));
+
+      syncProfile({ meals: updatedMeals });
+      return updatedMeals;
+    });
+  };
+
+  const editLivaMeal = (exactId: string | number, updatedData: Partial<any>) => {
+    setLoggedMeals((prevMeals) => {
+      const mealToEdit = prevMeals.find(m => String(m.id) === String(exactId));
+      if (!mealToEdit) return prevMeals;
+
+      const updatedMeals = prevMeals.map(m => 
+        String(m.id) === String(exactId) ? { ...m, ...updatedData } : m
+      );
+
+      const dateStr = new Date(parseInt(mealToEdit.id) - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      
+      // Update daily summary if calories or macros changed
+      if (updatedData.calories !== undefined || updatedData.protein !== undefined || updatedData.carbs !== undefined || updatedData.fat !== undefined) {
+        syncDailyData(dateStr, (curr: any) => ({
+          calories: Math.max(0, (curr.calories || 0) - (mealToEdit.calories || 0) + (updatedData.calories || 0)),
+          protein: Math.max(0, (curr.protein || 0) - (mealToEdit.protein || 0) + (updatedData.protein || 0)),
+          carbs: Math.max(0, (curr.carbs || 0) - (mealToEdit.carbs || 0) + (updatedData.carbs || 0)),
+          fat: Math.max(0, (curr.fat || 0) - (mealToEdit.fat || 0) + (updatedData.fat || 0))
+        }));
+      }
 
       syncProfile({ meals: updatedMeals });
       return updatedMeals;
@@ -765,7 +793,11 @@ export default function App() {
         }
 
         if (data.deleteData && data.deleteData.mealType) {
-          deleteLivaMealByType(data.deleteData.mealType);
+          if (data.deleteData.id) {
+            deleteLivaMealByType(data.deleteData.mealType, data.deleteData.date, data.deleteData.id);
+          } else {
+            deleteLivaMealByType(data.deleteData.mealType, data.deleteData.date);
+          }
         }
 
         // Auto-close after a few seconds so the user can see the result and then return to the app
@@ -1126,6 +1158,7 @@ export default function App() {
             goals={goals}
             onLogWater={(amount) => setWaterLogged((w: number) => Math.max(0, w + amount))}
             onDeleteMeal={deleteLivaMeal}
+            onSetChatInitialMsg={setChatInitialMsg}
           />
         );
       }
@@ -1137,6 +1170,8 @@ export default function App() {
             goals={goals}
             history={history}
             syncDailyData={syncDailyData}
+            onDeleteMeal={(mealType, date, id) => deleteLivaMealByType(mealType, date, id)}
+            onEditMeal={editLivaMeal}
           />
         );
       case "quick-log":
@@ -1241,8 +1276,10 @@ export default function App() {
               logLivaWater(waterData);
             }}
             onMealDeleted={(deleteData) => {
-              if (deleteData.mealType) {
-                deleteLivaMealByType(deleteData.mealType);
+              if (deleteData.id) {
+                deleteLivaMealByType(deleteData.mealType, deleteData.date, deleteData.id);
+              } else if (deleteData.mealType) {
+                deleteLivaMealByType(deleteData.mealType, deleteData.date);
               }
             }}
             remainingCalories={Math.max(0, goals.calories - caloriesLogged)}
@@ -1279,8 +1316,10 @@ export default function App() {
               logLivaWater(waterData);
             }}
             onMealDeleted={(deleteData) => {
-              if (deleteData.mealType) {
-                deleteLivaMealByType(deleteData.mealType);
+              if (deleteData.id) {
+                deleteLivaMealByType(deleteData.mealType, deleteData.date, deleteData.id);
+              } else if (deleteData.mealType) {
+                deleteLivaMealByType(deleteData.mealType, deleteData.date);
               }
             }}
             loggedMeals={loggedMeals}
@@ -1354,6 +1393,8 @@ export default function App() {
             caloriesLogged={caloriesLogged}
             proteinLogged={proteinLogged}
             loggedMealsCount={todaysLoggedMeals.filter(m => m.mealType !== "snack").length}
+            history={history}
+            todaysLoggedMeals={todaysLoggedMeals}
           />
         );
       case "progress-weekly":

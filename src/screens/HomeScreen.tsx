@@ -21,19 +21,22 @@ export default function HomeScreen({
   goals,
   onLogWater,
   onDeleteMeal,
+  onSetChatInitialMsg,
 }: {
   onNavigate: (screen: Screen) => void;
   onStartLog: (mode: EntryMode) => void;
   userName: string;
   caloriesLogged: number;
-  proteinLogged: number;
-  loggedMeals: LoggedMeal[];
+  proteinLogged?: number;
+  loggedMeals?: LoggedMeal[];
   waterLogged: number;
-  completedHabits: { [key: string]: boolean };
+  completedHabits?: { [key: string]: boolean };
   goals: GoalConfig;
   onLogWater: (amount: number) => void;
   onDeleteMeal?: (mealId: string) => void;
+  onSetChatInitialMsg?: (msg: string) => void;
 }) {
+  const [askLivaText, setAskLivaText] = useState("");
   const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
   const [selectedMealCategory, setSelectedMealCategory] = useState<string | null>(null);
   const waterGlasses = Math.min(12, Math.round(waterLogged / 250));
@@ -200,12 +203,20 @@ export default function HomeScreen({
         </section>
 
         <section
-          className="mb-4 rounded-[24px] bg-white/40 p-3.5"
+          className="mb-4 rounded-[24px] bg-white/40 p-3.5 cursor-pointer hover:bg-white/60 transition-colors"
           style={{
             boxShadow: "0 6px 20px rgba(16,32,26,0.04)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             border: "1px solid rgba(255, 255, 255, 0.4)",
+          }}
+          onClick={(e) => {
+            if ((e.target as HTMLElement).tagName !== 'INPUT') {
+              if (askLivaText.trim()) {
+                if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
+                onNavigate("liva-home");
+              }
+            }
           }}
         >
           <div className="flex items-center gap-3">
@@ -221,8 +232,32 @@ export default function HomeScreen({
                 }}
               >
                 <MessageCircle size={16} color={green} />
-                <input className="min-w-0 flex-1 bg-transparent text-xs outline-none" placeholder="What did you eat today?" />
-                <Send size={15} color={green} />
+                <input 
+                  className="min-w-0 flex-1 bg-transparent text-xs outline-none" 
+                  placeholder="What did you eat today?"
+                  value={askLivaText}
+                  onChange={(e) => setAskLivaText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (askLivaText.trim()) {
+                        if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
+                        onNavigate("liva-home");
+                      }
+                    }
+                  }}
+                />
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (askLivaText.trim()) {
+                      if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
+                      onNavigate("liva-home");
+                    }
+                  }}
+                  className="p-1 hover:bg-[#34C759]/10 rounded-full transition-colors"
+                >
+                  <Send size={15} color={green} />
+                </button>
               </div>
             </div>
           </div>

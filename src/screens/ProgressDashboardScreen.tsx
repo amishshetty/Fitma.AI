@@ -1,4 +1,4 @@
-import { TrendingUp, Leaf, Calendar, MessageCircle, Award, Target , Activity} from "lucide-react";
+import { TrendingUp, Leaf, Calendar, MessageCircle, Award, Target, Activity, Flame } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import BottomNav from "../components/layout/BottomNav";
 import LivaAvatar from "../components/layout/LivaAvatar";
@@ -17,6 +17,8 @@ export default function ProgressDashboardScreen({
   caloriesLogged,
   proteinLogged,
   loggedMealsCount,
+  history,
+  todaysLoggedMeals,
 }: {
   onNavigate: (screen: Screen) => void;
   userWeight: number;
@@ -26,12 +28,98 @@ export default function ProgressDashboardScreen({
   caloriesLogged: number;
   proteinLogged?: number;
   loggedMealsCount: number;
+  history?: Record<string, any>;
+  todaysLoggedMeals?: any[];
 }) {
   const habitCompletionRate = useMemo(() => {
     const total = 5;
     const completed = Object.values(completedHabits).filter(Boolean).length;
     return Math.round((completed / total) * 100);
   }, [completedHabits]);
+
+  const [activeChartTab, setActiveChartTab] = useState('Today');
+
+  const chartData = useMemo(() => {
+    const data = [];
+    let maxKcal = 500;
+    
+    if (activeChartTab === 'Week') {
+      const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000);
+        const dateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        const dayData = history?.[dateStr] || {};
+        const p = dayData.protein || 0;
+        const c = dayData.carbs || 0;
+        const f = dayData.fat || 0;
+        const kcal = dayData.calories || 0;
+        
+        if (kcal > maxKcal) maxKcal = kcal;
+        data.push({ day: days[d.getDay()], p, c, f, kcal });
+      }
+    } else if (activeChartTab === 'Month') {
+      const labels = ['W1', 'W2', 'W3', 'W4'];
+      for (let w = 3; w >= 0; w--) {
+        let p = 0, c = 0, f = 0, kcal = 0;
+        for (let i = 0; i < 7; i++) {
+          const daysAgo = w * 7 + i;
+          const d = new Date(Date.now() - daysAgo * 86400000);
+          const dateStr = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+          const dayData = history?.[dateStr] || {};
+          p += dayData.protein || 0;
+          c += dayData.carbs || 0;
+          f += dayData.fat || 0;
+          kcal += dayData.calories || 0;
+        }
+        p = Math.round(p / 7);
+        c = Math.round(c / 7);
+        f = Math.round(f / 7);
+        kcal = Math.round(kcal / 7);
+        
+        if (kcal > maxKcal) maxKcal = kcal;
+        data.push({ day: labels[3 - w], p, c, f, kcal });
+      }
+    } else if (activeChartTab === 'Today') {
+      const mealTypes = [
+        { key: 'breakfast', label: 'B' },
+        { key: 'lunch', label: 'L' },
+        { key: 'snack', label: 'S' },
+        { key: 'dinner', label: 'D' }
+      ];
+      
+      mealTypes.forEach(({ key, label }) => {
+        let p = 0, c = 0, f = 0, kcal = 0;
+        if (todaysLoggedMeals) {
+          todaysLoggedMeals.forEach(m => {
+            if (m.mealType === key) {
+              p += m.protein || 0;
+              c += m.carbs || 0;
+              f += m.fat || 0;
+              kcal += m.calories || 0;
+            }
+          });
+        }
+        
+        if (kcal > maxKcal) maxKcal = kcal;
+        data.push({ day: label, p, c, f, kcal });
+      });
+    }
+    
+    // Add 35% vertical buffer so the tallest bar never hits the top, leaving room for the tooltip
+    maxKcal = Math.ceil((maxKcal * 1.35) / 100) * 100;
+    if (maxKcal < 500) maxKcal = 500;
+    
+    const yAxisLabels = [maxKcal, Math.round(maxKcal*0.75), Math.round(maxKcal*0.5), Math.round(maxKcal*0.25), 0];
+    
+    let displayMetric = 0;
+    if (activeChartTab === 'Week' || activeChartTab === 'Today') {
+      displayMetric = caloriesLogged;
+    } else if (activeChartTab === 'Month') {
+      displayMetric = Math.round(data.reduce((acc, curr) => acc + curr.kcal, 0) / 4);
+    }
+    
+    return { data, maxKcal, yAxisLabels, displayMetric };
+  }, [history, todaysLoggedMeals, activeChartTab, caloriesLogged]);
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col" style={{ background: "#f7fffe" }}>
@@ -110,6 +198,112 @@ export default function ProgressDashboardScreen({
             <p className="mt-1 text-[12px] leading-relaxed text-slate-500">
               You usually skip breakfast on Tuesdays. Eating a protein-rich breakfast may help maintain your energy levels throughout the day.
             </p>
+          </div>
+        </div>
+
+        {/* Nutrition Analytics Chart Card */}
+        <div className="rounded-[24px] bg-white p-5 border border-slate-100" style={{ boxShadow: "0 8px 24px rgba(16,32,26,0.04)" }}>
+          <h2 className="font-extrabold text-[18px] text-slate-800 mb-4 tracking-tight">Nutrition Analytics</h2>
+          
+          {/* Segment Control */}
+          <div className="flex bg-[#f8fafc] p-1 rounded-[14px] mb-6">
+            {['Today', 'Week', 'Month'].map((tab) => (
+              <button 
+                key={tab} 
+                onClick={() => setActiveChartTab(tab)}
+                className={`flex-1 py-2 text-[10px] font-extrabold rounded-[10px] transition-all ${activeChartTab === tab ? 'bg-white text-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Metric */}
+          <div className="flex items-center gap-2 mb-8">
+            <Flame size={20} strokeWidth={2.5} className="text-[#059669]" />
+            <span className="font-extrabold text-[22px] text-slate-800 tracking-tight">
+              {chartData.displayMetric} kcal
+            </span>
+          </div>
+
+          {/* Chart */}
+          <div className="relative h-48 w-full mb-2 mt-4">
+            {/* Y-axis labels and grid lines */}
+            <div className="absolute inset-0 flex flex-col justify-between pb-6">
+              {chartData.yAxisLabels.map((val) => (
+                <div key={val} className="flex items-center w-full">
+                  <span className="text-[9px] font-bold text-slate-400 w-7 text-left">{val}</span>
+                  <div className="flex-1 border-t border-dashed border-slate-200/80 ml-2" />
+                </div>
+              ))}
+            </div>
+
+            {/* Bars container */}
+            <div className="absolute inset-0 pl-9 flex items-end justify-between px-2 pb-6">
+              {chartData.data.map((data, i) => {
+                const totalMacroKcal = (data.p * 4) + (data.c * 4) + (data.f * 9) || 1; // avoid division by zero
+                const pPct = ((data.p * 4) / totalMacroKcal) * 100;
+                const cPct = ((data.c * 4) / totalMacroKcal) * 100;
+                const fPct = ((data.f * 9) / totalMacroKcal) * 100;
+                const barHeight = Math.min((data.kcal / chartData.maxKcal) * 100, 100);
+
+                return (
+                  <div key={i} className="flex flex-col items-center h-full justify-end relative w-4 group">
+                    {data.kcal > 0 && (
+                      <div className="w-full rounded-t-[4px] overflow-hidden flex flex-col justify-start absolute bottom-0 cursor-pointer" style={{ height: `${barHeight}%` }}>
+                        <div className="w-full bg-[#10b981] hover:brightness-110 transition-all" style={{ height: `${fPct}%` }} />
+                        <div className="w-full bg-[#f59e0b] hover:brightness-110 transition-all" style={{ height: `${cPct}%` }} />
+                        <div className="w-full bg-[#0ea5e9] hover:brightness-110 transition-all" style={{ height: `${pPct}%` }} />
+                      </div>
+                    )}
+                    
+                    {/* Hover Tooltip */}
+                    {data.kcal > 0 && (
+                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xl border border-slate-100 text-slate-800 p-3 rounded-[16px] opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 w-[110px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] scale-95 group-hover:scale-100 origin-bottom">
+                        <div className="font-extrabold text-[13px] mb-2 text-center text-slate-800 border-b border-slate-100 pb-2">{data.kcal} <span className="text-[10px] font-bold text-slate-400">kcal</span></div>
+                        <div className="flex justify-between items-center text-[11px] mb-1.5">
+                          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#0ea5e9]"></div><span className="text-slate-500 font-bold">Protein</span></div>
+                          <span className="font-extrabold text-slate-700">{data.p}g</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[11px] mb-1.5">
+                          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#f59e0b]"></div><span className="text-slate-500 font-bold">Carbs</span></div>
+                          <span className="font-extrabold text-slate-700">{data.c}g</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[11px]">
+                          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#10b981]"></div><span className="text-slate-500 font-bold">Fat</span></div>
+                          <span className="font-extrabold text-slate-700">{data.f}g</span>
+                        </div>
+                        {/* Triangle indicator */}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-white" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* X-axis labels */}
+            <div className="absolute bottom-0 left-9 right-2 flex justify-between px-2">
+              {chartData.data.map((data, i) => (
+                <span key={i} className="text-[9px] font-bold text-slate-400 w-4 text-center">{data.day}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center gap-5 pt-3">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-[3px] bg-[#10b981]" />
+              <span className="text-[10px] font-bold text-slate-500">Fat</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-[3px] bg-[#f59e0b]" />
+              <span className="text-[10px] font-bold text-slate-500">Carbs</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-[3px] bg-[#0ea5e9]" />
+              <span className="text-[10px] font-bold text-slate-500">Protein</span>
+            </div>
           </div>
         </div>
 

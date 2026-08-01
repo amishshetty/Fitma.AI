@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, ChevronRight, Sunrise, Sun, Moon, Coffee, Check, Flame, Droplets, Target, Zap, Activity } from "lucide-react";
+import { ChevronLeft, ChevronDown, ChevronRight, Sunrise, Sun, Moon, Coffee, Check, Flame, Droplets, Target, Zap, Activity, Trash2, Edit3, X, Leaf, Wheat } from "lucide-react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import BottomNav from "../components/layout/BottomNav";
 import { ink, muted } from "../constants";
@@ -11,18 +11,41 @@ export default function MyPlanScreen({
   loggedMeals = [],
   goals,
   history = {},
-  syncDailyData
+  syncDailyData,
+  onDeleteMeal,
+  onEditMeal
 }: {
   onNavigate: (screen: Screen) => void;
   loggedMeals: LoggedMeal[];
   goals: GoalConfig;
   history?: Record<string, any>;
   syncDailyData?: (dateStr: string, updater: any) => void;
+  onDeleteMeal?: (mealType: string, date: string, id: string) => void;
+  onEditMeal?: (id: string, updatedData: Partial<LoggedMeal>) => void;
 }) {
   const [selectedDate, setSelectedDate] = useState(() => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
   const [isWaterDrawerOpen, setIsWaterDrawerOpen] = useState(false);
+  const [activeActionMeal, setActiveActionMeal] = useState<LoggedMeal | null>(null);
+  const [isEditingMeal, setIsEditingMeal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<LoggedMeal>>({});
+  const pressTimer = useRef<any>(null);
+
+  const handlePressStart = (meal: LoggedMeal) => {
+    pressTimer.current = setTimeout(() => {
+      setActiveActionMeal(meal);
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 500); // 500ms for long press
+  };
+
+  const handlePressEnd = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+  };
 
   const changeDate = (days: number) => {
     const d = new Date(selectedDate);
@@ -150,7 +173,16 @@ export default function MyPlanScreen({
               </div>
             ) : (
               selectedDateMeals.map(meal => (
-                <div key={meal.id} className="rounded-2xl border border-slate-100 p-4 flex items-center justify-between bg-white transition-all shadow-sm">
+                <div 
+                  key={meal.id} 
+                  className="rounded-2xl border border-slate-100 p-4 flex items-center justify-between bg-white transition-all shadow-sm cursor-pointer select-none active:scale-[0.98]"
+                  onTouchStart={() => handlePressStart(meal)}
+                  onTouchEnd={handlePressEnd}
+                  onTouchMove={handlePressEnd}
+                  onMouseDown={() => handlePressStart(meal)}
+                  onMouseUp={handlePressEnd}
+                  onMouseLeave={handlePressEnd}
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100">
                       {meal.mealType === 'breakfast' ? <Sunrise size={18} className="text-[#FF8B6B]" /> : 
@@ -441,6 +473,185 @@ export default function MyPlanScreen({
           </div>
         </div>
       )}
+
+      {/* Bottom Sheet for Meal Action */}
+      <div 
+        className={`absolute inset-0 z-50 bg-slate-900/30 backdrop-blur-md transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${activeActionMeal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => { setActiveActionMeal(null); setIsEditingMeal(false); }}
+      >
+        <div 
+          className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-[40px] p-8 pb-12 shadow-[0_-20px_40px_rgba(0,0,0,0.06)] border-t border-white transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] transform ${activeActionMeal ? 'translate-y-0' : 'translate-y-full'}`}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="w-16 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8" />
+          
+          {activeActionMeal && !isEditingMeal && (
+            <>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[24px] bg-white shadow-[0_12px_36px_rgba(52,199,89,0.12)]">
+                  {activeActionMeal.mealType === 'breakfast' ? <Sunrise size={32} strokeWidth={2} className="text-[#34C759]" /> : 
+                   activeActionMeal.mealType === 'lunch' ? <Sun size={32} strokeWidth={2} className="text-[#34C759]" /> : 
+                   activeActionMeal.mealType === 'dinner' ? <Moon size={32} strokeWidth={2} className="text-[#34C759]" /> : 
+                   <Coffee size={32} strokeWidth={2} className="text-[#34C759]" />}
+                </div>
+                <div className="flex-1 ml-1">
+                  <h3 className="font-extrabold text-[#1c1c1e] text-[22px] capitalize tracking-tight leading-tight">{activeActionMeal.mealType}</h3>
+                  <p className="text-[14px] font-semibold text-slate-400 mt-1 line-clamp-1 leading-snug">{activeActionMeal.name}</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setEditFormData(activeActionMeal);
+                    setIsEditingMeal(true);
+                  }}
+                  className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[#34C759]/10 text-[#34C759] active:scale-95 transition-transform"
+                >
+                  <Edit3 size={18} strokeWidth={2.5} />
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-4 gap-3 mb-8 px-1">
+                {[
+                  { label: "Calories", value: activeActionMeal.calories, unit: "kcal", icon: <Flame size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
+                  { label: "Protein", value: activeActionMeal.protein, unit: "g", icon: <Leaf size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
+                  { label: "Carbs", value: activeActionMeal.carbs, unit: "g", icon: <Wheat size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
+                  { label: "Fats", value: activeActionMeal.fat, unit: "g", icon: <Droplets size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
+                ].map((stat, i) => (
+                  <div key={i} className={`relative overflow-hidden rounded-[24px] py-5 px-1 shadow-[0_16px_40px_rgba(0,0,0,0.05)] flex flex-col items-center justify-center text-center ${i === 0 ? 'bg-gradient-to-b from-white from-50% to-[#dcfce7]/70' : 'bg-white'}`}>
+                    {stat.icon}
+                    <p className="text-[9px] font-bold text-slate-400/90 mb-1.5 uppercase tracking-wide">{stat.label}</p>
+                    <p className="text-[20px] font-extrabold text-[#34C759] leading-none flex flex-col items-center">
+                      {stat.value || 0}
+                      <span className="text-[10px] font-bold mt-1.5 text-slate-400/80 lowercase">{stat.unit}</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <button 
+                  className="w-full flex items-center justify-between p-[10px] pr-5 rounded-[22px] bg-white shadow-[0_8px_30px_rgba(255,59,48,0.06)] border border-rose-50 active:scale-[0.98] transition-transform"
+                  onClick={() => {
+                    if (onDeleteMeal) {
+                      let dateText = "today";
+                      if (!isToday) dateText = "yesterday";
+                      onDeleteMeal(activeActionMeal.mealType || 'snack', dateText, activeActionMeal.id);
+                    }
+                    setActiveActionMeal(null);
+                  }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-rose-50 text-rose-500">
+                      <Trash2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <span className="font-bold text-[16px] tracking-tight text-rose-500">Delete Meal</span>
+                  </div>
+                  <ChevronRight size={20} strokeWidth={3} className="text-rose-400" />
+                </button>
+
+                <button 
+                  className="w-full flex items-center p-[10px] rounded-[22px] bg-[#0f172a] shadow-[0_12px_30px_rgba(15,23,42,0.2)] active:scale-[0.98] transition-transform"
+                  onClick={() => { setActiveActionMeal(null); setIsEditingMeal(false); }}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white/10 text-white">
+                    <X size={20} strokeWidth={2.5} />
+                  </div>
+                  <span className="font-bold text-[16px] tracking-tight text-white ml-4">Cancel</span>
+                </button>
+              </div>
+            </>
+          )}
+
+          {activeActionMeal && isEditingMeal && (
+            <div className="space-y-4 relative">
+              {isSaving && (
+                <div className="absolute inset-0 z-10 bg-white/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#34C759] border-t-transparent" />
+                </div>
+              )}
+              
+              <h3 className="font-extrabold text-slate-800 text-xl tracking-tight mb-6">Edit {activeActionMeal.mealType}</h3>
+              
+              <div>
+                <label className="text-[12px] font-extrabold text-slate-700 uppercase tracking-wider ml-1 mb-2 block">What did you eat?</label>
+                <input 
+                  type="text" 
+                  value={editFormData.name || ''}
+                  onChange={e => setEditFormData({...editFormData, name: e.target.value})}
+                  placeholder="e.g. 2 slices of avocado toast"
+                  className="w-full bg-white border border-slate-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] rounded-2xl p-5 font-black text-slate-900 text-lg focus:outline-none focus:ring-2 focus:ring-[#34C759]/40 focus:border-[#34C759] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                />
+                <p className="text-[12px] font-medium text-slate-500 ml-1 mt-3 leading-relaxed">
+                  Liva AI will automatically calculate the calories, protein, carbs, and fats based on the food you enter.
+                </p>
+              </div>
+
+              <div className="pt-4 space-y-3">
+                <button 
+                  disabled={isSaving}
+                  className="w-full relative overflow-hidden flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r from-[#34C759] to-[#2ba148] text-white shadow-[0_12px_30px_rgba(52,199,89,0.35)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:scale-100"
+                  onClick={async () => {
+                    if (!editFormData.name?.trim()) return;
+                    setIsSaving(true);
+                    
+                    try {
+                      const API_URL = import.meta.env.VITE_API_URL || '';
+                      const response = await fetch(`${API_URL}/api/chat`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          message: `[SYSTEM COMMAND] Force log exactly this food: "${editFormData.name}" for ${activeActionMeal.mealType} today. DO NOT ask any follow-up questions or make conversation. You MUST output the MEAL_LOG JSON immediately with fully calculated calories, protein, carbs, and fat.`,
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      let macros = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+                      
+                      if (data?.mealData) {
+                        macros = {
+                          calories: data.mealData.calories || 0,
+                          protein: data.mealData.protein || 0,
+                          carbs: data.mealData.carbs || 0,
+                          fat: data.mealData.fat || 0
+                        };
+                      }
+                      
+                      if (onEditMeal) {
+                        onEditMeal(activeActionMeal.id, {
+                          name: editFormData.name,
+                          ...macros
+                        });
+                      }
+                    } catch (error) {
+                      console.error("Failed to fetch macros", error);
+                      // Fallback just update name
+                      if (onEditMeal) onEditMeal(activeActionMeal.id, { name: editFormData.name });
+                    } finally {
+                      setIsSaving(false);
+                      setIsEditingMeal(false);
+                      setActiveActionMeal(null);
+                    }
+                  }}
+                >
+                  <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-300" />
+                  {isSaving ? (
+                    <div className="flex items-center gap-3">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                      <span>Calculating Macros...</span>
+                    </div>
+                  ) : "Save Changes"}
+                </button>
+                <button 
+                  disabled={isSaving}
+                  className="w-full flex items-center justify-center p-4 rounded-2xl bg-white/60 backdrop-blur-lg border border-slate-200/50 text-slate-700 shadow-[0_8px_24px_rgba(0,0,0,0.03)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
+                  onClick={() => setIsEditingMeal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
