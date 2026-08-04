@@ -150,8 +150,13 @@ Be friendly.
   }
 }
 
-export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null, userLocalDateStr = null) {
+export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null, userLocalDateStr = null, customVocabulary = {}) {
   const emotion = detectEmotion(message);
+
+  const customVocabKeys = Object.keys(customVocabulary);
+  const customVocabText = customVocabKeys.length > 0 
+    ? `\nCUSTOM VOCABULARY MAPPINGS (CRITICAL):\nThe user's speech recognition often mishears certain words. Use this mapping to correct the user's input before processing it:\n${customVocabKeys.map(k => `- When user says "${k}", they actually mean "${customVocabulary[k]}"`).join("\n")}\n`
+    : "";
 
   return `
 You are Liva.
@@ -162,6 +167,7 @@ You are the permanent AI companion inside Fitma.ai.
 You are a highly intelligent, futuristic personal diet manager.
 
 ${buildHealthContext(profile, loggedMeals, remainingCalories, userLocalDateStr)}
+${customVocabText}
 
 ${buildResponseStyle(profile)}
 
@@ -352,6 +358,25 @@ For any other natural language command (e.g. "I ate 2 rotis", "Log 2 rotis for b
   }
 }
 
+6. UPDATE_VOCABULARY: If the user corrects your understanding of a word (e.g. "I meant roti not rotate", "Doll means Dal").
+"action": {
+  "type": "UPDATE_VOCABULARY",
+  "data": {
+    "misheard_word": "correct_word"
+  }
+}
+- Use this to learn from transcription mistakes.
+- After updating vocabulary, you should ALSO process their actual intent if possible (e.g. log the "Dal" immediately as MEAL_LOG if they were trying to log it, or just say "Got it, I'll remember that!" if they were just correcting you. Note: If you also need to log a meal, you can't return two actions, so prioritize MEAL_LOG, but since our JSON structure allows 'updateVocabularyData' at the root if we modify the parse logs, let's keep it simple: if they correct a word while logging a meal, return MEAL_LOG but acknowledge the correction in your message. But wait, to make it strict, if they correct a word, return UPDATE_VOCABULARY and say "Got it, I've updated my dictionary. Should I log that meal for you now?").
+- Wait, a better structure is to just allow returning "updateVocabularyData" inside "action.data" for ANY action type. 
+Let's redefine this: if the user corrects a word, you can return "type": "UPDATE_VOCABULARY", OR if they are logging a meal AND correcting a word simultaneously, just use MEAL_LOG and we'll handle vocabulary updates in the next step.
+Actually, let's strictly use UPDATE_VOCABULARY when the primary intent is correcting a word:
+"action": {
+  "type": "UPDATE_VOCABULARY",
+  "data": {
+    "wrong_word_lowercase": "correct_word_lowercase"
+  }
+}
+
 If user asks to CHANGE or REPLACE an already logged meal, just use MEAL_LOG, the frontend will handle replacement based on context.
 
 CRITICAL: ONLY return JSON. Do not return any other text.
@@ -485,6 +510,7 @@ export function parseLogs(responseText) {
   let summaryData = null;
   let waterData = null;
   let deleteData = null;
+  let updateVocabularyData = null;
   let recommendationData = null;
   let greeting = null;
   let motivation = null;
@@ -545,6 +571,8 @@ export function parseLogs(responseText) {
         deleteData = data;
       } else if (type === "SUMMARY_LOG") {
         summaryData = data;
+      } else if (type === "UPDATE_VOCABULARY") {
+        updateVocabularyData = data;
       }
     }
   } catch (error) {
@@ -559,6 +587,7 @@ export function parseLogs(responseText) {
     summaryData,
     waterData,
     deleteData,
+    updateVocabularyData,
     recommendationData,
     greeting,
     motivation

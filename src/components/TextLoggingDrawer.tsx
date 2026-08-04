@@ -1,5 +1,5 @@
 import { X, Loader2, Check, Activity } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import PrimaryButton from "./ui/PrimaryButton";
 import { ink } from "../constants";
@@ -7,6 +7,7 @@ import { ink } from "../constants";
 export default function TextLoggingDrawer({ onClose, onLogMeal }: { onClose: () => void; onLogMeal: (meal: any) => void }) {
   const [text, setText] = useState("");
   const [isParsing, setIsParsing] = useState(false);
+  const [pendingInternalMeal, setPendingInternalMeal] = useState<any>(null);
 
   const handleParseAndSave = async () => {
     if (!text.trim()) return;
@@ -42,9 +43,13 @@ export default function TextLoggingDrawer({ onClose, onLogMeal }: { onClose: () 
         if (!data.mealData.name && data.mealData.items) {
           data.mealData.name = data.mealData.items.join(", ");
         }
-        onLogMeal(data.mealData);
         setIsParsing(false);
-        onClose();
+        if (!data.mealData.mealType || data.mealData.mealType.toLowerCase() === 'unknown') {
+          setPendingInternalMeal(data.mealData);
+        } else {
+          onLogMeal(data.mealData);
+          onClose();
+        }
       } else {
         throw new Error("No meal data found in AI response");
       }
@@ -94,18 +99,53 @@ export default function TextLoggingDrawer({ onClose, onLogMeal }: { onClose: () 
           </button>
         </div>
 
-        <div className="relative mb-5">
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="min-h-32 w-full resize-none rounded-[24px] bg-white p-5 text-base outline-none transition-shadow focus:ring-4 focus:ring-[#34C759]/20"
-            placeholder='"I had 2 rotis and 2 eggs for breakfast"'
-            style={{ color: ink, boxShadow: "0 4px 20px rgba(16,32,26,0.04)", border: "1px solid #e2e8f0" }}
-          />
-          {/* Decorative AI icon */}
-          <div className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-[#34C759]/10 px-3 py-1.5 text-xs font-bold text-[#34C759]">
-            <Activity size={14} /> AI Powered
+        <div className="mb-5 flex flex-col gap-4">
+          <div className="relative">
+            <textarea
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+                if (pendingInternalMeal) setPendingInternalMeal(null);
+              }}
+              className="min-h-32 w-full resize-none rounded-[24px] bg-white p-5 text-base outline-none transition-shadow focus:ring-4 focus:ring-[#34C759]/20"
+              placeholder='"I had 2 rotis and 2 eggs for breakfast"'
+              style={{ color: ink, boxShadow: "0 4px 20px rgba(16,32,26,0.04)", border: "1px solid #e2e8f0" }}
+            />
+            {/* Decorative AI icon */}
+            <div className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-[#34C759]/10 px-3 py-1.5 text-xs font-bold text-[#34C759]">
+              <Activity size={14} /> AI Powered
+            </div>
           </div>
+
+          <AnimatePresence>
+            {pendingInternalMeal && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="flex flex-col items-start w-full space-y-2 overflow-hidden"
+              >
+                <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/50 max-w-[85%]">
+                  <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">Which meal is this?</p>
+                </div>
+                <div className="flex flex-nowrap overflow-x-auto gap-2 w-full pb-1 hide-scrollbar pt-1">
+                  {["Breakfast", "Lunch", "Dinner", "Snack"].map(section => (
+                    <button
+                      key={section}
+                      onClick={() => {
+                        onLogMeal({ ...pendingInternalMeal, mealType: section.toLowerCase() });
+                        setPendingInternalMeal(null);
+                        onClose();
+                      }}
+                      className="bg-white hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-colors flex-shrink-0"
+                    >
+                      {section}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         
         <div className="mb-6">

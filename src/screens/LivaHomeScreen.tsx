@@ -71,6 +71,13 @@ export default function LivaHomeScreen({
   const silenceTimeoutRef = useRef<any>(null);
   const suggestionsScrollRef = useRef<HTMLDivElement>(null);
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [customVocabulary, setCustomVocabulary] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem("liva_custom_vocab");
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return {};
+  });
 
   const scrollSuggestions = (direction: 'left' | 'right') => {
     if (suggestionsScrollRef.current) {
@@ -200,7 +207,8 @@ export default function LivaHomeScreen({
             }
             return { ...m, dateString: dateStr };
           }),
-          remainingCalories: remainingCalories
+          remainingCalories: remainingCalories,
+          customVocabulary: customVocabulary
         })
       });
 
@@ -221,6 +229,15 @@ export default function LivaHomeScreen({
       
       if (data.deleteData && onMealDeleted) {
         onMealDeleted(data.deleteData);
+      }
+
+      if (data.updateVocabularyData) {
+        const newMappings = data.updateVocabularyData;
+        setCustomVocabulary(prev => {
+          const updated = { ...prev, ...newMappings };
+          localStorage.setItem("liva_custom_vocab", JSON.stringify(updated));
+          return updated;
+        });
       }
 
       const summaryToRender = data.mealData || data.summaryData || null;

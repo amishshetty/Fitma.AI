@@ -55,41 +55,82 @@ export default function HomeScreen({
     const calRemaining = Math.max(0, calTarget - caloriesLogged);
     const protRemaining = Math.max(0, protTarget - proteinLogged);
     
+    // Check which meals are already logged
+    const hasBreakfast = loggedMeals.some(m => m.mealType === 'breakfast');
+    const hasLunch = loggedMeals.some(m => m.mealType === 'lunch');
+    const hasDinner = loggedMeals.some(m => m.mealType === 'dinner');
+    
     // 1. Time-based Logic (Most immediate context)
     if (hour >= 17) {
-      generated.push({
-        id: "time-dinner",
-        icon: <Moon size={16} />,
-        title: "Evening Update",
-        text: calRemaining > 800 
-          ? "You have enough calories left. Enjoy a good dinner!"
-          : "Calories are low. Try a light dinner like soup or salad.",
-        actionText: "Log dinner",
-        onClick: () => onStartLog("text"),
-        color: "#00C4B0"
-      });
+      if (!hasDinner) {
+        generated.push({
+          id: "time-dinner",
+          icon: <Moon size={16} />,
+          title: "Evening Update",
+          text: calRemaining > 800 
+            ? "You have enough calories left. Enjoy a good dinner!"
+            : "Calories are low. Try a light dinner like soup or salad.",
+          actionText: "Log dinner",
+          onClick: () => onStartLog("text"),
+          color: "#00C4B0"
+        });
+      } else {
+        generated.push({
+          id: "time-dinner-done",
+          icon: <Moon size={16} />,
+          title: "Evening Update",
+          text: "Dinner is logged! Have a relaxing evening.",
+          color: "#00C4B0"
+        });
+      }
     } else if (hour < 11) {
-      generated.push({
-        id: "time-morning",
-        icon: <Sunrise size={16} />,
-        title: "Morning Routine",
-        text: waterGlasses < 3 
-          ? "You need more water today. Drink a glass now!"
-          : "Great start today! Keep up the good work.",
-        actionText: waterGlasses < 3 ? "Add water" : "Log snack",
-        onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
-        color: "#00C4B0"
-      });
+      if (!hasBreakfast) {
+        generated.push({
+          id: "time-morning",
+          icon: <Sunrise size={16} />,
+          title: "Morning Routine",
+          text: waterGlasses < 3 
+            ? "You need more water today. Drink a glass now!"
+            : "Start your day right with a healthy breakfast!",
+          actionText: waterGlasses < 3 ? "Add water" : "Log breakfast",
+          onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
+          color: "#00C4B0"
+        });
+      } else {
+        generated.push({
+          id: "time-morning-done",
+          icon: <Sunrise size={16} />,
+          title: "Morning Routine",
+          text: waterGlasses < 3 
+            ? "You need more water today. Drink a glass now!"
+            : "Great start today! Keep up the good work.",
+          actionText: waterGlasses < 3 ? "Add water" : "Log snack",
+          onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
+          color: "#00C4B0"
+        });
+      }
     } else {
-      generated.push({
-        id: "time-lunch",
-        icon: <Sun size={16} />,
-        title: "Mid-day Check",
-        text: caloriesLogged < calTarget * 0.3 
-          ? "You've barely eaten today! Make sure to grab a nutritious lunch."
-          : "You're doing great on your meals! A quick walk can give you a mid-day energy boost.",
-        color: "#00C4B0"
-      });
+      if (!hasLunch) {
+        generated.push({
+          id: "time-lunch",
+          icon: <Sun size={16} />,
+          title: "Mid-day Check",
+          text: caloriesLogged < calTarget * 0.3 
+            ? "You've barely eaten today! Make sure to grab a nutritious lunch."
+            : "Time for lunch! Refuel your body.",
+          actionText: "Log lunch",
+          onClick: () => onStartLog("text"),
+          color: "#00C4B0"
+        });
+      } else {
+        generated.push({
+          id: "time-lunch-done",
+          icon: <Sun size={16} />,
+          title: "Mid-day Check",
+          text: "You're doing great on your meals! A quick walk can give you a mid-day energy boost.",
+          color: "#00C4B0"
+        });
+      }
     }
 
     // 2. Macro Logic

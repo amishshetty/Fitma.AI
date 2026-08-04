@@ -176,6 +176,7 @@ export default function MyPlanScreen({
                 <div 
                   key={meal.id} 
                   className="rounded-2xl border border-slate-100 p-4 flex items-center justify-between bg-white transition-all shadow-sm cursor-pointer select-none active:scale-[0.98]"
+                  onClick={() => setActiveActionMeal(meal)}
                   onTouchStart={() => handlePressStart(meal)}
                   onTouchEnd={handlePressEnd}
                   onTouchMove={handlePressEnd}
@@ -509,55 +510,62 @@ export default function MyPlanScreen({
                 </button>
               </div>
               
-              <div className="grid grid-cols-4 gap-3 mb-8 px-1">
-                {[
-                  { label: "Calories", value: activeActionMeal.calories, unit: "kcal", icon: <Flame size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
-                  { label: "Protein", value: activeActionMeal.protein, unit: "g", icon: <Leaf size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
-                  { label: "Carbs", value: activeActionMeal.carbs, unit: "g", icon: <Wheat size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
-                  { label: "Fats", value: activeActionMeal.fat, unit: "g", icon: <Droplets size={20} strokeWidth={1.8} className="text-[#34C759] mb-3" /> },
-                ].map((stat, i) => (
-                  <div key={i} className={`relative overflow-hidden rounded-[24px] py-5 px-1 shadow-[0_16px_40px_rgba(0,0,0,0.05)] flex flex-col items-center justify-center text-center ${i === 0 ? 'bg-gradient-to-b from-white from-50% to-[#dcfce7]/70' : 'bg-white'}`}>
-                    {stat.icon}
-                    <p className="text-[9px] font-bold text-slate-400/90 mb-1.5 uppercase tracking-wide">{stat.label}</p>
-                    <p className="text-[20px] font-extrabold text-[#34C759] leading-none flex flex-col items-center">
-                      {stat.value || 0}
-                      <span className="text-[10px] font-bold mt-1.5 text-slate-400/80 lowercase">{stat.unit}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-4">
-                <button 
-                  className="w-full flex items-center justify-between p-[10px] pr-5 rounded-[22px] bg-white shadow-[0_8px_30px_rgba(255,59,48,0.06)] border border-rose-50 active:scale-[0.98] transition-transform"
-                  onClick={() => {
-                    if (onDeleteMeal) {
-                      let dateText = "today";
-                      if (!isToday) dateText = "yesterday";
-                      onDeleteMeal(activeActionMeal.mealType || 'snack', dateText, activeActionMeal.id);
-                    }
-                    setActiveActionMeal(null);
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-rose-50 text-rose-500">
-                      <Trash2 size={20} strokeWidth={2.5} />
+                <div className="flex flex-col gap-3 mb-8 px-1">
+                  {/* Large Calories Box */}
+                  <div className="relative overflow-hidden rounded-[24px] p-4 bg-[#f2fbf5] flex flex-col justify-center border border-[#e6f5ea]">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <Flame size={16} strokeWidth={2.5} className="text-[#34C759]" />
+                      <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest">Calories</span>
                     </div>
-                    <span className="font-bold text-[16px] tracking-tight text-rose-500">Delete Meal</span>
+                    <div className="flex items-baseline gap-1 mt-0.5">
+                      <span className="text-[32px] font-black text-[#34C759] leading-none tracking-tighter">{activeActionMeal.calories || 0}</span>
+                      <span className="text-[13px] font-bold text-slate-400">kcal</span>
+                    </div>
                   </div>
-                  <ChevronRight size={20} strokeWidth={3} className="text-rose-400" />
-                </button>
 
-                <button 
-                  className="w-full flex items-center p-[10px] rounded-[22px] bg-[#0f172a] shadow-[0_12px_30px_rgba(15,23,42,0.2)] active:scale-[0.98] transition-transform"
-                  onClick={() => { setActiveActionMeal(null); setIsEditingMeal(false); }}
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white/10 text-white">
-                    <X size={20} strokeWidth={2.5} />
+                  {/* 3 Small Macro Boxes */}
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { label: "Protein", value: activeActionMeal.protein, unit: "g", icon: <Leaf size={16} strokeWidth={2.5} className="text-[#34C759]" /> },
+                      { label: "Carbs", value: activeActionMeal.carbs, unit: "g", icon: <Wheat size={16} strokeWidth={2.5} className="text-[#34C759]" /> },
+                      { label: "Fats", value: activeActionMeal.fat, unit: "g", icon: <Droplets size={16} strokeWidth={2.5} className="text-[#34C759]" /> },
+                    ].map((stat, i) => (
+                      <div key={i} className="relative rounded-[20px] p-3.5 bg-white border border-slate-50 flex flex-col items-start shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                        <div className="mb-1.5">
+                          {stat.icon}
+                        </div>
+                        <p className="text-[9px] font-bold text-slate-400 mb-0.5 uppercase tracking-wider">{stat.label}</p>
+                        <p className="text-[18px] font-black text-slate-800 leading-none flex items-baseline gap-0.5">
+                          {stat.value || 0}
+                          <span className="text-[11px] font-bold text-slate-400 lowercase ml-0.5">{stat.unit}</span>
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                  <span className="font-bold text-[16px] tracking-tight text-white ml-4">Cancel</span>
-                </button>
-              </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button 
+                    className="flex-1 flex justify-center items-center py-4 rounded-[20px] bg-white border border-rose-100 active:scale-[0.98] transition-transform"
+                    onClick={() => {
+                      if (onDeleteMeal) {
+                        let dateText = "today";
+                        if (!isToday) dateText = "yesterday";
+                        onDeleteMeal(activeActionMeal.mealType || 'snack', dateText, activeActionMeal.id);
+                      }
+                      setActiveActionMeal(null);
+                    }}
+                  >
+                    <span className="font-semibold text-base text-rose-500">Delete Meal</span>
+                  </button>
+
+                  <button 
+                    className="flex-1 flex justify-center items-center py-4 rounded-[20px] bg-[#0f172a] shadow-[0_8px_24px_rgba(15,23,42,0.15)] active:scale-[0.98] transition-transform"
+                    onClick={() => { setActiveActionMeal(null); setIsEditingMeal(false); }}
+                  >
+                    <span className="font-semibold text-base text-white">Cancel</span>
+                  </button>
+                </div>
             </>
           )}
 

@@ -6,11 +6,12 @@ import {
 } from '../services/chatService.js';
 
 export const handleChat = async (req, res) => {
-  const { message, profile, previousMessages = [], loggedMeals = [], remainingCalories } = req.body || {};
+  const { message, profile, previousMessages = [], loggedMeals = [], remainingCalories, customVocabulary = {} } = req.body || {};
 
   console.log("=== INCOMING CHAT REQUEST ===");
   console.log("Message:", message);
   console.log("LoggedMeals:", JSON.stringify(loggedMeals, null, 2));
+  console.log("CustomVocabulary:", JSON.stringify(customVocabulary));
   console.log("LocalDateStr:", req.body.localDateStr);
   console.log("===============================");
 
@@ -58,7 +59,7 @@ export const handleChat = async (req, res) => {
 
   try {
     // ---------- GEMINI MODEL ----------
-    const systemPrompt = buildLivaBrain(message, userProfile, combinedMeals, dynamicRemainingCalories, userLocalDateStr);
+    const systemPrompt = buildLivaBrain(message, userProfile, combinedMeals, dynamicRemainingCalories, userLocalDateStr, customVocabulary);
 
     console.log("=== SYSTEM PROMPT ===");
     console.log(systemPrompt);
@@ -168,7 +169,7 @@ EXPECTED JSON FORMAT:
 
     let response = data.candidates[0].content.parts[0].text;
 
-    const { cleanResponse, mealData, summaryData, waterData, deleteData, recommendationData, greeting, motivation } = parseLogs(response);
+    const { cleanResponse, mealData, summaryData, waterData, deleteData, updateVocabularyData, recommendationData, greeting, motivation } = parseLogs(response);
 
     return res.json({
       success: true,
@@ -181,6 +182,7 @@ EXPECTED JSON FORMAT:
       summaryData,
       waterData,
       deleteData,
+      updateVocabularyData,
       recommendationData,
     });
   } catch (error) {

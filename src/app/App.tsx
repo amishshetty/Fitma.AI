@@ -360,23 +360,49 @@ export default function App() {
       mealDate.setDate(mealDate.getDate() - 1);
     }
     const mealDateStr = new Date(mealDate.getTime() - mealDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-    const newId = isYesterday ? (Date.now() - 86400000).toString() : Date.now().toString();
-
-    const newMeal: LoggedMeal = {
-      id: newId,
-      name: items.join(", "),
-      calories: addedCal,
-      protein: addedProt,
-      carbs: addedCarbs,
-      fat: addedFat,
-      timestamp: mealDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      mealType: mealType
-    };
-
     setLoggedMeals((prevMeals) => {
-      // Allow multiple items to be logged in the same meal category without overwriting
-      // (e.g., logging rice, then logging salad separately for dinner)
-      const updatedMeals = [...prevMeals, newMeal];
+      const targetDate = isYesterday ? new Date(Date.now() - 86400000).toDateString() : new Date().toDateString();
+      
+      const existingMealIndex = prevMeals.findIndex(m => {
+        if (m.mealType !== mealType) return false;
+        let mDateStr = "";
+        try {
+          mDateStr = new Date(parseInt(m.id)).toDateString();
+        } catch (e) {
+          mDateStr = "Unknown";
+        }
+        return mDateStr === targetDate;
+      });
+
+      let updatedMeals = [...prevMeals];
+      let oldCal = 0, oldProt = 0, oldCarbs = 0, oldFat = 0;
+      const newId = isYesterday ? (Date.now() - 86400000).toString() : Date.now().toString();
+      
+      const newMeal: LoggedMeal = {
+        id: newId,
+        name: items.join(", "),
+        calories: addedCal,
+        protein: addedProt,
+        carbs: addedCarbs,
+        fat: addedFat,
+        timestamp: mealDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        mealType: mealType
+      };
+
+      if (existingMealIndex >= 0) {
+        // The LLM backend returns the *combined* meal context if the user adds items to an existing meal.
+        // So we must REPLACE the old meal rather than appending, to prevent duplicate items and double-counting calories.
+        const oldMeal = updatedMeals[existingMealIndex];
+        oldCal = oldMeal.calories || 0;
+        oldProt = oldMeal.protein || 0;
+        oldCarbs = oldMeal.carbs || 0;
+        oldFat = oldMeal.fat || 0;
+        
+        newMeal.id = oldMeal.id; // Preserve the original ID so UI elements don't suddenly shift or re-render unexpectedly
+        updatedMeals[existingMealIndex] = newMeal;
+      } else {
+        updatedMeals.push(newMeal);
+      }
 
       syncDailyData(mealDateStr, (curr: any) => {
         const nextHabits = { ...(curr.completedHabits || {}) };
@@ -384,10 +410,10 @@ export default function App() {
           nextHabits.breakfast = true;
         }
         return {
-          calories: Math.max(0, (curr.calories || 0) + addedCal),
-          protein: Math.max(0, (curr.protein || 0) + addedProt),
-          carbs: Math.max(0, (curr.carbs || 0) + addedCarbs),
-          fat: Math.max(0, (curr.fat || 0) + addedFat),
+          calories: Math.max(0, (curr.calories || 0) - oldCal + addedCal),
+          protein: Math.max(0, (curr.protein || 0) - oldProt + addedProt),
+          carbs: Math.max(0, (curr.carbs || 0) - oldCarbs + addedCarbs),
+          fat: Math.max(0, (curr.fat || 0) - oldFat + addedFat),
           completedHabits: nextHabits
         };
       });
@@ -1762,8 +1788,9 @@ export default function App() {
                       key={section}
                       onClick={() => {
                         logLivaMeal({ ...pendingMealData, mealType: section.toLowerCase() });
-                        setPendingMealData(null);
-                        setToastMessage(`Meal saved in ${section}!`);
+                          setPendingMealData(null);
+                          setIsTextDrawerOpen(false);
+                          setToastMessage(`Meal saved in ${section}!`);
                         setTimeout(() => setToastMessage(null), 3000);
                       }}
                       className="bg-white/95 hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
