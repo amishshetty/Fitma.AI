@@ -1,7 +1,6 @@
 import cron from "node-cron";
-import User from "../models/User.js";
-import MealLog from "../models/Meal.js";
 import { sendPushNotification } from "./pushService.js";
+import { getDatabase } from 'firebase-admin/database';
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -48,21 +47,33 @@ export const startCronJobs = () => {
 
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
+      const startOfDayTimestamp = startOfDay.getTime();
 
+      const db = getDatabase();
+      
       // Find all users who have a push subscription
-      const users = await User.find({ pushSubscription: { $ne: null } });
+      const usersSnapshot = await db.ref('users').once('value');
+      const usersDict = usersSnapshot.val() || {};
+      const users = Object.entries(usersDict)
+        .map(([deviceId, data]) => ({ deviceId, ...data }))
+        .filter(u => u.pushSubscription != null);
 
       for (const user of users) {
         // Check if user has already logged this meal today
-        const hasLogged = await MealLog.exists({
-          userId: user._id,
-          mealType: expectedMeal,
-          loggedAt: { $gte: startOfDay }
-        });
+        const mealsSnapshot = await db.ref(`mealLogs/${user.deviceId}`)
+          .orderByChild('loggedAt')
+          .startAt(startOfDayTimestamp)
+          .once('value');
+          
+        let hasLogged = false;
+        if (mealsSnapshot.exists()) {
+          const meals = Object.values(mealsSnapshot.val());
+          hasLogged = meals.some(m => m.mealType === expectedMeal);
+        }
 
         if (!hasLogged) {
           const message = await generateProactiveMessage("Friend", expectedMeal);
-          console.log(`Sending push to User ${user._id}: ${message}`);
+          console.log(`Sending push to User ${user.deviceId}: ${message}`);
           
           await sendPushNotification(user.pushSubscription, {
             title: "Liva 🌿",

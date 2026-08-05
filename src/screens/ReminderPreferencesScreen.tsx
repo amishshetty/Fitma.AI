@@ -3,7 +3,8 @@ import PrimaryButton from "../components/ui/PrimaryButton";
 import ScreenShell from "./ScreenShell";
 import { ink, green, muted } from "../constants";
 import { Screen } from "../types";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, BellRing } from "lucide-react";
+import { subscribeUserToPush } from "../utils/pushNotifications";
 
 export default function ReminderPreferencesScreen({ onBack }: { onBack: () => void }) {
   const [aiEnabled, setAiEnabled] = useState(true);
@@ -27,6 +28,15 @@ export default function ReminderPreferencesScreen({ onBack }: { onBack: () => vo
     { key: "weekly", label: "Weekly Reports", desc: "Weekly health summaries" },
     { key: "weight", label: "Weight Check-ins", desc: "Goal progression checkups" },
   ] as const;
+
+  const handleEnablePush = async () => {
+    const result = await subscribeUserToPush();
+    if (result.success) {
+      alert("Push notifications enabled successfully!");
+    } else {
+      alert("Could not enable push notifications: " + result.error);
+    }
+  };
 
   return (
     <ScreenShell
@@ -69,6 +79,21 @@ export default function ReminderPreferencesScreen({ onBack }: { onBack: () => vo
             }}
           >
             <span className="w-6 h-6 rounded-full bg-white shadow inline-block" />
+          </button>
+        </div>
+
+        {/* System Push Notifications */}
+        <div className="rounded-[26px] bg-white p-5 border border-slate-100 flex items-center justify-between" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+          <div className="flex-1 pr-4">
+            <span className="text-sm font-bold block" style={{ color: ink }}>System Notifications</span>
+            <span className="text-[11px] block mt-0.5" style={{ color: "#8da396" }}>Receive alerts even when app is closed</span>
+          </div>
+          <button
+            onClick={handleEnablePush}
+            className="flex items-center gap-2 rounded-xl px-4 py-2 bg-[#ecfbf1] text-xs font-bold transition-all hover:opacity-80"
+            style={{ color: green }}
+          >
+            <BellRing size={14} /> Enable
           </button>
         </div>
 

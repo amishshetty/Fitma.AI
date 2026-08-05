@@ -129,6 +129,7 @@ import ReminderMealFlowScreen from "../screens/ReminderMealFlowScreen";
 import ReminderPreferencesScreen from "../screens/ReminderPreferencesScreen";
 import ReminderPreviewScreen from "../screens/ReminderPreviewScreen";
 import ReminderSettingsScreen from "../screens/ReminderSettingsScreen";
+import LivaSmartEngineScreen from "../screens/LivaSmartEngineScreen";
 import ReminderWeeklySummaryScreen from "../screens/ReminderWeeklySummaryScreen";
 import SaveMealScreen from "../screens/SaveMealScreen";
 import SearchFoodScreen from "../screens/SearchFoodScreen";
@@ -1502,10 +1503,12 @@ export default function App() {
       // NOTIFICATIONS & SMART REMINDERS ROUTING SCREENS
       case "reminder-center":
         return <ReminderCenterScreen onBack={() => go("home")} onNavigate={go} />;
-      case "reminder-settings":
-        return <ReminderSettingsScreen onBack={() => go("reminder-center")} onNavigate={go} />;
-      case "reminder-preview":
-        return <ReminderPreviewScreen onBack={() => go("reminder-settings")} onNavigate={go} />;
+        case "reminder-settings":
+          return <ReminderSettingsScreen onBack={() => go("reminder-center")} onNavigate={go} />;
+        case "liva-smart-engine":
+          return <LivaSmartEngineScreen onBack={() => go("reminder-settings")} onNavigate={go} />;
+        case "reminder-preview":
+          return <ReminderPreviewScreen onBack={() => go("reminder-settings")} onNavigate={go} userName={userName} />;
       case "reminder-meal-flow":
         return (
           <ReminderMealFlowScreen

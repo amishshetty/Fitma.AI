@@ -57,3 +57,7 @@ temp-pup/
 scratch/
 .gemini/
 ~$*.doc
+
+backend/firebase-key.json
+
+backend/firebase-key-minified.txt

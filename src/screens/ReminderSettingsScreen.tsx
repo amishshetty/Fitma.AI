@@ -5,6 +5,7 @@ import SecondaryButton from "../components/ui/SecondaryButton";
 import ScreenShell from "./ScreenShell";
 import { ink, green, muted } from "../constants";
 import { Screen } from "../types";
+import { subscribeUserToPush } from "../utils/pushNotifications";
 
 export default function ReminderSettingsScreen({
   onBack,
@@ -35,19 +36,38 @@ export default function ReminderSettingsScreen({
       footer={
         <div className="space-y-3">
           <PrimaryButton onClick={() => onNavigate("reminder-preview")}>Preview Liva Reminders</PrimaryButton>
+          <SecondaryButton onClick={async () => {
+            if ("Notification" in window) {
+              const result = await subscribeUserToPush();
+              if (result.success) {
+                new Notification("Liva AI Connected", {
+                  body: "You are now subscribed to the backend! The AI will push a real notification to you within 60 seconds.",
+                  icon: "/icon.png"
+                });
+              } else {
+                alert("Subscription failed: " + result.error);
+              }
+            }
+          }}>Subscribe to AI Backend</SecondaryButton>
           <SecondaryButton onClick={onBack}>Save Preferences</SecondaryButton>
         </div>
       }
     >
       <div className="space-y-5 pb-8">
         {/* Master AI Toggle Switch */}
-        <div className="rounded-[24px] bg-white p-5 border border-slate-100 flex items-center justify-between" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+        <div className="rounded-[24px] bg-white/60 backdrop-blur-xl p-5 border border-white/60 flex items-center justify-between relative z-10" style={{ boxShadow: "0 8px 32px rgba(16,32,26,0.05)" }}>
           <div>
             <span className="text-sm font-bold block" style={{ color: ink }}>Enable AI Reminders</span>
             <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">Allow Liva to optimize trigger timing</span>
           </div>
           <button
-            onClick={() => setAiEnabled(!aiEnabled)}
+            onClick={async () => {
+              const newVal = !aiEnabled;
+              setAiEnabled(newVal);
+              if (newVal) {
+                await requestFirebaseNotificationPermission();
+              }
+            }}
             className="w-12 h-6.5 rounded-full p-1 transition-all flex items-center justify-start cursor-pointer"
             style={{
               background: aiEnabled ? green : "#e2e8f0",
@@ -61,7 +81,7 @@ export default function ReminderSettingsScreen({
         {aiEnabled && (
           <>
             {/* Reminder Category checkboxes */}
-            <div className="rounded-[26px] bg-white p-5 border border-slate-100 space-y-3" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+            <div className="rounded-[26px] bg-white/60 backdrop-blur-xl p-5 border border-white/60 space-y-3 relative z-10" style={{ boxShadow: "0 8px 32px rgba(16,32,26,0.05)" }}>
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Enabled Categories</h3>
               {[
                 { key: "meals", label: "Meal Reminders", desc: "Adaptive meal timing logs" },
@@ -90,7 +110,7 @@ export default function ReminderSettingsScreen({
             </div>
 
             {/* Frequency selector pill boxes */}
-            <div className="rounded-[24px] bg-white p-5 border border-slate-100" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+            <div className="rounded-[24px] bg-white/60 backdrop-blur-xl p-5 border border-white/60 relative z-10" style={{ boxShadow: "0 8px 32px rgba(16,32,26,0.05)" }}>
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3.5">Reminders Frequency</h3>
               <div className="flex bg-slate-50 p-1 rounded-2xl">
                 {[
@@ -114,7 +134,7 @@ export default function ReminderSettingsScreen({
             </div>
 
             {/* Silent hours setting inputs */}
-            <div className="rounded-[24px] bg-white p-5 border border-slate-100 space-y-3" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+            <div className="rounded-[24px] bg-white/60 backdrop-blur-xl p-5 border border-white/60 space-y-3 relative z-10" style={{ boxShadow: "0 8px 32px rgba(16,32,26,0.05)" }}>
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Quiet Hours</h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
@@ -139,7 +159,7 @@ export default function ReminderSettingsScreen({
             </div>
 
             {/* Travel Mode Toggle */}
-            <div className="rounded-[24px] bg-white p-5 border border-slate-100 flex items-center justify-between" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
+            <div className="rounded-[24px] bg-white/60 backdrop-blur-xl p-5 border border-white/60 flex items-center justify-between relative z-10" style={{ boxShadow: "0 8px 32px rgba(16,32,26,0.05)" }}>
               <div>
                 <span className="text-sm font-bold block" style={{ color: ink }}>Travel Mode</span>
                 <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">Reduces frequency & adjusts time zone sugerences</span>

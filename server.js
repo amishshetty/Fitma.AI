@@ -4,9 +4,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import dotenv from "dotenv";
+import "./backend/services/firebaseAdmin.js";
 import { genAI } from "./backend/services/chatService.js";
 import chatRoutes from "./backend/routes/chatRoutes.js";
 import visionRoutes from "./backend/routes/visionRoutes.js";
+import notificationRoutes from "./backend/routes/notificationRoutes.js";
+import aiReminderEngine from "./backend/services/ai-reminders/scheduler.js";
 
 dotenv.config();
 
@@ -35,6 +38,9 @@ app.use("/api", chatRoutes);
 
 // Vision API Route
 app.use("/api/vision", visionRoutes);
+
+// Notification API Route
+app.use("/api/notifications", notificationRoutes);
 
 // Health Check API
 app.get("/api/health", (req, res) => {
@@ -80,11 +86,14 @@ if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log("");
     console.log("========================================");
-    console.log("💚 Fitma.ai");
-    console.log("🤖 Liva AI Companion");
-    console.log(`🚀 Server Running : ${PORT}`);
-    console.log(`🧠 AI : ${genAI ? "Gemini Connected" : "Mock Mode"}`);
+    console.log("dY's Fitma.ai");
+    console.log("dY - Liva AI Companion");
+    console.log(`dYs? Server Running : ${PORT}`);
+    console.log(`dY  AI : ${genAI ? "Gemini Connected" : "Mock Mode"}`);
     console.log("========================================");
+    
+    // Start the AI Reminder Engine background cron
+    aiReminderEngine.start();
   });
 }
 
