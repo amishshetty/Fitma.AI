@@ -37,7 +37,11 @@ export default function ReminderSettingsScreen({
         <div className="space-y-3">
           <PrimaryButton onClick={() => onNavigate("reminder-preview")}>Preview Liva Reminders</PrimaryButton>
           <SecondaryButton onClick={async () => {
-            if ("Notification" in window) {
+            try {
+              if (!("Notification" in window)) {
+                alert("Push Notifications are not supported on this device/browser. Please make sure you have added this app to your Home Screen on iOS 16.4+.");
+                return;
+              }
               const result = await subscribeUserToPush();
               if (result.success) {
                 new Notification("Liva AI Connected", {
@@ -47,6 +51,8 @@ export default function ReminderSettingsScreen({
               } else {
                 alert("Subscription failed: " + result.error);
               }
+            } catch (err: any) {
+              alert("Error pressing button: " + err.message);
             }
           }}>Subscribe to AI Backend</SecondaryButton>
           <SecondaryButton onClick={onBack}>Save Preferences</SecondaryButton>
