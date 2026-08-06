@@ -56,10 +56,18 @@ router.post("/subscribe", async (req, res) => {
     
     // Race the DB update against the timeout
     await Promise.race([
-      db.ref(`users/${deviceId}`).update({
-        pushSubscription: subscription,
-        updatedAt: ServerValue.TIMESTAMP
-      }),
+      (async () => {
+        const userRef = db.ref(`users/${deviceId}`);
+        const snapshot = await userRef.child('createdAt').once('value');
+        const updatePayload = {
+          pushSubscription: subscription,
+          updatedAt: ServerValue.TIMESTAMP
+        };
+        if (!snapshot.exists()) {
+          updatePayload.createdAt = ServerValue.TIMESTAMP;
+        }
+        return userRef.update(updatePayload);
+      })(),
       timeout
     ]);
     

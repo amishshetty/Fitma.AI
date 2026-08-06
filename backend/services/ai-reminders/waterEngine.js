@@ -1,61 +1,55 @@
 class WaterEngine {
-  calculateInterval(goal, consumed, remainingAwakeHours) {
-    if (remainingAwakeHours <= 0) return null; // Time to sleep
+  evaluateUser(profile, todayLogs, user) {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMin = now.getMinutes();
     
-    const remainingWater = goal - consumed;
+    const createdAt = user?.createdAt || Date.now();
+    const daysSinceCreated = (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
+
+    // Only send water reminders between 9 AM and 9 PM
+    if (currentHour < 9 || currentHour >= 21) {
+      return null;
+    }
+
+    const goal = 2500; // default goal
     
-    if (remainingWater <= 0) {
+    // We check either waterObj (new format) or water (old format number, for backward compatibility)
+    let consumed = 0;
+    let lastLogTime = new Date();
+    lastLogTime.setHours(9, 0, 0, 0); // Default to 9:00 AM today if no logs
+    
+    if (todayLogs.waterObj) {
+      consumed = todayLogs.waterObj.total || 0;
+      if (todayLogs.waterObj.lastUpdate) {
+        lastLogTime = new Date(todayLogs.waterObj.lastUpdate);
+      }
+    } else if (typeof todayLogs.water === 'number') {
+      consumed = todayLogs.water;
+    }
+
+    if (consumed >= goal) {
       console.log('[Water Engine] Goal met, skipping reminders');
       return null;
     }
 
-    // Remaining Water / Remaining Awake Hours = ml per hour
-    const mlPerHour = Math.round(remainingWater / remainingAwakeHours);
+    const diffMins = (now - lastLogTime) / (1000 * 60);
     
-    // We want to remind roughly every 1.5 - 2 hours, so let's set a standard volume threshold, e.g. 250ml per glass.
-    // If they need 500ml/hr, we should remind them more frequently.
-    // Let's return the interval in minutes based on how much they need per hour.
-    // Standard glass: 250ml
-    const glassesNeededPerHour = mlPerHour / 250;
+    // Check if it's been a multiple of 3 hours (180 mins) since the last log
+    // Since cron runs every 15 minutes, we look for the remainder being within a 15-min window
+    const intervalsOf3Hours = Math.floor(diffMins / 180);
+    const remainder = diffMins % 180;
     
-    let intervalMins = 120; // Default 2 hours
-    if (glassesNeededPerHour > 1.5) intervalMins = 60; // Needs a lot, remind every hour
-    if (glassesNeededPerHour > 2.5) intervalMins = 45; // Needs tons, remind every 45 mins
-    if (glassesNeededPerHour < 0.5) intervalMins = 180; // Doesn't need much, remind every 3 hours
-
-    return intervalMins;
-  }
-
-  evaluateUser(profile, todayLogs) {
-    // Determine awake hours remaining based on profile.averageSleepSchedule
-    const now = new Date();
-    const currentHour = now.getHours();
-    
-    // Parse sleep time, assume format "23:00"
-    const sleepHour = parseInt(profile.averageSleepSchedule.sleepTime.split(':')[0]);
-    
-    let awakeHours = sleepHour - currentHour;
-    if (awakeHours < 0) awakeHours += 24; // if they sleep past midnight
-    
-    if (awakeHours <= 1) {
-       // Near bedtime, decrease frequency / stop
-       return null;
+    if (intervalsOf3Hours >= 1 && remainder >= 0 && remainder < 15) {
+      return {
+        category: 'WATER',
+        priority: 'MEDIUM',
+        message: `It's been 3 hours since your last water log! You've drank ${(consumed/1000).toFixed(1)}L out of ${(goal/1000).toFixed(1)}L today. Stay hydrated!`,
+        reminderNumber: intervalsOf3Hours
+      };
     }
-
-    // Mock logs (in real app, fetch from DB)
-    const goal = 3000;
-    const consumed = todayLogs.water || 0; 
     
-    const intervalMins = this.calculateInterval(goal, consumed, awakeHours);
-    
-    if (!intervalMins) return null;
-
-    return {
-      category: 'WATER',
-      priority: 'MEDIUM',
-      message: `You have ${(goal - consumed)/1000}L left today. One glass now keeps you on track.`,
-      intervalMins
-    };
+    return null;
   }
 }
 

@@ -7,12 +7,37 @@ import { Screen } from "../types";
 
 export default function SaveMealScreen({ onBack, onSave }: { onBack: () => void; onSave: () => void }) {
   const [mealType, setMealType] = useState("Lunch");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const deviceId = localStorage.getItem("fitma_device_id") || "unknown-device";
+      await fetch("/api/logs/meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deviceId,
+          mealType: mealType.toLowerCase(),
+          calories: 610,
+          protein: 22,
+          carbs: 115,
+          fat: 8
+        })
+      });
+    } catch (e) {
+      console.error("Failed to log meal to backend", e);
+    }
+    setIsSaving(false);
+    onSave();
+  };
+
   return (
     <ScreenShell
       title="Save Meal"
       subtitle="One last check before your dashboard updates."
       onBack={onBack}
-      footer={<PrimaryButton onClick={onSave}>Save Meal</PrimaryButton>}
+      footer={<PrimaryButton onClick={handleSave}>{isSaving ? "Saving..." : "Save Meal"}</PrimaryButton>}
     >
       <div className="space-y-5">
         <div className="rounded-[28px] bg-white p-5" style={{ boxShadow: "0 8px 26px rgba(16,32,26,0.07)" }}>

@@ -9,6 +9,7 @@ import { genAI } from "./backend/services/chatService.js";
 import chatRoutes from "./backend/routes/chatRoutes.js";
 import visionRoutes from "./backend/routes/visionRoutes.js";
 import notificationRoutes from "./backend/routes/notificationRoutes.js";
+import logRoutes from "./backend/routes/logRoutes.js";
 import aiReminderEngine from "./backend/services/ai-reminders/scheduler.js";
 
 dotenv.config();
@@ -41,6 +42,9 @@ app.use("/api/vision", visionRoutes);
 
 // Notification API Route
 app.use("/api/notifications", notificationRoutes);
+
+// User Logging API Route
+app.use("/api/logs", logRoutes);
 
 // Health Check API
 app.get("/api/health", (req, res) => {

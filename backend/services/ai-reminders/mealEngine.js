@@ -1,10 +1,15 @@
 class MealEngine {
-  evaluateUser(profile, todayLogs, lastNotificationTime) {
+  evaluateUser(profile, todayLogs, user) {
     const now = new Date();
-    const currentHourMinute = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-    
-    // Check if we are near a predicted meal time
-    const mealTimes = profile.averageMealTimes; // { breakfast: "08:00", lunch: "13:00", ... }
+    const createdAt = user?.createdAt || Date.now();
+    const daysSinceCreated = (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
+
+    let mealTimes = {};
+    if (daysSinceCreated < 7) {
+      mealTimes = { breakfast: "09:00", lunch: "13:00", dinner: "19:30" };
+    } else {
+      mealTimes = profile.averageMealTimes || { breakfast: "09:00", lunch: "13:00", dinner: "19:30" };
+    }
     
     // We will check if current time is roughly +20 mins or +60 mins from predicted meal time
     let activeMeal = null;
@@ -21,9 +26,8 @@ class MealEngine {
        
        // PRD Logic:
        // Wait 20 mins -> Reminder 1
-       // Wait 40 mins more (so 60 mins total) -> Reminder 2
-       // Wait 60 mins more (so 120 mins total) -> Suggest healthy meal / Reminder 3
-       
+       // Wait 60 mins -> Reminder 2
+       // Wait 120 mins -> Reminder 3
        if (diffMins > 0 && diffMins <= 120) {
           activeMeal = mealName;
           expectedTime = mealTimeDate;
@@ -34,7 +38,8 @@ class MealEngine {
     if (!activeMeal) return null; // Not currently around any meal time
     
     // Check if user logged the active meal today
-    if (todayLogs.meals && todayLogs.meals.includes(activeMeal)) {
+    const hasLoggedMeal = (todayLogs.meals || []).some(m => m.type && m.type.toLowerCase() === activeMeal.toLowerCase());
+    if (hasLoggedMeal) {
       console.log(`[Meal Engine] User already logged ${activeMeal}. Stopping reminders.`);
       return null;
     }
@@ -43,7 +48,6 @@ class MealEngine {
     const diffMins = (now - expectedTime) / (1000 * 60);
     
     if (diffMins >= 20 && diffMins < 60) {
-      // First reminder window (20 mins passed)
       return {
         category: 'MEAL',
         priority: 'HIGH',
@@ -51,7 +55,6 @@ class MealEngine {
         reminderNumber: 1
       };
     } else if (diffMins >= 60 && diffMins < 120) {
-      // Second reminder window (60 mins passed)
       return {
         category: 'MEAL',
         priority: 'HIGH',
@@ -59,7 +62,6 @@ class MealEngine {
         reminderNumber: 2
       };
     } else if (diffMins >= 120 && diffMins < 180) {
-      // Third reminder window
       return {
         category: 'MEAL',
         priority: 'CRITICAL',

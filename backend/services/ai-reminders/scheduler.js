@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import mealEngine from './mealEngine.js';
 import waterEngine from './waterEngine.js';
+import calorieEngine from './calorieEngine.js';
 import priorityManager from './priorityManager.js';
 import notificationSender from './notificationSender.js';
 import { getDatabase } from 'firebase-admin/database';
@@ -90,17 +91,26 @@ class AIReminderEngine {
     // Evaluate engines
     const pendingNotifications = [];
     
-    // Mock user logs for today
-    const mockLogs = {
-      meals: [], // user has not logged any meal today
-      water: 500 // user logged 500ml water
+    // Fetch real user logs for today
+    const db = getDatabase();
+    const today = new Date().toISOString().split('T')[0];
+    const logsSnapshot = await db.ref(`userLogs/${profile.userId}/${today}`).once('value');
+    const todayLogs = logsSnapshot.val() || { meals: {}, water: 0 };
+
+    // Format meals into an array for easier parsing by the engines
+    const formattedLogs = {
+      meals: todayLogs.meals ? Object.values(todayLogs.meals) : [],
+      water: todayLogs.water || 0
     };
 
-    const mealNotif = mealEngine.evaluateUser(profile, mockLogs, null);
+    const mealNotif = mealEngine.evaluateUser(profile, formattedLogs, user);
     if (mealNotif) pendingNotifications.push(mealNotif);
 
-    const waterNotif = waterEngine.evaluateUser(profile, mockLogs);
+    const waterNotif = waterEngine.evaluateUser(profile, formattedLogs, user);
     if (waterNotif) pendingNotifications.push(waterNotif);
+    
+    const calorieNotif = calorieEngine.evaluateUser(profile, formattedLogs, user);
+    if (calorieNotif) pendingNotifications.push(calorieNotif);
 
     if (pendingNotifications.length === 0) return;
 

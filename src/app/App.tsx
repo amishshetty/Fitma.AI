@@ -366,6 +366,8 @@ export default function App() {
       
       const existingMealIndex = prevMeals.findIndex(m => {
         if (m.mealType !== mealType) return false;
+        if (mealType === "snack") return false; // Allow multiple snacks per day
+        
         let mDateStr = "";
         try {
           mDateStr = new Date(parseInt(m.id)).toDateString();
@@ -514,6 +516,13 @@ export default function App() {
 
     const amountML = Number(waterData.amountML) || Number(waterData.amount) || Number(waterData.ml) || 0;
     if (amountML <= 0) return;
+
+    const deviceId = localStorage.getItem("fitma_device_id") || "unknown-device";
+    fetch("/api/logs/water", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceId, amountMl: amountML })
+    }).catch(e => console.error("Failed to log water to backend", e));
 
     syncDailyData(todayStr, (curr: any) => {
        const nextWater = (curr.water || 0) + amountML;
