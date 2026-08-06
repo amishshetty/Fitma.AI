@@ -32,6 +32,14 @@ export async function subscribeUserToPush() {
       return outputArray;
     };
 
+    // Unsubscribe from any old subscriptions first to avoid InvalidStateError 
+    // when the VAPID key changes or a previous dummy key was used.
+    const existingSubscription = await registration.pushManager.getSubscription();
+    if (existingSubscription) {
+      console.log("Found existing subscription, unsubscribing...");
+      await existingSubscription.unsubscribe();
+    }
+
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
