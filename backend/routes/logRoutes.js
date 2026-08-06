@@ -17,39 +17,42 @@ router.post("/meal", async (req, res) => {
     const today = new Date().toISOString().split('T')[0];
     const mealsRef = db.ref(`userLogs/${deviceId}/${today}/meals`);
     
-    let existingKey = null;
-    if (mealType !== 'snack') {
-      const snapshot = await mealsRef.once('value');
-      if (snapshot.exists()) {
-        snapshot.forEach(child => {
-          if (child.val().type === mealType) {
-            existingKey = child.key;
-          }
-        });
-      }
-    }
-    
-    const logRef = existingKey ? mealsRef.child(existingKey) : mealsRef.push();
-    
-    // Also race this to avoid hanging if DB is unresponsive
     const timeout = new Promise((_, reject) => 
       setTimeout(() => reject(new Error("Firebase database update timed out")), 5000)
     );
-    
-    await Promise.race([
-      logRef.set({
-        type: mealType,
-        notes: notes || "",
-        calories: calories || 0,
-        protein: protein || 0,
-        carbs: carbs || 0,
-        fat: fat || 0,
-        timestamp: ServerValue.TIMESTAMP
-      }),
-      timeout
-    ]);
 
-    res.status(201).json({ message: "Meal logged successfully", logId: logRef.key });
+    await Promise.race([
+      (async () => {
+        let existingKey = null;
+        if (mealType !== 'snack') {
+          const snapshot = await mealsRef.once('value');
+          if (snapshot.exists()) {
+            snapshot.forEach(child => {
+              if (child.val().type === mealType) {
+                existingKey = child.key;
+              }
+            });
+          }
+        }
+        
+        const logRef = existingKey ? mealsRef.child(existingKey) : mealsRef.push();
+        
+        await logRef.set({
+          type: mealType,
+          notes: notes || "",
+          calories: calories || 0,
+          protein: protein || 0,
+          carbs: carbs || 0,
+          fat: fat || 0,
+          timestamp: ServerValue.TIMESTAMP
+        });
+        
+        return logRef.key;
+      })(),
+      timeout
+    ]).then(key => {
+      res.status(201).json({ message: "Meal logged successfully", logId: key });
+    });
   } catch (error) {
     console.error("Error logging meal:", error);
     res.status(500).json({ error: "Failed to log meal: " + error.message });
