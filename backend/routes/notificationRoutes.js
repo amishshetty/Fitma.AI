@@ -31,14 +31,25 @@ router.post("/subscribe", async (req, res) => {
 
   try {
     const db = getDatabase();
-    await db.ref(`users/${deviceId}`).update({
-      pushSubscription: subscription,
-      updatedAt: ServerValue.TIMESTAMP
-    });
+    
+    // Create a 5 second timeout promise
+    const timeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Firebase database update timed out after 5 seconds")), 5000)
+    );
+    
+    // Race the DB update against the timeout
+    await Promise.race([
+      db.ref(`users/${deviceId}`).update({
+        pushSubscription: subscription,
+        updatedAt: ServerValue.TIMESTAMP
+      }),
+      timeout
+    ]);
+    
     res.status(201).json({ message: "Subscription saved successfully" });
   } catch (error) {
     console.error("Error saving Push Subscription:", error);
-    res.status(500).json({ error: "Failed to save Push Subscription" });
+    res.status(500).json({ error: "Failed to save Push Subscription: " + error.message });
   }
 });
 
