@@ -44,7 +44,8 @@ export default function ReminderSettingsScreen({
               }
               const result = await subscribeUserToPush();
               if (result.success) {
-                new Notification("Liva AI Connected", {
+                const reg = await navigator.serviceWorker.ready;
+                reg.showNotification("Liva AI Connected", {
                   body: "You are now subscribed to the backend! The AI will push a real notification to you within 60 seconds.",
                   icon: "/icon.png"
                 });
