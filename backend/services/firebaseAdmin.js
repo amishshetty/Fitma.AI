@@ -31,12 +31,12 @@ try {
     if (serviceAccount) {
       initializeApp({
         credential: cert(serviceAccount),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.asia-southeast1.firebasedatabase.app'
+        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
       });
       console.log('[Firebase Admin] Initialized successfully with service account.');
     } else {
       initializeApp({
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.asia-southeast1.firebasedatabase.app'
+        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
       });
       console.log('[Firebase Admin] Initialized with application default credentials (or local mock).');
     }
