@@ -42,7 +42,14 @@ try {
     }
   }
 } catch (error) {
-  console.warn('[Firebase Admin] Failed to initialize (mock mode active):', error.message);
+  console.warn('[Firebase Admin] Failed to initialize, falling back to mock mode:', error.message);
+  try {
+    if (!getApps().length) {
+      initializeApp({
+        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
+      });
+    }
+  } catch(e) {}
 }
 
 export default {};
