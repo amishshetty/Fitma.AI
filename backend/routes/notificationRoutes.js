@@ -13,17 +13,34 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// Initialize Web Push with VAPID keys
-webpush.setVapidDetails(
-  "mailto:support@fitma.ai",
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
+try {
+  webpush.setVapidDetails(
+    "mailto:support@fitma.ai",
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+} catch (e) {
+  console.warn("WebPush missing VAPID keys, push notifications will fail:", e.message);
+}
+
+router.post("/test-timeout", async (req, res) => {
+  try {
+    await Promise.race([
+      new Promise(resolve => setTimeout(resolve, 10000)),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2000))
+    ]);
+    res.json({ status: "success" });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 // @route POST /api/notifications/subscribe
 // @desc Subscribe a user to push notifications
 router.post("/subscribe", async (req, res) => {
+  console.log("HIT /subscribe route", req.body);
   const { subscription, deviceId } = req.body;
+
 
   if (!subscription || !deviceId) {
     return res.status(400).json({ error: "Missing subscription or deviceId" });
