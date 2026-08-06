@@ -38,6 +38,29 @@ export default function ProgressDashboardScreen({
   }, [completedHabits]);
 
   const [activeChartTab, setActiveChartTab] = useState('Today');
+  const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
+  const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
+    };
+  }, []);
+
+  const handleBarTap = (index: number) => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+    
+    if (activeTooltipIndex === index) {
+      setActiveTooltipIndex(null);
+    } else {
+      setActiveTooltipIndex(index);
+      tooltipTimeoutRef.current = setTimeout(() => {
+        setActiveTooltipIndex(null);
+      }, 4000);
+    }
+  };
 
   const chartData = useMemo(() => {
     const data = [];
@@ -248,7 +271,11 @@ export default function ProgressDashboardScreen({
                 const barHeight = Math.min((data.kcal / chartData.maxKcal) * 100, 100);
 
                 return (
-                  <div key={i} className="flex flex-col items-center h-full justify-end relative w-4 group">
+                  <div 
+                    key={i} 
+                    className="flex flex-col items-center h-full justify-end relative w-4 group"
+                    onClick={() => handleBarTap(i)}
+                  >
                     {data.kcal > 0 && (
                       <div className="w-full rounded-t-[4px] overflow-hidden flex flex-col justify-start absolute bottom-0 cursor-pointer" style={{ height: `${barHeight}%` }}>
                         <div className="w-full bg-[#10b981] hover:brightness-110 transition-all" style={{ height: `${fPct}%` }} />
@@ -259,7 +286,7 @@ export default function ProgressDashboardScreen({
                     
                     {/* Hover Tooltip */}
                     {data.kcal > 0 && (
-                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xl border border-slate-100 text-slate-800 p-3 rounded-[16px] opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 w-[110px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] scale-95 group-hover:scale-100 origin-bottom">
+                      <div className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xl border border-slate-100 text-slate-800 p-3 rounded-[16px] transition-all duration-200 pointer-events-none z-50 w-[110px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] origin-bottom ${activeTooltipIndex === i ? 'opacity-100 scale-100' : 'opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100'}`}>
                         <div className="font-extrabold text-[13px] mb-2 text-center text-slate-800 border-b border-slate-100 pb-2">{data.kcal} <span className="text-[10px] font-bold text-slate-400">kcal</span></div>
                         <div className="flex justify-between items-center text-[11px] mb-1.5">
                           <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#0ea5e9]"></div><span className="text-slate-500 font-bold">Protein</span></div>

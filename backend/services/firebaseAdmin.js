@@ -13,13 +13,18 @@ try {
     let serviceAccount;
     
     if (serviceAccountKey) {
-      // Check if it's a file path or a JSON string
+      // Check if it's a JSON string
       if (serviceAccountKey.trim().startsWith('{')) {
-        // It's a JSON string (Vercel)
         serviceAccount = JSON.parse(serviceAccountKey);
-      } else if (fs.existsSync(path.resolve(serviceAccountKey))) {
-        // It's a file path (Local)
+      } 
+      // Check if it's a file path
+      else if (fs.existsSync(path.resolve(serviceAccountKey))) {
         serviceAccount = JSON.parse(fs.readFileSync(path.resolve(serviceAccountKey), 'utf8'));
+      }
+      // Otherwise, assume it's a Base64 encoded string
+      else {
+        const decodedString = Buffer.from(serviceAccountKey, 'base64').toString('utf8');
+        serviceAccount = JSON.parse(decodedString);
       }
     }
 
