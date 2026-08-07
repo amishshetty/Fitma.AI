@@ -22,8 +22,17 @@ class NotificationSender {
     // Dispatch via Web Push
     try {
       if (subscription) {
+        let niceTitle = 'Message from Liva';
+        if (notificationPayload.category === 'WATER') {
+          niceTitle = 'Hydration Reminder 💧';
+        } else if (notificationPayload.category === 'MEAL') {
+          niceTitle = 'Meal Reminder 🍽️';
+        } else if (notificationPayload.category === 'CALORIE') {
+          niceTitle = 'Nutrition Update 🥗';
+        }
+        
         const payload = JSON.stringify({
-          title: notificationPayload.title || `Fitma.ai ${notificationPayload.category} Alert`,
+          title: notificationPayload.title || niceTitle,
           body: notificationPayload.message,
           icon: '/icon.png',
           url: '/',
