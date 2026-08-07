@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import mealRecommendationImg from "@/assets/meal_recommendation.jpg";
-import recipeHeroImg from "@/assets/recipe_hero.jpg";
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import mealRecommendationImg from '@/assets/meal_recommendation.jpg';
+import recipeHeroImg from '@/assets/recipe_hero.jpg';
 import {
   Activity,
   Apple,
@@ -51,10 +51,10 @@ import {
   Sun,
   Moon,
   Coffee,
-  X
-} from "lucide-react";
+  X,
+} from 'lucide-react';
 
-import { auth, db } from "./firebase";
+import { auth, db } from './firebase';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -64,86 +64,89 @@ import {
   GoogleAuthProvider,
   OAuthProvider,
   signInWithCredential,
-  signInWithPopup
-} from "firebase/auth";
+  signInWithPopup,
+} from 'firebase/auth';
+import { ref, get, set, update } from 'firebase/database';
+import FloatingLiva from '../components/layout/FloatingLiva';
+import LivaSiriOverlay from '../components/layout/LivaSiriOverlay';
+import PhoneFrame from '../components/layout/PhoneFrame';
+import TextLoggingDrawer from '../components/TextLoggingDrawer';
+import AIProcessingScreen from '../screens/AIProcessingScreen';
+import CameraAIProcessingScreen from '../screens/CameraAIProcessingScreen';
+import CameraLoggingScreen from '../screens/CameraLoggingScreen';
+import CameraMealSelectionScreen from '../screens/CameraMealSelectionScreen';
+import GoalsScreen from '../screens/GoalsScreen';
+import BodyMetricsScreen from '../screens/BodyMetricsScreen';
+import HomeScreen from '../screens/HomeScreen';
+import LivaChatScreen from '../screens/LivaChatScreen';
+import LivaHomeScreen from '../screens/LivaHomeScreen';
+import LivaRecipeDetailScreen from '../screens/LivaRecipeDetailScreen';
+import LivaRecipeSwiperScreen from '../screens/LivaRecipeSwiperScreen';
+import LivaRecommendationsScreen from '../screens/LivaRecommendationsScreen';
+import LivaResponseScreen from '../screens/LivaResponseScreen';
+import LivaThinkingScreen from '../screens/LivaThinkingScreen';
+import LivaVoiceScreen from '../screens/LivaVoiceScreen';
+import LivaWaterScreen from '../screens/LivaWaterScreen';
+import LivaWeeklyCoachScreen from '../screens/LivaWeeklyCoachScreen';
+import LoginScreen from '../screens/LoginScreen';
+import MealConfirmationScreen from '../screens/MealConfirmationScreen';
+import MealSuccessScreen from '../screens/MealSuccessScreen';
+import MeetLivaScreen from '../screens/MeetLivaScreen';
+import MyPlanScreen from '../screens/MyPlanScreen';
+import NutritionBreakdownScreen from '../screens/NutritionBreakdownScreen';
+import OnboardingSuccessScreen from '../screens/OnboardingSuccessScreen';
+import PermissionsScreen from '../screens/PermissionsScreen';
+import PortionSelectionScreen from '../screens/PortionSelectionScreen';
+import ProfileDevicesScreen from '../screens/ProfileDevicesScreen';
+import ProfileGoalsScreen from '../screens/ProfileGoalsScreen';
+import ProfileHealthScreen from '../screens/ProfileHealthScreen';
+import ProfileHelpScreen from '../screens/ProfileHelpScreen';
+import ProfileHomeScreen from '../screens/ProfileHomeScreen';
+import ProfileLivaScreen from '../screens/ProfileLivaScreen';
+import ProfilePersonalScreen from '../screens/ProfilePersonalScreen';
+import ProfilePremiumScreen from '../screens/ProfilePremiumScreen';
+import ProfilePrivacyScreen from '../screens/ProfilePrivacyScreen';
+import ProfileSettingsScreen from '../screens/ProfileSettingsScreen';
+import ProgressAchievementsScreen from '../screens/ProgressAchievementsScreen';
+import ProgressDashboardScreen from '../screens/ProgressDashboardScreen';
+import ProgressGoalsScreen from '../screens/ProgressGoalsScreen';
+import ProgressHabitsScreen from '../screens/ProgressHabitsScreen';
+import ProgressInsightsScreen from '../screens/ProgressInsightsScreen';
+import ProgressMonthlyScreen from '../screens/ProgressMonthlyScreen';
+import ProgressNutritionScreen from '../screens/ProgressNutritionScreen';
+import ProgressWeeklyScreen from '../screens/ProgressWeeklyScreen';
+import ProgressWeightScreen from '../screens/ProgressWeightScreen';
+import QuickLogScreen from '../screens/QuickLogScreen';
+import ReminderCelebrationScreen from '../screens/ReminderCelebrationScreen';
+import ReminderCenterScreen from '../screens/ReminderCenterScreen';
+import ReminderHydrationScreen from '../screens/ReminderHydrationScreen';
+import ReminderMealFlowScreen from '../screens/ReminderMealFlowScreen';
+import ReminderPreferencesScreen from '../screens/ReminderPreferencesScreen';
+import ReminderPreviewScreen from '../screens/ReminderPreviewScreen';
+import ReminderSettingsScreen from '../screens/ReminderSettingsScreen';
+import LivaSmartEngineScreen from '../screens/LivaSmartEngineScreen';
+import ReminderWeeklySummaryScreen from '../screens/ReminderWeeklySummaryScreen';
+import SaveMealScreen from '../screens/SaveMealScreen';
+import SearchFoodScreen from '../screens/SearchFoodScreen';
+import SplashScreen from '../screens/SplashScreen';
+import TextLoggingScreen from '../screens/TextLoggingScreen';
+import UserSettingsScreen from '../screens/UserSettingsScreen';
+import VoiceLoggingScreen from '../screens/VoiceLoggingScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
+import { getDeviceId } from '../utils/deviceInfo';
+import { requestPushPermission } from '../utils/pushManager';
 import {
-  ref,
-  get,
-  set,
-  update
-} from "firebase/database";
-import FloatingLiva from "../components/layout/FloatingLiva";
-import LivaSiriOverlay from "../components/layout/LivaSiriOverlay";
-import PhoneFrame from "../components/layout/PhoneFrame";
-import TextLoggingDrawer from "../components/TextLoggingDrawer";
-import AIProcessingScreen from "../screens/AIProcessingScreen";
-import CameraAIProcessingScreen from "../screens/CameraAIProcessingScreen";
-import CameraLoggingScreen from "../screens/CameraLoggingScreen";
-import CameraMealSelectionScreen from "../screens/CameraMealSelectionScreen";
-import GoalsScreen from "../screens/GoalsScreen";
-import BodyMetricsScreen from "../screens/BodyMetricsScreen";
-import HomeScreen from "../screens/HomeScreen";
-import LivaChatScreen from "../screens/LivaChatScreen";
-import LivaHomeScreen from "../screens/LivaHomeScreen";
-import LivaRecipeDetailScreen from "../screens/LivaRecipeDetailScreen";
-import LivaRecipeSwiperScreen from "../screens/LivaRecipeSwiperScreen";
-import LivaRecommendationsScreen from "../screens/LivaRecommendationsScreen";
-import LivaResponseScreen from "../screens/LivaResponseScreen";
-import LivaThinkingScreen from "../screens/LivaThinkingScreen";
-import LivaVoiceScreen from "../screens/LivaVoiceScreen";
-import LivaWaterScreen from "../screens/LivaWaterScreen";
-import LivaWeeklyCoachScreen from "../screens/LivaWeeklyCoachScreen";
-import LoginScreen from "../screens/LoginScreen";
-import MealConfirmationScreen from "../screens/MealConfirmationScreen";
-import MealSuccessScreen from "../screens/MealSuccessScreen";
-import MeetLivaScreen from "../screens/MeetLivaScreen";
-import MyPlanScreen from "../screens/MyPlanScreen";
-import NutritionBreakdownScreen from "../screens/NutritionBreakdownScreen";
-import OnboardingSuccessScreen from "../screens/OnboardingSuccessScreen";
-import PermissionsScreen from "../screens/PermissionsScreen";
-import PortionSelectionScreen from "../screens/PortionSelectionScreen";
-import ProfileDevicesScreen from "../screens/ProfileDevicesScreen";
-import ProfileGoalsScreen from "../screens/ProfileGoalsScreen";
-import ProfileHealthScreen from "../screens/ProfileHealthScreen";
-import ProfileHelpScreen from "../screens/ProfileHelpScreen";
-import ProfileHomeScreen from "../screens/ProfileHomeScreen";
-import ProfileLivaScreen from "../screens/ProfileLivaScreen";
-import ProfilePersonalScreen from "../screens/ProfilePersonalScreen";
-import ProfilePremiumScreen from "../screens/ProfilePremiumScreen";
-import ProfilePrivacyScreen from "../screens/ProfilePrivacyScreen";
-import ProfileSettingsScreen from "../screens/ProfileSettingsScreen";
-import ProgressAchievementsScreen from "../screens/ProgressAchievementsScreen";
-import ProgressDashboardScreen from "../screens/ProgressDashboardScreen";
-import ProgressGoalsScreen from "../screens/ProgressGoalsScreen";
-import ProgressHabitsScreen from "../screens/ProgressHabitsScreen";
-import ProgressInsightsScreen from "../screens/ProgressInsightsScreen";
-import ProgressMonthlyScreen from "../screens/ProgressMonthlyScreen";
-import ProgressNutritionScreen from "../screens/ProgressNutritionScreen";
-import ProgressWeeklyScreen from "../screens/ProgressWeeklyScreen";
-import ProgressWeightScreen from "../screens/ProgressWeightScreen";
-import QuickLogScreen from "../screens/QuickLogScreen";
-import ReminderCelebrationScreen from "../screens/ReminderCelebrationScreen";
-import ReminderCenterScreen from "../screens/ReminderCenterScreen";
-import ReminderHydrationScreen from "../screens/ReminderHydrationScreen";
-import ReminderMealFlowScreen from "../screens/ReminderMealFlowScreen";
-import ReminderPreferencesScreen from "../screens/ReminderPreferencesScreen";
-import ReminderPreviewScreen from "../screens/ReminderPreviewScreen";
-import ReminderSettingsScreen from "../screens/ReminderSettingsScreen";
-import LivaSmartEngineScreen from "../screens/LivaSmartEngineScreen";
-import ReminderWeeklySummaryScreen from "../screens/ReminderWeeklySummaryScreen";
-import SaveMealScreen from "../screens/SaveMealScreen";
-import SearchFoodScreen from "../screens/SearchFoodScreen";
-import SplashScreen from "../screens/SplashScreen";
-import TextLoggingScreen from "../screens/TextLoggingScreen";
-import UserSettingsScreen from "../screens/UserSettingsScreen";
-import VoiceLoggingScreen from "../screens/VoiceLoggingScreen";
-import WelcomeScreen from "../screens/WelcomeScreen";
-import { getDeviceId } from "../utils/deviceInfo";
-import { requestPushPermission } from "../utils/pushManager";
-import { ink, green, muted, softGreen, mealItems, rotatingFacts, screenVariants } from "../constants";
-import { Screen, EntryMode } from "../types";
-import { screens } from "../constants";
-import { GoalConfig, MemoryItem, LoggedMeal } from "../types";
+  ink,
+  green,
+  muted,
+  softGreen,
+  mealItems,
+  rotatingFacts,
+  screenVariants,
+} from '../constants';
+import { Screen, EntryMode } from '../types';
+import { screens } from '../constants';
+import { GoalConfig, MemoryItem, LoggedMeal } from '../types';
 
 // ==========================================
 // PROGRESS & INSIGHTS MODULE SCREENS
@@ -156,8 +159,8 @@ import { GoalConfig, MemoryItem, LoggedMeal } from "../types";
 // ==========================================
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("splash");
-  const [entryMode, setEntryMode] = useState<EntryMode>("voice");
+  const [screen, setScreen] = useState<Screen>('splash');
+  const [entryMode, setEntryMode] = useState<EntryMode>('voice');
   const [chatInitialMsg, setChatInitialMsg] = useState<string | undefined>();
   const [chatInitialResponse, setChatInitialResponse] = useState<any>(null);
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
@@ -165,20 +168,23 @@ export default function App() {
   const [isTextDrawerOpen, setIsTextDrawerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [pendingMealData, setPendingMealData] = useState<any>(null);
-  const [capturedImageBase64, setCapturedImageBase64] = useState<string | null>(null);
-  const [processingTargetMeal, setProcessingTargetMeal] = useState<string>("unknown");
+  const [capturedImageBase64, setCapturedImageBase64] = useState<string | null>(
+    null
+  );
+  const [processingTargetMeal, setProcessingTargetMeal] =
+    useState<string>('unknown');
   // SIRI OVERLAY STATE
   const [livaSiriActive, setLivaSiriActive] = useState(false);
-  const [siriText, setSiriText] = useState("Listening...");
+  const [siriText, setSiriText] = useState('Listening...');
   const [showHeyLivaTip, setShowHeyLivaTip] = useState(false);
   const wakeWordRecRef = useRef<any>(null);
   const activeSiriRecRef = useRef<any>(null);
 
   const showFloatingLiva =
-    screen === "home" ||
-    screen === "quick-log" ||
-    screen === "progress-dashboard" ||
-    screen === "profile-home";
+    screen === 'home' ||
+    screen === 'quick-log' ||
+    screen === 'progress-dashboard' ||
+    screen === 'profile-home';
 
   useEffect(() => {
     if (!showFloatingLiva) {
@@ -210,54 +216,79 @@ export default function App() {
 
   // AUTH PERSISTENCE STATES
   const [dbError, setDbError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("fitma_token"));
-  const [loginInitialView, setLoginInitialView] = useState<"signin" | "signup" | "forgot" | "reset" | "verify" | "profile-complete">("signin");
-  const [loginInitialResetToken, setLoginInitialResetToken] = useState("");
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem('fitma_token')
+  );
+  const [loginInitialView, setLoginInitialView] = useState<
+    'signin' | 'signup' | 'forgot' | 'reset' | 'verify' | 'profile-complete'
+  >('signin');
+  const [loginInitialResetToken, setLoginInitialResetToken] = useState('');
   const [inactivityWarning, setInactivityWarning] = useState(false);
   const [inactivityCountdown, setInactivityCountdown] = useState(30);
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userActivity, setUserActivity] = useState<"sedentary" | "light" | "moderate" | "athlete">("light");
-  const [userPreferences, setUserPreferences] = useState({ veg: false, egg: false, nonveg: false, vegan: false, jain: false });
-  const [userAllergies, setUserAllergies] = useState({ peanuts: false, gluten: false, dairy: false, shellfish: false });
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userActivity, setUserActivity] = useState<
+    'sedentary' | 'light' | 'moderate' | 'athlete'
+  >('light');
+  const [userPreferences, setUserPreferences] = useState({
+    veg: false,
+    egg: false,
+    nonveg: false,
+    vegan: false,
+    jain: false,
+  });
+  const [userAllergies, setUserAllergies] = useState({
+    peanuts: false,
+    gluten: false,
+    dairy: false,
+    shellfish: false,
+  });
   const [memories, setMemories] = useState<MemoryItem[]>([]);
-  const [userPhone, setUserPhone] = useState("");
-  const [userGender, setUserGender] = useState("Male");
-  const [userHeight, setUserHeight] = useState("178 cm");
-  const [userUnits, setUserUnits] = useState("Metric (kg, cm)");
-  const [primaryGoal, setPrimaryGoal] = useState<string>("Weight Loss");
-  const [language, setLanguage] = useState<string>("English");
-  const [motivationStyle, setMotivationStyle] = useState<string>("Friendly");
+  const [userPhone, setUserPhone] = useState('');
+  const [userGender, setUserGender] = useState('Male');
+  const [userHeight, setUserHeight] = useState('178 cm');
+  const [userUnits, setUserUnits] = useState('Metric (kg, cm)');
+  const [primaryGoal, setPrimaryGoal] = useState<string>('Weight Loss');
+  const [language, setLanguage] = useState<string>('English');
+  const [motivationStyle, setMotivationStyle] = useState<string>('Friendly');
 
   const getDietString = () => {
-    if (userPreferences.vegan) return "Vegan";
-    if (userPreferences.jain) return "Jain";
-    if (userPreferences.veg) return "Vegetarian";
-    if (userPreferences.egg) return "Eggitarian";
-    if (userPreferences.nonveg) return "Non-Vegetarian";
-    return "Vegetarian";
+    if (userPreferences.vegan) return 'Vegan';
+    if (userPreferences.jain) return 'Jain';
+    if (userPreferences.veg) return 'Vegetarian';
+    if (userPreferences.egg) return 'Eggitarian';
+    if (userPreferences.nonveg) return 'Non-Vegetarian';
+    return 'Vegetarian';
   };
 
   // NEW PROGRESS & REMINDERS STATE
   const [userWeight, setUserWeight] = useState(70.0);
   const [loggedMeals, setLoggedMeals] = useState<LoggedMeal[]>([]);
   const [history, setHistory] = useState<Record<string, any>>({});
-  
-  const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+  const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .split('T')[0];
   const todayData = history[todayStr] || {};
-  
-  const todayStart = new Date().setHours(0,0,0,0);
-  const todayEnd = new Date().setHours(23,59,59,999);
-  const todaysLoggedMeals = loggedMeals.filter(m => {
+
+  const todayStart = new Date().setHours(0, 0, 0, 0);
+  const todayEnd = new Date().setHours(23, 59, 59, 999);
+  const todaysLoggedMeals = loggedMeals.filter((m) => {
     const time = parseInt(m.id);
     return time >= todayStart && time <= todayEnd;
   });
-  
-  const proteinLogged = todaysLoggedMeals.reduce((acc, curr) => acc + (curr.protein || 0), 0);
-  const caloriesLogged = todaysLoggedMeals.reduce((acc, curr) => acc + (curr.calories || 0), 0);
-  
+
+  const proteinLogged = todaysLoggedMeals.reduce(
+    (acc, curr) => acc + (curr.protein || 0),
+    0
+  );
+  const caloriesLogged = todaysLoggedMeals.reduce(
+    (acc, curr) => acc + (curr.calories || 0),
+    0
+  );
+
   const waterLogged = todayData.water || 0;
-  
+
   const completedHabits = todayData.completedHabits || {
     breakfast: false,
     water: false,
@@ -274,17 +305,17 @@ export default function App() {
 
   // Synchronization helper to update DB in real-time
   const syncProfile = async (updates: Partial<any>) => {
-    const activeToken = token || localStorage.getItem("fitma_token");
+    const activeToken = token || localStorage.getItem('fitma_token');
     if (!activeToken) return;
 
     // Always update localStorage fallback for instant offline recovery/previews
     const localKey = `fitma_fallback_user_${activeToken}`;
     try {
-      const existing = JSON.parse(localStorage.getItem(localKey) || "{}");
+      const existing = JSON.parse(localStorage.getItem(localKey) || '{}');
       const updated = { ...existing, ...updates };
       localStorage.setItem(localKey, JSON.stringify(updated));
     } catch (e) {
-      console.warn("Local storage sync warning:", e);
+      console.warn('Local storage sync warning:', e);
     }
 
     // Write to Firebase Realtime Database
@@ -292,11 +323,19 @@ export default function App() {
       await update(ref(db, `users/${activeToken}`), updates);
       setDbError(null);
     } catch (err: any) {
-      console.error("Failed to sync profile updates to Firebase Realtime Database:", err);
-      if (err.message && err.message.toLowerCase().includes("permission denied")) {
-        setDbError("Firebase Permission Denied: Please set Realtime Database rules to '.read': true, '.write': true in your Firebase console.");
+      console.error(
+        'Failed to sync profile updates to Firebase Realtime Database:',
+        err
+      );
+      if (
+        err.message &&
+        err.message.toLowerCase().includes('permission denied')
+      ) {
+        setDbError(
+          "Firebase Permission Denied: Please set Realtime Database rules to '.read': true, '.write': true in your Firebase console."
+        );
       } else {
-        setDbError(`Firebase Sync Alert: ${err.message || "Connection issue"}`);
+        setDbError(`Firebase Sync Alert: ${err.message || 'Connection issue'}`);
       }
     }
   };
@@ -304,46 +343,60 @@ export default function App() {
   const syncDailyData = (dateStr: string, updater: any) => {
     setHistory((prev) => {
       const current = prev[dateStr] || {};
-      const nextUpdates = typeof updater === 'function' ? updater(current) : updater;
+      const nextUpdates =
+        typeof updater === 'function' ? updater(current) : updater;
       const nextDay = { ...current, ...nextUpdates };
       const nextHistory = { ...prev, [dateStr]: nextDay };
       // State derived from history is calculated dynamically during render
-      
+
       // Delay syncing slightly to allow batching
       setTimeout(() => syncProfile({ history: nextHistory }), 0);
-      
+
       return nextHistory;
     });
   };
 
   const setWaterLogged = (updater: any) => {
     syncDailyData(todayStr, (curr: any) => ({
-      water: typeof updater === 'function' ? updater(curr.water || 0) : updater
+      water: typeof updater === 'function' ? updater(curr.water || 0) : updater,
     }));
   };
 
   const setCaloriesLogged = (updater: any) => {
     syncDailyData(todayStr, (curr: any) => ({
-      calories: typeof updater === 'function' ? updater(curr.calories || 0) : updater
+      calories:
+        typeof updater === 'function' ? updater(curr.calories || 0) : updater,
     }));
   };
 
   const setProteinLogged = (updater: any) => {
     syncDailyData(todayStr, (curr: any) => ({
-      protein: typeof updater === 'function' ? updater(curr.protein || 0) : updater
+      protein:
+        typeof updater === 'function' ? updater(curr.protein || 0) : updater,
     }));
   };
 
   const setCompletedHabits = (updater: any) => {
     syncDailyData(todayStr, (curr: any) => ({
-      completedHabits: typeof updater === 'function' ? updater(curr.completedHabits || { breakfast: false, water: false, protein: false, exercise: false, sleep: false }) : updater
+      completedHabits:
+        typeof updater === 'function'
+          ? updater(
+              curr.completedHabits || {
+                breakfast: false,
+                water: false,
+                protein: false,
+                exercise: false,
+                sleep: false,
+              }
+            )
+          : updater,
     }));
   };
 
   const logLivaMeal = (mealData: any) => {
     if (!mealData) return;
 
-    if (mealData.mealType && mealData.mealType.toLowerCase() === "unknown") {
+    if (mealData.mealType && mealData.mealType.toLowerCase() === 'unknown') {
       setPendingMealData(mealData);
       return;
     }
@@ -352,44 +405,58 @@ export default function App() {
     const addedProt = Number(mealData.protein) || 0;
     const addedCarbs = Number(mealData.carbs) || 0;
     const addedFat = Number(mealData.fat) || 0;
-    const mealType = (mealData.mealType || "snack").toLowerCase();
-    const items = mealData.items || ["meal"];
+    const mealType = (mealData.mealType || 'snack').toLowerCase();
+    const items = mealData.items || ['meal'];
 
-    const isYesterday = mealData.date === "yesterday";
+    const isYesterday = mealData.date === 'yesterday';
     const mealDate = new Date();
     if (isYesterday) {
       mealDate.setDate(mealDate.getDate() - 1);
     }
-    const mealDateStr = new Date(mealDate.getTime() - mealDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    const mealDateStr = new Date(
+      mealDate.getTime() - mealDate.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split('T')[0];
     setLoggedMeals((prevMeals) => {
-      const targetDate = isYesterday ? new Date(Date.now() - 86400000).toDateString() : new Date().toDateString();
-      
-      const existingMealIndex = prevMeals.findIndex(m => {
+      const targetDate = isYesterday
+        ? new Date(Date.now() - 86400000).toDateString()
+        : new Date().toDateString();
+
+      const existingMealIndex = prevMeals.findIndex((m) => {
         if (m.mealType !== mealType) return false;
-        if (mealType === "snack") return false; // Allow multiple snacks per day
-        
-        let mDateStr = "";
+        if (mealType === 'snack') return false; // Allow multiple snacks per day
+
+        let mDateStr = '';
         try {
           mDateStr = new Date(parseInt(m.id)).toDateString();
         } catch (e) {
-          mDateStr = "Unknown";
+          mDateStr = 'Unknown';
         }
         return mDateStr === targetDate;
       });
 
       let updatedMeals = [...prevMeals];
-      let oldCal = 0, oldProt = 0, oldCarbs = 0, oldFat = 0;
-      const newId = isYesterday ? (Date.now() - 86400000).toString() : Date.now().toString();
-      
+      let oldCal = 0,
+        oldProt = 0,
+        oldCarbs = 0,
+        oldFat = 0;
+      const newId = isYesterday
+        ? (Date.now() - 86400000).toString()
+        : Date.now().toString();
+
       const newMeal: LoggedMeal = {
         id: newId,
-        name: items.join(", "),
+        name: items.join(', '),
         calories: addedCal,
         protein: addedProt,
         carbs: addedCarbs,
         fat: addedFat,
-        timestamp: mealDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        mealType: mealType
+        timestamp: mealDate.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        mealType: mealType,
       };
 
       if (existingMealIndex >= 0) {
@@ -400,7 +467,7 @@ export default function App() {
         oldProt = oldMeal.protein || 0;
         oldCarbs = oldMeal.carbs || 0;
         oldFat = oldMeal.fat || 0;
-        
+
         newMeal.id = oldMeal.id; // Preserve the original ID so UI elements don't suddenly shift or re-render unexpectedly
         updatedMeals[existingMealIndex] = newMeal;
       } else {
@@ -409,7 +476,7 @@ export default function App() {
 
       syncDailyData(mealDateStr, (curr: any) => {
         const nextHabits = { ...(curr.completedHabits || {}) };
-        if (mealType === "breakfast") {
+        if (mealType === 'breakfast') {
           nextHabits.breakfast = true;
         }
         return {
@@ -417,7 +484,7 @@ export default function App() {
           protein: Math.max(0, (curr.protein || 0) - oldProt + addedProt),
           carbs: Math.max(0, (curr.carbs || 0) - oldCarbs + addedCarbs),
           fat: Math.max(0, (curr.fat || 0) - oldFat + addedFat),
-          completedHabits: nextHabits
+          completedHabits: nextHabits,
         };
       });
 
@@ -428,15 +495,19 @@ export default function App() {
 
   const deleteLivaMeal = (mealId: string) => {
     setLoggedMeals((prevMeals) => {
-      const mealToDelete = prevMeals.find(m => m.id === mealId);
+      const mealToDelete = prevMeals.find((m) => m.id === mealId);
       if (!mealToDelete) return prevMeals;
 
-      const updatedMeals = prevMeals.filter(m => m.id !== mealId);
-      
-      const dateStr = new Date(parseInt(mealId) - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      const updatedMeals = prevMeals.filter((m) => m.id !== mealId);
+
+      const dateStr = new Date(
+        parseInt(mealId) - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split('T')[0];
       syncDailyData(dateStr, (curr: any) => ({
         calories: Math.max(0, (curr.calories || 0) - mealToDelete.calories),
-        protein: Math.max(0, (curr.protein || 0) - mealToDelete.protein)
+        protein: Math.max(0, (curr.protein || 0) - mealToDelete.protein),
       }));
 
       syncProfile({ meals: updatedMeals });
@@ -444,40 +515,55 @@ export default function App() {
     });
   };
 
-  const deleteLivaMealByType = (rawMealType: string, rawDate?: string, exactId?: string | number) => {
+  const deleteLivaMealByType = (
+    rawMealType: string,
+    rawDate?: string,
+    exactId?: string | number
+  ) => {
     setLoggedMeals((prevMeals) => {
       let mealToDelete: any = null;
 
       if (exactId) {
         // Precise deletion if AI provided the exact ID
-        mealToDelete = prevMeals.find(m => m.id === exactId || m.id === parseInt(exactId as string, 10) || m.id === String(exactId));
+        mealToDelete = prevMeals.find(
+          (m) =>
+            m.id === exactId ||
+            m.id === parseInt(exactId as string, 10) ||
+            m.id === String(exactId)
+        );
       }
 
       if (!mealToDelete) {
         // Fallback to time-based + mealType deletion if exact ID wasn't provided or found
-        const mealType = (rawMealType || "").toLowerCase();
+        const mealType = (rawMealType || '').toLowerCase();
         const now = new Date();
-        if (rawDate === "yesterday") {
+        if (rawDate === 'yesterday') {
           now.setDate(now.getDate() - 1);
         }
-        const targetStart = now.setHours(0,0,0,0);
-        const targetEnd = now.setHours(23,59,59,999);
-        
-        const mealsInTargetDate = prevMeals.filter(m => {
+        const targetStart = now.setHours(0, 0, 0, 0);
+        const targetEnd = now.setHours(23, 59, 59, 999);
+
+        const mealsInTargetDate = prevMeals.filter((m) => {
           const time = parseInt(m.id);
-          return time >= targetStart && time <= targetEnd && m.mealType === mealType;
+          return (
+            time >= targetStart && time <= targetEnd && m.mealType === mealType
+          );
         });
 
         if (mealsInTargetDate.length === 0) return prevMeals;
         mealToDelete = mealsInTargetDate[mealsInTargetDate.length - 1];
       }
 
-      const updatedMeals = prevMeals.filter(m => m.id !== mealToDelete.id);
-      
-      const dateStr = new Date(parseInt(mealToDelete.id) - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      const updatedMeals = prevMeals.filter((m) => m.id !== mealToDelete.id);
+
+      const dateStr = new Date(
+        parseInt(mealToDelete.id) - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split('T')[0];
       syncDailyData(dateStr, (curr: any) => ({
         calories: Math.max(0, (curr.calories || 0) - mealToDelete.calories),
-        protein: Math.max(0, (curr.protein || 0) - mealToDelete.protein)
+        protein: Math.max(0, (curr.protein || 0) - mealToDelete.protein),
       }));
 
       syncProfile({ meals: updatedMeals });
@@ -485,24 +571,56 @@ export default function App() {
     });
   };
 
-  const editLivaMeal = (exactId: string | number, updatedData: Partial<any>) => {
+  const editLivaMeal = (
+    exactId: string | number,
+    updatedData: Partial<any>
+  ) => {
     setLoggedMeals((prevMeals) => {
-      const mealToEdit = prevMeals.find(m => String(m.id) === String(exactId));
+      const mealToEdit = prevMeals.find(
+        (m) => String(m.id) === String(exactId)
+      );
       if (!mealToEdit) return prevMeals;
 
-      const updatedMeals = prevMeals.map(m => 
+      const updatedMeals = prevMeals.map((m) =>
         String(m.id) === String(exactId) ? { ...m, ...updatedData } : m
       );
 
-      const dateStr = new Date(parseInt(mealToEdit.id) - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      
+      const dateStr = new Date(
+        parseInt(mealToEdit.id) - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split('T')[0];
+
       // Update daily summary if calories or macros changed
-      if (updatedData.calories !== undefined || updatedData.protein !== undefined || updatedData.carbs !== undefined || updatedData.fat !== undefined) {
+      if (
+        updatedData.calories !== undefined ||
+        updatedData.protein !== undefined ||
+        updatedData.carbs !== undefined ||
+        updatedData.fat !== undefined
+      ) {
         syncDailyData(dateStr, (curr: any) => ({
-          calories: Math.max(0, (curr.calories || 0) - (mealToEdit.calories || 0) + (updatedData.calories || 0)),
-          protein: Math.max(0, (curr.protein || 0) - (mealToEdit.protein || 0) + (updatedData.protein || 0)),
-          carbs: Math.max(0, (curr.carbs || 0) - (mealToEdit.carbs || 0) + (updatedData.carbs || 0)),
-          fat: Math.max(0, (curr.fat || 0) - (mealToEdit.fat || 0) + (updatedData.fat || 0))
+          calories: Math.max(
+            0,
+            (curr.calories || 0) -
+              (mealToEdit.calories || 0) +
+              (updatedData.calories || 0)
+          ),
+          protein: Math.max(
+            0,
+            (curr.protein || 0) -
+              (mealToEdit.protein || 0) +
+              (updatedData.protein || 0)
+          ),
+          carbs: Math.max(
+            0,
+            (curr.carbs || 0) -
+              (mealToEdit.carbs || 0) +
+              (updatedData.carbs || 0)
+          ),
+          fat: Math.max(
+            0,
+            (curr.fat || 0) - (mealToEdit.fat || 0) + (updatedData.fat || 0)
+          ),
         }));
       }
 
@@ -514,103 +632,132 @@ export default function App() {
   const logLivaWater = (waterData: any) => {
     if (!waterData) return;
 
-    const amountML = Number(waterData.amountML) || Number(waterData.amount) || Number(waterData.ml) || 0;
+    const amountML =
+      Number(waterData.amountML) ||
+      Number(waterData.amount) ||
+      Number(waterData.ml) ||
+      0;
     if (amountML <= 0) return;
 
-    const deviceId = localStorage.getItem("fitma_device_id") || "unknown-device";
-    fetch("/api/logs/water", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceId, amountMl: amountML })
-    }).catch(e => console.error("Failed to log water to backend", e));
+    const deviceId =
+      localStorage.getItem('fitma_device_id') || 'unknown-device';
+    fetch('/api/logs/water', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceId, amountMl: amountML }),
+    }).catch((e) => console.error('Failed to log water to backend', e));
 
     syncDailyData(todayStr, (curr: any) => {
-       const nextWater = (curr.water || 0) + amountML;
-       const nextHabits = { ...(curr.completedHabits || {}) };
-       if (nextWater >= (goals.water || 2500)) {
-         nextHabits.water = true;
-       }
-       return {
-         water: nextWater,
-         completedHabits: nextHabits
-       };
+      const nextWater = (curr.water || 0) + amountML;
+      const nextHabits = { ...(curr.completedHabits || {}) };
+      if (nextWater >= (goals.water || 2500)) {
+        nextHabits.water = true;
+      }
+      return {
+        water: nextWater,
+        completedHabits: nextHabits,
+      };
     });
   };
 
   // Check session token and load profile on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const tokenParam = params.get("token");
+    const tokenParam = params.get('token');
     const href = window.location.href;
 
     if (tokenParam) {
-      if (href.includes("verify-email")) {
-        alert("Please confirm verification in the email link sent by Firebase Auth.");
+      if (href.includes('verify-email')) {
+        alert(
+          'Please confirm verification in the email link sent by Firebase Auth.'
+        );
         window.history.replaceState({}, document.title, window.location.origin);
-        setLoginInitialView("signin");
-        go("login");
+        setLoginInitialView('signin');
+        go('login');
         return;
-      } else if (href.includes("reset-password")) {
-        setLoginInitialView("reset");
+      } else if (href.includes('reset-password')) {
+        setLoginInitialView('reset');
         setLoginInitialResetToken(tokenParam);
         window.history.replaceState({}, document.title, window.location.origin);
-        go("login");
+        go('login');
         return;
       }
     }
 
-    const activeToken = localStorage.getItem("fitma_token");
+    const activeToken = localStorage.getItem('fitma_token');
     if (activeToken) {
       const loadProfile = async () => {
         try {
           const userSnapshot = await get(ref(db, `users/${activeToken}`));
           if (userSnapshot.exists()) {
             const u = userSnapshot.val();
-            setUserName(u.name || u.username || "User");
-            setUserEmail(u.email || "");
+            setUserName(u.name || u.username || 'User');
+            setUserEmail(u.email || '');
             setUserWeight(u.weight || 70.0);
-            
+
             const loadedHistory = u.history || {};
             setHistory(loadedHistory);
-            setGoals(u.goals || { weight: 65.0, calories: 2000, protein: 100, water: 2500 });
-            setUserActivity(u.activity || "light");
-            setUserPreferences(u.preferences || { veg: false, egg: false, nonveg: false, vegan: false, jain: false });
-            setUserAllergies(u.allergies || { peanuts: false, gluten: false, dairy: false, shellfish: false });
+            setGoals(
+              u.goals || {
+                weight: 65.0,
+                calories: 2000,
+                protein: 100,
+                water: 2500,
+              }
+            );
+            setUserActivity(u.activity || 'light');
+            setUserPreferences(
+              u.preferences || {
+                veg: false,
+                egg: false,
+                nonveg: false,
+                vegan: false,
+                jain: false,
+              }
+            );
+            setUserAllergies(
+              u.allergies || {
+                peanuts: false,
+                gluten: false,
+                dairy: false,
+                shellfish: false,
+              }
+            );
             setMemories(u.memories || []);
-            setUserPhone(u.phone || "");
-            setUserGender(u.gender || "Male");
-            setUserHeight(u.height || "178 cm");
-            setUserUnits(u.units || "Metric (kg, cm)");
-            setPrimaryGoal(u.primaryGoal || "Weight Loss");
-            setLanguage(u.language || "English");
-            setMotivationStyle(u.motivationStyle || "Friendly");
+            setUserPhone(u.phone || '');
+            setUserGender(u.gender || 'Male');
+            setUserHeight(u.height || '178 cm');
+            setUserUnits(u.units || 'Metric (kg, cm)');
+            setPrimaryGoal(u.primaryGoal || 'Weight Loss');
+            setLanguage(u.language || 'English');
+            setMotivationStyle(u.motivationStyle || 'Friendly');
             let parsedMeals = u.meals || [];
             if (parsedMeals && !Array.isArray(parsedMeals)) {
               parsedMeals = Object.values(parsedMeals);
             }
             setLoggedMeals(parsedMeals);
-            
+
             if (u.onboardingCompleted === true) {
-              setScreen("home");
+              setScreen('home');
             } else {
-              setScreen("meet-liva");
+              setScreen('meet-liva');
             }
           } else {
-            throw new Error("No profile document found in Realtime Database.");
+            throw new Error('No profile document found in Realtime Database.');
           }
         } catch (err) {
-          console.error("Auto login failed:", err);
-          localStorage.removeItem("fitma_token");
+          console.error('Auto login failed:', err);
+          localStorage.removeItem('fitma_token');
           setToken(null);
-          setScreen("splash");
+          setScreen('splash');
         }
       };
       loadProfile();
-      
+
       // Ping the Render backend to wake it up in the background!
       const API_URL = import.meta.env.VITE_API_URL || '';
       fetch(`${API_URL}/api/health`).catch(() => {});
-      
+
       // Request push permissions
       setTimeout(() => requestPushPermission(), 3000);
     }
@@ -620,35 +767,40 @@ export default function App() {
   useEffect(() => {
     if (!showFloatingLiva || livaSiriActive) return;
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
     let wakeWordRecognition: any = null;
     try {
       wakeWordRecognition = new SpeechRecognition();
-      wakeWordRecognition.lang = "en-US";
+      wakeWordRecognition.lang = 'en-US';
       wakeWordRecognition.continuous = true;
       wakeWordRecognition.interimResults = true;
       wakeWordRecRef.current = wakeWordRecognition;
     } catch (e) {
-      console.warn("SpeechRecognition not fully supported:", e);
+      console.warn('SpeechRecognition not fully supported:', e);
       return;
     }
 
     wakeWordRecognition.onresult = (event: any) => {
       if (livaSiriActive) return;
 
-      let finalTranscript = "";
+      let finalTranscript = '';
       for (let i = 0; i < event.results.length; i++) {
-        finalTranscript += event.results[i][0].transcript + " ";
+        finalTranscript += event.results[i][0].transcript + ' ';
       }
-      
+
       const transcript = finalTranscript.toLowerCase().trim();
 
       // Much more lenient match for any combination of hey/hi and a variant of Liva
       // Or just mentioning liva/olivia/leeva independently
-      const isWakeWord = /(hey|hay|hi|hello|ok|okay|wake up|start|listen)\s*(liva|liver|leva|leave a|live a|olivia|liba|leeva|aliva|riva|ziva)/i.test(transcript);
-      
+      const isWakeWord =
+        /(hey|hay|hi|hello|ok|okay|wake up|start|listen)\s*(liva|liver|leva|leave a|live a|olivia|liba|leeva|aliva|riva|ziva)/i.test(
+          transcript
+        );
+
       const isJustLiva = /(liva|leeva|aliva|liba)/i.test(transcript);
 
       if (isWakeWord || isJustLiva) {
@@ -661,7 +813,10 @@ export default function App() {
     };
 
     wakeWordRecognition.onerror = (event: any) => {
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      if (
+        event.error === 'not-allowed' ||
+        event.error === 'service-not-allowed'
+      ) {
         wakeWordRecognition.onend = null; // kill it if permissions are fully denied
       }
     };
@@ -697,39 +852,48 @@ export default function App() {
       } catch (e) {}
     }
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setChatInitialMsg("");
-      go("liva-chat");
+      setChatInitialMsg('');
+      go('liva-chat');
       return;
     }
 
-    const isIOSChrome = navigator.userAgent.match("CriOS");
+    const isIOSChrome = navigator.userAgent.match('CriOS');
     if (isIOSChrome) {
-      alert("Apple restricts voice recognition in Chrome on iOS. Please use Safari to use voice features.");
-      setChatInitialMsg("");
-      go("liva-chat");
+      alert(
+        'Apple restricts voice recognition in Chrome on iOS. Please use Safari to use voice features.'
+      );
+      setChatInitialMsg('');
+      go('liva-chat');
       return;
     }
 
-    setSiriText("Listening...");
+    setSiriText('Listening...');
     setLivaSiriActive(true);
 
     let recognition: any = null;
     try {
       recognition = new SpeechRecognition();
     } catch (e) {
-      console.warn("SpeechRecognition not fully supported:", e);
-      setSiriText("Voice not supported on this device. Use text chat.");
+      console.warn('SpeechRecognition not fully supported:', e);
+      setSiriText('Voice not supported on this device. Use text chat.');
       setTimeout(() => setLivaSiriActive(false), 3000);
       return;
     }
     activeSiriRecRef.current = recognition; // Register as the current active instance
-    recognition.lang = language === "Hindi" ? "hi-IN" : language === "Marathi" ? "mr-IN" : "en-US";
+    recognition.lang =
+      language === 'Hindi'
+        ? 'hi-IN'
+        : language === 'Marathi'
+          ? 'mr-IN'
+          : 'en-US';
     recognition.interimResults = true;
     recognition.continuous = true; // Use continuous to prevent aggressive no-speech timeouts
 
-    let finalTranscript = "";
+    let finalTranscript = '';
     let hasError = false;
     let isProcessing = false;
     let silenceTimeout: any = null;
@@ -739,66 +903,70 @@ export default function App() {
       if (isProcessing || hasError) return;
       isProcessing = true;
       if (silenceTimeout) clearTimeout(silenceTimeout);
-      
+
       try {
         recognition.stop();
       } catch (e) {
         // Ignore if already stopped
       }
-      
-      setSiriText(finalTranscript + "\n\nThinking...");
-      
+
+      setSiriText(finalTranscript + '\n\nThinking...');
+
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
 
         const API_URL = import.meta.env.VITE_API_URL || '';
         const response = await fetch(`${API_URL}/api/chat`, {
-          method: "POST",
+          method: 'POST',
           signal: controller.signal,
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: finalTranscript,
             deviceId: getDeviceId(),
             profile: {
-              name: userName || "Amish",
+              name: userName || 'Amish',
               goal: primaryGoal,
               diet: getDietString(),
               dailyCalories: goals.calories || 1800,
               motivationStyle: motivationStyle,
-              language: language
+              language: language,
             },
             previousMessages: [],
-            loggedMeals: (loggedMeals || []).map(m => {
-              let dateStr = "";
+            loggedMeals: (loggedMeals || []).map((m) => {
+              let dateStr = '';
               try {
                 dateStr = new Date(parseInt(m.id)).toDateString();
               } catch (e) {
-                dateStr = "Unknown";
+                dateStr = 'Unknown';
               }
               return { ...m, dateString: dateStr };
             }),
-            remainingCalories: Math.max(0, goals.calories - caloriesLogged)
+            remainingCalories: Math.max(0, goals.calories - caloriesLogged),
           }),
         });
 
         clearTimeout(timeoutId);
-        
+
         if (activeSiriRecRef.current !== recognition) return; // double check after fetch
 
         let data;
-        let responseText = "";
+        let responseText = '';
         try {
           responseText = await response.text();
           data = JSON.parse(responseText);
         } catch (e) {
-          console.error("Failed to parse JSON. Raw response:", responseText);
-          throw new Error(`API Error: ${response.status} - ${responseText.substring(0, 50)}`);
+          console.error('Failed to parse JSON. Raw response:', responseText);
+          throw new Error(
+            `API Error: ${response.status} - ${responseText.substring(0, 50)}`
+          );
         }
 
         if (!response.ok) {
-          console.error("API Error Response:", data);
-          setSiriText(data?.response || data?.error || `Server Error ${response.status}`);
+          console.error('API Error Response:', data);
+          setSiriText(
+            data?.response || data?.error || `Server Error ${response.status}`
+          );
           setTimeout(() => setLivaSiriActive(false), 4000);
           return;
         }
@@ -807,18 +975,22 @@ export default function App() {
           setLivaSiriActive(false);
           setChatInitialMsg(finalTranscript);
           setChatInitialResponse(data);
-          go("liva-home");
+          go('liva-home');
           return;
         }
 
         setSiriText(data.response);
         if (data.mealData && !data.deleteData) {
-          if (data.mealData.mealType && data.mealData.mealType.toLowerCase() === "unknown") {
+          if (
+            data.mealData.mealType &&
+            data.mealData.mealType.toLowerCase() === 'unknown'
+          ) {
             setPendingMealData(data.mealData);
           } else {
             logLivaMeal(data.mealData);
-            const loggedType = data.mealData.mealType || "snack";
-            const capitalizedType = loggedType.charAt(0).toUpperCase() + loggedType.slice(1);
+            const loggedType = data.mealData.mealType || 'snack';
+            const capitalizedType =
+              loggedType.charAt(0).toUpperCase() + loggedType.slice(1);
             setToastMessage(`Meal saved in ${capitalizedType}!`);
             setTimeout(() => setToastMessage(null), 3000);
           }
@@ -830,14 +1002,24 @@ export default function App() {
 
         if (data.deleteData && data.deleteData.mealType) {
           if (data.deleteData.id) {
-            deleteLivaMealByType(data.deleteData.mealType, data.deleteData.date, data.deleteData.id);
+            deleteLivaMealByType(
+              data.deleteData.mealType,
+              data.deleteData.date,
+              data.deleteData.id
+            );
           } else {
-            deleteLivaMealByType(data.deleteData.mealType, data.deleteData.date);
+            deleteLivaMealByType(
+              data.deleteData.mealType,
+              data.deleteData.date
+            );
           }
         }
 
         // Auto-close after a few seconds so the user can see the result and then return to the app
-        const isUnknownMeal = data.mealData && data.mealData.mealType && data.mealData.mealType.toLowerCase() === "unknown";
+        const isUnknownMeal =
+          data.mealData &&
+          data.mealData.mealType &&
+          data.mealData.mealType.toLowerCase() === 'unknown';
         if (!isUnknownMeal) {
           setTimeout(() => {
             if (activeSiriRecRef.current === recognition) {
@@ -846,11 +1028,16 @@ export default function App() {
           }, 3500);
         }
       } catch (err: any) {
-        console.error("Fetch Catch:", err);
+        console.error('Fetch Catch:', err);
         if (activeSiriRecRef.current !== recognition) return;
-        
-        const errorMessage = err instanceof Error ? err.message : "Try again later!";
-        setSiriText(errorMessage.includes("API Error") ? errorMessage : "Couldn't reach Liva right now. Try again later!");
+
+        const errorMessage =
+          err instanceof Error ? err.message : 'Try again later!';
+        setSiriText(
+          errorMessage.includes('API Error')
+            ? errorMessage
+            : "Couldn't reach Liva right now. Try again later!"
+        );
         setTimeout(() => {
           if (activeSiriRecRef.current === recognition) {
             setLivaSiriActive(false);
@@ -862,9 +1049,9 @@ export default function App() {
     recognition.onresult = (event: any) => {
       if (activeSiriRecRef.current !== recognition) return;
       if (isProcessing) return;
-      let transcript = "";
+      let transcript = '';
       const isAndroid = /Android/i.test(navigator.userAgent);
-      
+
       if (isAndroid) {
         // Android Chrome often duplicates results by appending the full sentence to new indices.
         // The most accurate representation is usually just the very last result.
@@ -872,22 +1059,24 @@ export default function App() {
       } else {
         transcript = Array.from(event.results)
           .map((result: any) => result[0].transcript)
-          .join("");
+          .join('');
       }
-      
-      setSiriText(transcript || "Listening...");
+
+      setSiriText(transcript || 'Listening...');
       finalTranscript = transcript;
-      
+
       // Clear previous silence timeout
       if (silenceTimeout) clearTimeout(silenceTimeout);
-      
+
       // Auto-submit after 1.5 seconds of silence
       silenceTimeout = setTimeout(() => {
         if (finalTranscript.trim()) {
           finishListening();
         } else {
           setSiriText("I didn't catch that. Tap to try again.");
-          try { recognition.stop(); } catch(e) {}
+          try {
+            recognition.stop();
+          } catch (e) {}
           setTimeout(() => {
             if (activeSiriRecRef.current === recognition) {
               setLivaSiriActive(false);
@@ -899,7 +1088,7 @@ export default function App() {
 
     recognition.onerror = (event: any) => {
       if (activeSiriRecRef.current !== recognition) return;
-      
+
       if (event.error === 'aborted') {
         if (!isProcessing) {
           setLivaSiriActive(false);
@@ -908,8 +1097,11 @@ export default function App() {
       }
 
       hasError = true;
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setSiriText("Microphone access denied.");
+      if (
+        event.error === 'not-allowed' ||
+        event.error === 'service-not-allowed'
+      ) {
+        setSiriText('Microphone access denied.');
       } else if (event.error === 'no-speech') {
         setSiriText("I didn't catch that. Tap me again.");
       } else {
@@ -937,31 +1129,48 @@ export default function App() {
     try {
       recognition.start();
     } catch (e) {
-      console.warn("Siri mic start issue:", e);
+      console.warn('Siri mic start issue:', e);
     }
   };
 
   const handleAuthSuccess = (newToken: string, user: any, isNew: boolean) => {
-    localStorage.setItem("fitma_token", newToken);
+    localStorage.setItem('fitma_token', newToken);
     setToken(newToken);
-    setUserName(user.name || user.username || "User");
+    setUserName(user.name || user.username || 'User');
     setUserEmail(user.email);
     setUserWeight(user.weight || 70.0);
-    
+
     const loadedHistory = user.history || {};
     setHistory(loadedHistory);
-    setGoals(user.goals || { weight: 70.0, calories: 2000, protein: 100, water: 2500 });
-    setUserActivity(user.activity || "light");
-    setUserPreferences(user.preferences || { veg: false, egg: false, nonveg: false, vegan: false, jain: false });
-    setUserAllergies(user.allergies || { peanuts: false, gluten: false, dairy: false, shellfish: false });
+    setGoals(
+      user.goals || { weight: 70.0, calories: 2000, protein: 100, water: 2500 }
+    );
+    setUserActivity(user.activity || 'light');
+    setUserPreferences(
+      user.preferences || {
+        veg: false,
+        egg: false,
+        nonveg: false,
+        vegan: false,
+        jain: false,
+      }
+    );
+    setUserAllergies(
+      user.allergies || {
+        peanuts: false,
+        gluten: false,
+        dairy: false,
+        shellfish: false,
+      }
+    );
     setMemories(user.memories || []);
-    setUserPhone(user.phone || "");
-    setUserGender(user.gender || "Male");
-    setUserHeight(user.height || "178 cm");
-    setUserUnits(user.units || "Metric (kg, cm)");
-    setPrimaryGoal(user.primaryGoal || "Weight Loss");
-    setLanguage(user.language || "English");
-    setMotivationStyle(user.motivationStyle || "Friendly");
+    setUserPhone(user.phone || '');
+    setUserGender(user.gender || 'Male');
+    setUserHeight(user.height || '178 cm');
+    setUserUnits(user.units || 'Metric (kg, cm)');
+    setPrimaryGoal(user.primaryGoal || 'Weight Loss');
+    setLanguage(user.language || 'English');
+    setMotivationStyle(user.motivationStyle || 'Friendly');
     let parsedMeals = user.meals || [];
     if (parsedMeals && !Array.isArray(parsedMeals)) {
       parsedMeals = Object.values(parsedMeals);
@@ -970,17 +1179,17 @@ export default function App() {
     setProteinLogged(user.protein || 0);
 
     if (isNew || user.onboardingCompleted !== true) {
-      go("meet-liva");
+      go('meet-liva');
     } else {
-      go("home");
+      go('home');
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("fitma_token");
+    localStorage.removeItem('fitma_token');
     setToken(null);
-    setUserName("");
-    setUserEmail("");
+    setUserName('');
+    setUserEmail('');
     setUserWeight(70.0);
     setHistory({});
     setGoals({
@@ -989,15 +1198,26 @@ export default function App() {
       protein: 100,
       water: 2500,
     });
-    setUserActivity("light");
-    setUserPreferences({ veg: false, egg: false, nonveg: false, vegan: false, jain: false });
-    setUserAllergies({ peanuts: false, gluten: false, dairy: false, shellfish: false });
+    setUserActivity('light');
+    setUserPreferences({
+      veg: false,
+      egg: false,
+      nonveg: false,
+      vegan: false,
+      jain: false,
+    });
+    setUserAllergies({
+      peanuts: false,
+      gluten: false,
+      dairy: false,
+      shellfish: false,
+    });
     setMemories([]);
-    setUserPhone("");
-    setUserGender("Male");
-    setUserHeight("178 cm");
-    setUserUnits("Metric (kg, cm)");
-    go("splash");
+    setUserPhone('');
+    setUserGender('Male');
+    setUserHeight('178 cm');
+    setUserUnits('Metric (kg, cm)');
+    go('splash');
   };
 
   const handleDeleteAccount = async (password: string): Promise<boolean> => {
@@ -1006,11 +1226,14 @@ export default function App() {
     try {
       await deleteUser(user);
       handleLogout();
-      alert("Your account has been deleted permanently.");
+      alert('Your account has been deleted permanently.');
       return true;
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Failed to delete account. You may need to sign in again to complete this operation.");
+      alert(
+        err.message ||
+          'Failed to delete account. You may need to sign in again to complete this operation.'
+      );
       return false;
     }
   };
@@ -1033,25 +1256,28 @@ export default function App() {
       clearInterval(countdownInterval);
 
       // Warning after 15 minutes of inactivity (900,000 milliseconds)
-      warningTimer = setTimeout(() => {
-        setInactivityWarning(true);
-        let remaining = 30;
-        countdownInterval = setInterval(() => {
-          remaining--;
-          setInactivityCountdown(remaining);
-          if (remaining <= 0) {
-            clearInterval(countdownInterval);
-          }
-        }, 1000);
+      warningTimer = setTimeout(
+        () => {
+          setInactivityWarning(true);
+          let remaining = 30;
+          countdownInterval = setInterval(() => {
+            remaining--;
+            setInactivityCountdown(remaining);
+            if (remaining <= 0) {
+              clearInterval(countdownInterval);
+            }
+          }, 1000);
 
-        logoutTimer = setTimeout(() => {
-          handleLogout();
-          alert("Session timed out due to inactivity.");
-        }, 30000); // 30 second grace period
-      }, 15 * 60 * 1000);
+          logoutTimer = setTimeout(() => {
+            handleLogout();
+            alert('Session timed out due to inactivity.');
+          }, 30000); // 30 second grace period
+        },
+        15 * 60 * 1000
+      );
     };
 
-    const events = ["mousemove", "keydown", "click", "scroll"];
+    const events = ['mousemove', 'keydown', 'click', 'scroll'];
     const handleReset = () => {
       if (!inactivityWarning) {
         resetInactivityTimers();
@@ -1070,36 +1296,48 @@ export default function App() {
   }, [token, inactivityWarning]);
 
   const go = (next: Screen) => {
-    if (next === "liva-home" || next === "progress-dashboard" || next === "reminder-center") {
+    if (
+      next === 'liva-home' ||
+      next === 'progress-dashboard' ||
+      next === 'reminder-center'
+    ) {
       setLivaFlowActive(true);
-    } else if (next === "home" || next === "splash" || next === "welcome") {
+    } else if (next === 'home' || next === 'splash' || next === 'welcome') {
       setLivaFlowActive(false);
     }
     setScreen(next);
   };
 
   const startProcessing = (mode: EntryMode) => {
-    if (mode === "voice") {
+    if (mode === 'voice') {
       triggerSiri();
       return;
     }
-    if (mode === "text") {
+    if (mode === 'text') {
       setIsTextDrawerOpen(true);
       return;
     }
     setEntryMode(mode);
-    go("camera-log");
+    go('camera-log');
   };
 
-  const processingTarget = useMemo(() => (entryMode === "text" ? "search-food" : "meal-confirmation"), [entryMode]);
+  const processingTarget = useMemo(
+    () => (entryMode === 'text' ? 'search-food' : 'meal-confirmation'),
+    [entryMode]
+  );
 
   const content = () => {
     switch (screen) {
-      case "splash":
-        return <SplashScreen onNext={() => go("welcome")} />;
-      case "welcome":
-        return <WelcomeScreen onNext={() => go("login")} onLogin={() => go("login")} />;
-      case "login":
+      case 'splash':
+        return <SplashScreen onNext={() => go('welcome')} />;
+      case 'welcome':
+        return (
+          <WelcomeScreen
+            onNext={() => go('login')}
+            onLogin={() => go('login')}
+          />
+        );
+      case 'login':
         return (
           <LoginScreen
             onAuthSuccess={handleAuthSuccess}
@@ -1107,45 +1345,45 @@ export default function App() {
             initialResetToken={loginInitialResetToken}
           />
         );
-      case "meet-liva":
-        return <MeetLivaScreen onNext={() => go("goals")} />;
-      case "goals":
+      case 'meet-liva':
+        return <MeetLivaScreen onNext={() => go('goals')} />;
+      case 'goals':
         return (
           <GoalsScreen
             onNext={(selectedGoal) => {
               setPrimaryGoal(selectedGoal);
               syncProfile({ primaryGoal: selectedGoal });
-              go("body-metrics");
+              go('body-metrics');
             }}
-            onSkip={() => go("body-metrics")}
+            onSkip={() => go('body-metrics')}
           />
         );
-      case "body-metrics":
+      case 'body-metrics':
         return (
           <BodyMetricsScreen
             initialWeight={userWeight}
-            initialHeight={Number(userHeight.replace(" cm", "")) || 178}
+            initialHeight={Number(userHeight.replace(' cm', '')) || 178}
             onNext={(weight, height) => {
               setUserWeight(weight);
               setUserHeight(`${height} cm`);
-              
+
               // Calculate default goals based on height and weight
               const bmr = 10 * weight + 6.25 * height - 5 * 25 + 5;
               const tdee = bmr * 1.55;
               let cals = tdee;
               let proteinMultiplier = 1.8;
-              
-              if (primaryGoal === "Lose Weight") {
+
+              if (primaryGoal === 'Lose Weight') {
                 cals -= 500;
                 proteinMultiplier = 2.0;
-              } else if (primaryGoal === "Gain Muscle") {
+              } else if (primaryGoal === 'Gain Muscle') {
                 cals += 500;
                 proteinMultiplier = 2.2;
-              } else if (primaryGoal === "Improve Energy") {
+              } else if (primaryGoal === 'Improve Energy') {
                 cals = tdee;
                 proteinMultiplier = 1.6;
               }
-              
+
               const calculatedGoals = {
                 weight: weight,
                 height: height,
@@ -1153,30 +1391,34 @@ export default function App() {
                 protein: Math.round((weight * proteinMultiplier) / 5) * 5,
                 water: Math.round((weight * 35) / 250) * 250,
               };
-              
+
               setGoals(calculatedGoals);
-              syncProfile({ 
-                weight, 
+              syncProfile({
+                weight,
                 height: `${height} cm`,
-                goals: calculatedGoals
+                goals: calculatedGoals,
               });
-              
-              go("permissions");
+
+              go('permissions');
             }}
-            onSkip={() => go("permissions")}
+            onSkip={() => go('permissions')}
           />
         );
-      case "permissions":
-        return <PermissionsScreen onNext={() => go("onboarding-success")} />;
-      case "onboarding-success":
-        return <OnboardingSuccessScreen onFinish={() => {
-          syncProfile({ onboardingCompleted: true });
-          go("home");
-        }} />;
-      case "home": {
-        const targetStart = new Date().setHours(0,0,0,0);
-        const targetEnd = new Date().setHours(23,59,59,999);
-        const todayMeals = loggedMeals.filter(m => {
+      case 'permissions':
+        return <PermissionsScreen onNext={() => go('onboarding-success')} />;
+      case 'onboarding-success':
+        return (
+          <OnboardingSuccessScreen
+            onFinish={() => {
+              syncProfile({ onboardingCompleted: true });
+              go('home');
+            }}
+          />
+        );
+      case 'home': {
+        const targetStart = new Date().setHours(0, 0, 0, 0);
+        const targetEnd = new Date().setHours(23, 59, 59, 999);
+        const todayMeals = loggedMeals.filter((m) => {
           const time = parseInt(m.id);
           return time >= targetStart && time <= targetEnd;
         });
@@ -1192,13 +1434,15 @@ export default function App() {
             waterLogged={waterLogged}
             completedHabits={completedHabits}
             goals={goals}
-            onLogWater={(amount) => setWaterLogged((w: number) => Math.max(0, w + amount))}
+            onLogWater={(amount) =>
+              setWaterLogged((w: number) => Math.max(0, w + amount))
+            }
             onDeleteMeal={deleteLivaMeal}
             onSetChatInitialMsg={setChatInitialMsg}
           />
         );
       }
-      case "my-plan":
+      case 'my-plan':
         return (
           <MyPlanScreen
             onNavigate={go}
@@ -1206,79 +1450,130 @@ export default function App() {
             goals={goals}
             history={history}
             syncDailyData={syncDailyData}
-            onDeleteMeal={(mealType, date, id) => deleteLivaMealByType(mealType, date, id)}
+            onDeleteMeal={(mealType, date, id) =>
+              deleteLivaMealByType(mealType, date, id)
+            }
             onEditMeal={editLivaMeal}
           />
         );
-      case "quick-log":
+      case 'quick-log':
         return (
           <QuickLogScreen
-            onBack={() => go(livaFlowActive ? "liva-home" : "home")}
+            onBack={() => go(livaFlowActive ? 'liva-home' : 'home')}
             onSelect={startProcessing}
             onNavigate={go}
           />
         );
-      case "voice-log":
-        return <VoiceLoggingScreen onCancel={() => go(livaFlowActive ? "liva-home" : "quick-log")} onDone={() => go(livaFlowActive ? "liva-thinking" : "ai-processing")} />;
-      case "camera-log":
-        return <CameraLoggingScreen onBack={() => go(livaFlowActive ? "liva-home" : "quick-log")} onCapture={(base64) => { setCapturedImageBase64(base64); go("camera-meal-select"); }} />;
-      case "camera-meal-select":
-        return <CameraMealSelectionScreen image={capturedImageBase64 || ""} onBack={() => go("camera-log")} onSelect={(mealType) => { setProcessingTargetMeal(mealType); go("camera-ai-processing"); }} />;
-      case "camera-ai-processing":
+      case 'voice-log':
         return (
-          <CameraAIProcessingScreen 
-            image={capturedImageBase64 || ""} 
-            mealType={processingTargetMeal} 
+          <VoiceLoggingScreen
+            onCancel={() => go(livaFlowActive ? 'liva-home' : 'quick-log')}
+            onDone={() =>
+              go(livaFlowActive ? 'liva-thinking' : 'ai-processing')
+            }
+          />
+        );
+      case 'camera-log':
+        return (
+          <CameraLoggingScreen
+            onBack={() => go(livaFlowActive ? 'liva-home' : 'quick-log')}
+            onCapture={(base64) => {
+              setCapturedImageBase64(base64);
+              go('camera-meal-select');
+            }}
+          />
+        );
+      case 'camera-meal-select':
+        return (
+          <CameraMealSelectionScreen
+            image={capturedImageBase64 || ''}
+            onBack={() => go('camera-log')}
+            onSelect={(mealType) => {
+              setProcessingTargetMeal(mealType);
+              go('camera-ai-processing');
+            }}
+          />
+        );
+      case 'camera-ai-processing':
+        return (
+          <CameraAIProcessingScreen
+            image={capturedImageBase64 || ''}
+            mealType={processingTargetMeal}
             loggedMeals={loggedMeals}
-            onDone={(mealData) => { 
+            onDone={(mealData) => {
               logLivaMeal(mealData);
-              go("meal-success"); 
+              go('meal-success');
             }}
             onError={(err) => {
               console.error(err);
-              go("home"); // Fallback on error
+              go('home'); // Fallback on error
             }}
           />
         );
-      case "ai-processing":
+      case 'ai-processing':
         return <AIProcessingScreen onDone={() => go(processingTarget)} />;
-      case "text-log":
+      case 'text-log':
         return (
-          <TextLoggingScreen 
-            onBack={() => go(livaFlowActive ? "liva-home" : "quick-log")} 
+          <TextLoggingScreen
+            onBack={() => go(livaFlowActive ? 'liva-home' : 'quick-log')}
             onLogMeal={(meal) => {
               logLivaMeal(meal);
-              go("meal-success");
-            }} 
+              go('meal-success');
+            }}
           />
         );
-      case "search-food":
-        return <SearchFoodScreen onBack={() => go("text-log")} onContinue={() => go("meal-confirmation")} />;
-      case "meal-confirmation":
-        return <MealConfirmationScreen onBack={() => go(livaFlowActive ? "liva-home" : "quick-log")} onContinue={() => go("portion-selection")} />;
-      case "portion-selection":
-        return <PortionSelectionScreen onBack={() => go("meal-confirmation")} onContinue={() => go("nutrition-breakdown")} />;
-      case "nutrition-breakdown":
-        return <NutritionBreakdownScreen onBack={() => go("portion-selection")} onContinue={() => go("save-meal")} />;
-      case "save-meal":
+      case 'search-food':
+        return (
+          <SearchFoodScreen
+            onBack={() => go('text-log')}
+            onContinue={() => go('meal-confirmation')}
+          />
+        );
+      case 'meal-confirmation':
+        return (
+          <MealConfirmationScreen
+            onBack={() => go(livaFlowActive ? 'liva-home' : 'quick-log')}
+            onContinue={() => go('portion-selection')}
+          />
+        );
+      case 'portion-selection':
+        return (
+          <PortionSelectionScreen
+            onBack={() => go('meal-confirmation')}
+            onContinue={() => go('nutrition-breakdown')}
+          />
+        );
+      case 'nutrition-breakdown':
+        return (
+          <NutritionBreakdownScreen
+            onBack={() => go('portion-selection')}
+            onContinue={() => go('save-meal')}
+          />
+        );
+      case 'save-meal':
         return (
           <SaveMealScreen
-            onBack={() => go("nutrition-breakdown")}
+            onBack={() => go('nutrition-breakdown')}
             onSave={() => {
               setCaloriesLogged((c) => {
                 const next = c + 610;
                 syncProfile({ calories: next });
                 return next;
               });
-              go(livaFlowActive ? "liva-home" : "meal-success");
+              go(livaFlowActive ? 'liva-home' : 'meal-success');
             }}
           />
         );
-      case "meal-success":
-        return <MealSuccessScreen onDashboard={() => go(livaFlowActive ? "liva-home" : "home")} onLogAnother={() => go("quick-log")} />;
-      
+      case 'meal-success':
+        return (
+          <MealSuccessScreen
+            onDashboard={() => go(livaFlowActive ? 'liva-home' : 'home')}
+            onLogAnother={() => go('quick-log')}
+          />
+        );
+
       // LIVA AI ASSISTANT SCREENS
-      case "liva-home":
+      case 'liva-home':
         return (
           <LivaHomeScreen
             onNavigate={(screen) => {
@@ -1288,22 +1583,22 @@ export default function App() {
             }}
             onStartLog={(mode) => {
               setEntryMode(mode);
-              if (mode === "camera") {
-                go("camera-log");
-              } else if (mode === "voice") {
-                go("liva-voice");
+              if (mode === 'camera') {
+                go('camera-log');
+              } else if (mode === 'voice') {
+                go('liva-voice');
               } else {
-                go("liva-home");
+                go('liva-home');
               }
             }}
             userName={userName}
             userProfile={{
-              name: userName || "Amish",
+              name: userName || 'Amish',
               goal: primaryGoal,
               diet: getDietString(),
               dailyCalories: goals.calories || 1800,
               motivationStyle: motivationStyle,
-              language: language
+              language: language,
             }}
             onMealLogged={(mealData) => {
               logLivaMeal(mealData);
@@ -1313,7 +1608,11 @@ export default function App() {
             }}
             onMealDeleted={(deleteData) => {
               if (deleteData.id) {
-                deleteLivaMealByType(deleteData.mealType, deleteData.date, deleteData.id);
+                deleteLivaMealByType(
+                  deleteData.mealType,
+                  deleteData.date,
+                  deleteData.id
+                );
               } else if (deleteData.mealType) {
                 deleteLivaMealByType(deleteData.mealType, deleteData.date);
               }
@@ -1324,7 +1623,7 @@ export default function App() {
             initialResponse={chatInitialResponse}
           />
         );
-      case "liva-chat":
+      case 'liva-chat':
         return (
           <LivaChatScreen
             initialMessage={chatInitialMsg}
@@ -1332,18 +1631,18 @@ export default function App() {
             onBack={() => {
               setChatInitialMsg(undefined);
               setChatInitialResponse(null);
-              go("liva-home");
+              go('liva-home');
             }}
             onNavigate={go}
-            userId={getDeviceId() || "guest"}
+            userId={getDeviceId() || 'guest'}
             userName={userName}
             userProfile={{
-              name: userName || "Amish",
+              name: userName || 'Amish',
               goal: primaryGoal,
               diet: getDietString(),
               dailyCalories: goals.calories || 1800,
               motivationStyle: motivationStyle,
-              language: language
+              language: language,
             }}
             onMealLogged={(mealData) => {
               logLivaMeal(mealData);
@@ -1353,7 +1652,11 @@ export default function App() {
             }}
             onMealDeleted={(deleteData) => {
               if (deleteData.id) {
-                deleteLivaMealByType(deleteData.mealType, deleteData.date, deleteData.id);
+                deleteLivaMealByType(
+                  deleteData.mealType,
+                  deleteData.date,
+                  deleteData.id
+                );
               } else if (deleteData.mealType) {
                 deleteLivaMealByType(deleteData.mealType, deleteData.date);
               }
@@ -1361,64 +1664,68 @@ export default function App() {
             loggedMeals={loggedMeals}
           />
         );
-      case "liva-voice":
+      case 'liva-voice':
         return (
           <LivaVoiceScreen
-            onCancel={() => go("liva-home")}
+            onCancel={() => go('liva-home')}
             onDone={(spoken) => {
               setChatInitialMsg(spoken);
-              go("liva-home");
+              go('liva-home');
             }}
           />
         );
-      case "liva-thinking":
-        return <LivaThinkingScreen onDone={() => go("liva-response")} />;
-      case "liva-response":
+      case 'liva-thinking':
+        return <LivaThinkingScreen onDone={() => go('liva-response')} />;
+      case 'liva-response':
         return (
-          <LivaResponseScreen
-            onBack={() => go("liva-home")}
+          <LivaResponseScreen onBack={() => go('liva-home')} onNavigate={go} />
+        );
+      case 'liva-recommendations':
+        return (
+          <LivaRecommendationsScreen
+            onBack={() => go('liva-home')}
+            onSelectRecipe={(id) => {
+              setSelectedRecipeId(id);
+              go('liva-recipe-detail');
+            }}
+          />
+        );
+      case 'liva-recipe-detail':
+        return (
+          <LivaRecipeDetailScreen
+            onBack={() => go('liva-recommendations')}
+            onSave={() => go('liva-home')}
+          />
+        );
+      case 'liva-recipe-swiper':
+        return (
+          <LivaRecipeSwiperScreen
+            onBack={() => go('liva-home')}
             onNavigate={go}
           />
         );
-      case "liva-recommendations":
-        return (
-          <LivaRecommendationsScreen
-            onBack={() => go("liva-home")}
-            onSelectRecipe={(id) => {
-              setSelectedRecipeId(id);
-              go("liva-recipe-detail");
-            }}
-          />
-        );
-      case "liva-recipe-detail":
-        return (
-          <LivaRecipeDetailScreen
-            onBack={() => go("liva-recommendations")}
-            onSave={() => go("liva-home")}
-          />
-        );
-      case "liva-recipe-swiper":
-        return <LivaRecipeSwiperScreen onBack={() => go("liva-home")} onNavigate={go} />;
-      case "liva-water":
+      case 'liva-water':
         return (
           <LivaWaterScreen
-            onBack={() => go("liva-home")}
+            onBack={() => go('liva-home')}
             waterLogged={waterLogged}
             goals={goals}
-            onLogWater={(amount) => setWaterLogged((w: number) => Math.max(0, w + amount))}
+            onLogWater={(amount) =>
+              setWaterLogged((w: number) => Math.max(0, w + amount))
+            }
           />
         );
-      case "liva-weekly-coach":
+      case 'liva-weekly-coach':
         return (
           <LivaWeeklyCoachScreen
-            onBack={() => go("liva-home")}
-            onFinish={() => go("liva-home")}
+            onBack={() => go('liva-home')}
+            onFinish={() => go('liva-home')}
             userName={userName}
           />
         );
 
       // PROGRESS & INSIGHTS ROUTING SCREENS
-      case "progress-dashboard":
+      case 'progress-dashboard':
         return (
           <ProgressDashboardScreen
             onNavigate={go}
@@ -1428,41 +1735,43 @@ export default function App() {
             goals={goals}
             caloriesLogged={caloriesLogged}
             proteinLogged={proteinLogged}
-            loggedMealsCount={todaysLoggedMeals.filter(m => m.mealType !== "snack").length}
+            loggedMealsCount={
+              todaysLoggedMeals.filter((m) => m.mealType !== 'snack').length
+            }
             history={history}
             todaysLoggedMeals={todaysLoggedMeals}
           />
         );
-      case "progress-weekly":
+      case 'progress-weekly':
         return (
           <ProgressWeeklyScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             onNavigate={go}
             loggedMeals={loggedMeals}
             goals={goals}
           />
         );
-      case "progress-monthly":
+      case 'progress-monthly':
         return (
           <ProgressMonthlyScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             onNavigate={go}
             loggedMeals={loggedMeals}
             goals={goals}
           />
         );
-      case "progress-nutrition":
+      case 'progress-nutrition':
         return (
           <ProgressNutritionScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             loggedMeals={loggedMeals}
             goals={goals}
           />
         );
-      case "progress-weight":
+      case 'progress-weight':
         return (
           <ProgressWeightScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             userWeight={userWeight}
             goals={goals}
             onLogWeight={(w) => {
@@ -1473,10 +1782,10 @@ export default function App() {
             }}
           />
         );
-      case "progress-habits":
+      case 'progress-habits':
         return (
           <ProgressHabitsScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             habits={completedHabits}
             onToggleHabit={(key) =>
               setCompletedHabits((prev) => {
@@ -1487,63 +1796,100 @@ export default function App() {
             }
           />
         );
-      case "progress-insights":
-        return <ProgressInsightsScreen onBack={() => go("progress-dashboard")} onNavigate={go} />;
-      case "progress-achievements":
-        return <ProgressAchievementsScreen onBack={() => go("progress-dashboard")} />;
-      case "progress-goals":
+      case 'progress-insights':
+        return (
+          <ProgressInsightsScreen
+            onBack={() => go('progress-dashboard')}
+            onNavigate={go}
+          />
+        );
+      case 'progress-achievements':
+        return (
+          <ProgressAchievementsScreen onBack={() => go('progress-dashboard')} />
+        );
+      case 'progress-goals':
         return (
           <ProgressGoalsScreen
-            onBack={() => go("progress-dashboard")}
+            onBack={() => go('progress-dashboard')}
             goals={goals}
             onUpdateGoals={(updated) => {
               setGoals(updated);
               if (updated.weight) setUserWeight(updated.weight);
               if (updated.height) setUserHeight(`${updated.height} cm`);
-              syncProfile({ 
+              syncProfile({
                 goals: updated,
                 ...(updated.weight ? { weight: updated.weight } : {}),
-                ...(updated.height ? { height: `${updated.height} cm` } : {})
+                ...(updated.height ? { height: `${updated.height} cm` } : {}),
               });
             }}
           />
         );
 
       // NOTIFICATIONS & SMART REMINDERS ROUTING SCREENS
-      case "reminder-center":
-        return <ReminderCenterScreen onBack={() => go("home")} onNavigate={go} />;
-        case "reminder-settings":
-          return <ReminderSettingsScreen onBack={() => go("reminder-center")} onNavigate={go} />;
-        case "liva-smart-engine":
-          return <LivaSmartEngineScreen onBack={() => go("reminder-settings")} onNavigate={go} />;
-        case "reminder-preview":
-          return <ReminderPreviewScreen onBack={() => go("reminder-settings")} onNavigate={go} userName={userName} />;
-      case "reminder-meal-flow":
+      case 'reminder-center':
+        return (
+          <ReminderCenterScreen onBack={() => go('home')} onNavigate={go} />
+        );
+      case 'reminder-settings':
+        return (
+          <ReminderSettingsScreen
+            onBack={() => go('reminder-center')}
+            onNavigate={go}
+          />
+        );
+      case 'liva-smart-engine':
+        return (
+          <LivaSmartEngineScreen
+            onBack={() => go('reminder-settings')}
+            onNavigate={go}
+          />
+        );
+      case 'reminder-preview':
+        return (
+          <ReminderPreviewScreen
+            onBack={() => go('reminder-settings')}
+            onNavigate={go}
+            userName={userName}
+          />
+        );
+      case 'reminder-meal-flow':
         return (
           <ReminderMealFlowScreen
-            onBack={() => go("reminder-center")}
+            onBack={() => go('reminder-center')}
             onLogCalories={(kcal) => setCaloriesLogged((c: number) => c + kcal)}
             userName={userName}
           />
         );
-      case "reminder-hydration":
+      case 'reminder-hydration':
         return (
           <ReminderHydrationScreen
-            onBack={() => go("reminder-center")}
+            onBack={() => go('reminder-center')}
             waterLogged={waterLogged}
             goals={goals}
-            onLogWater={(amount) => setWaterLogged((w: number) => Math.max(0, w + amount))}
+            onLogWater={(amount) =>
+              setWaterLogged((w: number) => Math.max(0, w + amount))
+            }
           />
         );
-      case "reminder-celebration":
-        return <ReminderCelebrationScreen onBack={() => go("reminder-center")} onNavigate={go} userName={userName} />;
-      case "reminder-weekly-summary":
-        return <ReminderWeeklySummaryScreen onBack={() => go("reminder-center")} />;
-      case "reminder-preferences":
-        return <ReminderPreferencesScreen onBack={() => go("reminder-center")} />;
+      case 'reminder-celebration':
+        return (
+          <ReminderCelebrationScreen
+            onBack={() => go('reminder-center')}
+            onNavigate={go}
+            userName={userName}
+          />
+        );
+      case 'reminder-weekly-summary':
+        return (
+          <ReminderWeeklySummaryScreen onBack={() => go('reminder-center')} />
+        );
+      case 'reminder-preferences':
+        return (
+          <ReminderPreferencesScreen onBack={() => go('reminder-center')} />
+        );
 
       // PROFILE & SETTINGS ROUTING SCREENS
-      case "profile-home":
+      case 'profile-home':
         return (
           <ProfileHomeScreen
             onNavigate={go}
@@ -1555,10 +1901,10 @@ export default function App() {
             completedHabits={completedHabits}
           />
         );
-      case "profile-personal":
+      case 'profile-personal':
         return (
           <ProfilePersonalScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             name={userName}
             email={userEmail}
             phone={userPhone}
@@ -1572,19 +1918,27 @@ export default function App() {
               setUserGender(gender);
               setUserHeight(height);
               setUserUnits(units);
-              
-              const parsedHeight = Number(height.replace(" cm", "")) || 178;
+
+              const parsedHeight = Number(height.replace(' cm', '')) || 178;
               const updatedGoals = { ...goals, height: parsedHeight };
               setGoals(updatedGoals);
 
-              syncProfile({ name, email, phone, gender, height, units, goals: updatedGoals });
+              syncProfile({
+                name,
+                email,
+                phone,
+                gender,
+                height,
+                units,
+                goals: updatedGoals,
+              });
             }}
           />
         );
-      case "profile-health":
+      case 'profile-health':
         return (
           <ProfileHealthScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             activity={userActivity}
             preferences={userPreferences}
             allergies={userAllergies}
@@ -1596,19 +1950,19 @@ export default function App() {
             }}
           />
         );
-      case "profile-goals":
+      case 'profile-goals':
         return (
           <ProfileGoalsScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             goals={goals}
             onUpdateGoals={(updated) => {
               setGoals(updated);
               if (updated.weight) setUserWeight(updated.weight);
               if (updated.height) setUserHeight(`${updated.height} cm`);
-              syncProfile({ 
+              syncProfile({
                 goals: updated,
                 ...(updated.weight ? { weight: updated.weight } : {}),
-                ...(updated.height ? { height: `${updated.height} cm` } : {})
+                ...(updated.height ? { height: `${updated.height} cm` } : {}),
               });
             }}
             primaryGoal={primaryGoal}
@@ -1618,10 +1972,10 @@ export default function App() {
             }}
           />
         );
-      case "profile-liva":
+      case 'profile-liva':
         return (
           <ProfileLivaScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             memories={memories}
             onUpdateMemories={(updated) => {
               setMemories(updated);
@@ -1629,23 +1983,23 @@ export default function App() {
             }}
           />
         );
-      case "profile-devices":
-        return <ProfileDevicesScreen onBack={() => go("profile-home")} />;
-      case "profile-premium":
-        return <ProfilePremiumScreen onBack={() => go("profile-home")} />;
-      case "profile-privacy":
+      case 'profile-devices':
+        return <ProfileDevicesScreen onBack={() => go('profile-home')} />;
+      case 'profile-premium':
+        return <ProfilePremiumScreen onBack={() => go('profile-home')} />;
+      case 'profile-privacy':
         return (
           <ProfilePrivacyScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             onDeleteAccount={handleDeleteAccount}
           />
         );
-      case "profile-help":
-        return <ProfileHelpScreen onBack={() => go("profile-home")} />;
-      case "profile-settings":
+      case 'profile-help':
+        return <ProfileHelpScreen onBack={() => go('profile-home')} />;
+      case 'profile-settings':
         return (
           <ProfileSettingsScreen
-            onBack={() => go("profile-home")}
+            onBack={() => go('profile-home')}
             onLogout={handleLogout}
           />
         );
@@ -1660,7 +2014,12 @@ export default function App() {
         {dbError && (
           <div className="absolute top-12 left-4 right-4 z-50 rounded-2xl p-3 bg-red-50 border border-red-200 shadow-lg text-[10px] font-bold text-red-700 flex justify-between items-start gap-2">
             <span>⚠️ {dbError}</span>
-            <button onClick={() => setDbError(null)} className="text-red-500 hover:text-red-700 text-xs font-black select-none">×</button>
+            <button
+              onClick={() => setDbError(null)}
+              className="text-red-500 hover:text-red-700 text-xs font-black select-none"
+            >
+              ×
+            </button>
           </div>
         )}
         <AnimatePresence mode="wait">
@@ -1688,17 +2047,15 @@ export default function App() {
                   transition={{ duration: 0.25 }}
                   className="absolute bottom-[104px] right-[72px] z-20 bg-white/40 text-[#10201a] text-[9px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg whitespace-nowrap"
                   style={{
-                    boxShadow: "0 4px 12px rgba(16,32,26,0.06)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.4)",
+                    boxShadow: '0 4px 12px rgba(16,32,26,0.06)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255, 255, 255, 0.4)',
                   }}
                 >
                   Say "Hey Liva"
                   {/* Arrow pointing right to the floating Liva bubble */}
-                  <span
-                    className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[4px] border-b-[4px] border-l-[4px] border-t-transparent border-b-transparent border-l-white/40"
-                  />
+                  <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[4px] border-b-[4px] border-l-[4px] border-t-transparent border-b-transparent border-l-white/40" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1723,27 +2080,34 @@ export default function App() {
                 >
                   {/* Chat Bubble Style Prompt */}
                   <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 max-w-[85%] backdrop-blur-sm">
-                    <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">Which meal is this?</p>
+                    <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">
+                      Which meal is this?
+                    </p>
                   </div>
 
                   {/* Single Line Horizontally Scrollable Chips */}
                   <div className="flex flex-nowrap overflow-x-auto gap-2 w-full pb-2 hide-scrollbar">
-                    {["Breakfast", "Lunch", "Dinner", "Snack"].map(section => (
-                      <button
-                        key={section}
-                        onClick={() => {
-                          logLivaMeal({ ...pendingMealData, mealType: section.toLowerCase() });
-                          setPendingMealData(null);
-                          setLivaSiriActive(false);
-                          setLivaFlowActive(false);
-                          setToastMessage(`Meal saved in ${section}!`);
-                          setTimeout(() => setToastMessage(null), 3000);
-                        }}
-                        className="bg-white/95 hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
-                      >
-                        {section}
-                      </button>
-                    ))}
+                    {['Breakfast', 'Lunch', 'Dinner', 'Snack'].map(
+                      (section) => (
+                        <button
+                          key={section}
+                          onClick={() => {
+                            logLivaMeal({
+                              ...pendingMealData,
+                              mealType: section.toLowerCase(),
+                            });
+                            setPendingMealData(null);
+                            setLivaSiriActive(false);
+                            setLivaFlowActive(false);
+                            setToastMessage(`Meal saved in ${section}!`);
+                            setTimeout(() => setToastMessage(null), 3000);
+                          }}
+                          className="bg-white/95 hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
+                        >
+                          {section}
+                        </button>
+                      )
+                    )}
                   </div>
                 </motion.div>
               ) : null
@@ -1753,13 +2117,13 @@ export default function App() {
 
         <AnimatePresence>
           {isTextDrawerOpen && (
-            <TextLoggingDrawer 
-              onClose={() => setIsTextDrawerOpen(false)} 
+            <TextLoggingDrawer
+              onClose={() => setIsTextDrawerOpen(false)}
               onLogMeal={(meal) => {
                 logLivaMeal(meal);
                 setToastMessage(`Meal saved in ${meal.mealType}!`);
                 setTimeout(() => setToastMessage(null), 3000);
-              }} 
+              }}
             />
           )}
         </AnimatePresence>
@@ -1790,19 +2154,24 @@ export default function App() {
               >
                 {/* Chat Bubble Style Prompt */}
                 <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 max-w-[85%] backdrop-blur-sm">
-                  <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">Which meal is this?</p>
+                  <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">
+                    Which meal is this?
+                  </p>
                 </div>
 
                 {/* Single Line Horizontally Scrollable Chips */}
                 <div className="flex flex-nowrap overflow-x-auto gap-2 w-full pb-2 hide-scrollbar">
-                  {["Breakfast", "Lunch", "Dinner", "Snack"].map(section => (
+                  {['Breakfast', 'Lunch', 'Dinner', 'Snack'].map((section) => (
                     <button
                       key={section}
                       onClick={() => {
-                        logLivaMeal({ ...pendingMealData, mealType: section.toLowerCase() });
-                          setPendingMealData(null);
-                          setIsTextDrawerOpen(false);
-                          setToastMessage(`Meal saved in ${section}!`);
+                        logLivaMeal({
+                          ...pendingMealData,
+                          mealType: section.toLowerCase(),
+                        });
+                        setPendingMealData(null);
+                        setIsTextDrawerOpen(false);
+                        setToastMessage(`Meal saved in ${section}!`);
                         setTimeout(() => setToastMessage(null), 3000);
                       }}
                       className="bg-white/95 hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
@@ -1819,19 +2188,28 @@ export default function App() {
         {/* Inactivity Warning Modal */}
         {inactivityWarning && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
-            <div className="bg-white rounded-[28px] p-6 text-center space-y-4 max-w-[280px]" style={{ boxShadow: "0 20px 48px rgba(16,32,26,0.16)" }}>
+            <div
+              className="bg-white rounded-[28px] p-6 text-center space-y-4 max-w-[280px]"
+              style={{ boxShadow: '0 20px 48px rgba(16,32,26,0.16)' }}
+            >
               <span className="text-4xl block">⏱️</span>
               <div>
-                <h3 className="text-base font-bold text-slate-700">Are you still there?</h3>
+                <h3 className="text-base font-bold text-slate-700">
+                  Are you still there?
+                </h3>
                 <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                  You will be logged out automatically due to inactivity in <span className="font-extrabold text-rose-500">{inactivityCountdown} seconds</span>.
+                  You will be logged out automatically due to inactivity in{' '}
+                  <span className="font-extrabold text-rose-500">
+                    {inactivityCountdown} seconds
+                  </span>
+                  .
                 </p>
               </div>
               <button
                 onClick={() => {
                   setInactivityWarning(false);
                   setInactivityCountdown(30);
-                  window.dispatchEvent(new Event("click"));
+                  window.dispatchEvent(new Event('click'));
                 }}
                 className="w-full bg-[#34c759] hover:bg-[#25ad48] text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-md"
               >

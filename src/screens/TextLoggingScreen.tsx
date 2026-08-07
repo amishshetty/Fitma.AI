@@ -1,5 +1,5 @@
-import React from "react";
-import TextLoggingDrawer from "../components/TextLoggingDrawer";
+import React from 'react';
+import TextLoggingDrawer from '../components/TextLoggingDrawer';
 
 export default function TextLoggingScreen({
   onBack,

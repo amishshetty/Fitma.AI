@@ -1,16 +1,23 @@
-import { motion, AnimatePresence } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import LivaAvatar from "../components/layout/LivaAvatar";
-import ScreenShell from "./ScreenShell";
-import { ink, green, muted } from "../constants";
-import { Screen } from "../types";
+import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import LivaAvatar from '../components/layout/LivaAvatar';
+import ScreenShell from './ScreenShell';
+import { ink, green, muted } from '../constants';
+import { Screen } from '../types';
 
 export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
   const [factIndex, setFactIndex] = useState(0);
-  const rotatingHelper = ["Checking your nutrition...", "Reviewing today's meals...", "Calculating remaining calories..."];
+  const rotatingHelper = [
+    'Checking your nutrition...',
+    "Reviewing today's meals...",
+    'Calculating remaining calories...',
+  ];
 
   useEffect(() => {
-    const factTimer = setInterval(() => setFactIndex((idx) => (idx + 1) % rotatingHelper.length), 1000);
+    const factTimer = setInterval(
+      () => setFactIndex((idx) => (idx + 1) % rotatingHelper.length),
+      1000
+    );
     const doneTimer = setTimeout(onDone, 3000);
     return () => {
       clearInterval(factTimer);
@@ -24,7 +31,7 @@ export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
         <div className="relative mb-12">
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
             className="absolute inset-[-20px] rounded-full border-2 border-dashed border-[#34C759]/40"
           />
           <LivaAvatar size={132} floating />
@@ -51,9 +58,9 @@ export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
           <motion.div
             className="h-full rounded-full"
             style={{ background: green }}
-            initial={{ width: "10%" }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 2.9, ease: "easeInOut" }}
+            initial={{ width: '10%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 2.9, ease: 'easeInOut' }}
           />
         </div>
       </div>

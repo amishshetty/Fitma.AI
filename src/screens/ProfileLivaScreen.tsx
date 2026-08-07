@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import LivaAvatar from "../components/layout/LivaAvatar";
-import ScreenShell from "./ScreenShell";
-import { green, muted } from "../constants";
-import { Screen } from "../types";
-import { MemoryItem } from "../types";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import LivaAvatar from '../components/layout/LivaAvatar';
+import ScreenShell from './ScreenShell';
+import { green, muted } from '../constants';
+import { Screen } from '../types';
+import { MemoryItem } from '../types';
 
 export default function ProfileLivaScreen({
   onBack,
@@ -14,8 +14,10 @@ export default function ProfileLivaScreen({
   memories: MemoryItem[];
   onUpdateMemories: (memories: MemoryItem[]) => void;
 }) {
-  const [personality, setPersonality] = useState<"friendly" | "pro" | "motivational">("friendly");
-  const [newMemory, setNewMemory] = useState("");
+  const [personality, setPersonality] = useState<
+    'friendly' | 'pro' | 'motivational'
+  >('friendly');
+  const [newMemory, setNewMemory] = useState('');
 
   const handleDeleteMemory = (id: number) => {
     onUpdateMemories(memories.filter((m) => m.id !== id));
@@ -26,9 +28,9 @@ export default function ProfileLivaScreen({
     if (!newMemory.trim()) return;
     onUpdateMemories([
       ...memories,
-      { id: Date.now(), text: newMemory.trim(), category: "User Added" },
+      { id: Date.now(), text: newMemory.trim(), category: 'User Added' },
     ]);
-    setNewMemory("");
+    setNewMemory('');
   };
 
   return (
@@ -41,22 +43,28 @@ export default function ProfileLivaScreen({
         <LivaAvatar size={100} floating />
 
         {/* AI Personality Type Buttons */}
-        <div className="rounded-[24px] bg-white p-5 border border-slate-100 text-left" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Coach Communication Style</h3>
+        <div
+          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left"
+          style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
+        >
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">
+            Coach Communication Style
+          </h3>
           <div className="grid grid-cols-3 gap-2 text-xs">
             {[
-              { key: "friendly", label: "Friendly" },
-              { key: "pro", label: "Scientific" },
-              { key: "motivational", label: "Motivate" },
+              { key: 'friendly', label: 'Friendly' },
+              { key: 'pro', label: 'Scientific' },
+              { key: 'motivational', label: 'Motivate' },
             ].map((style) => (
               <button
                 key={style.key}
                 onClick={() => setPersonality(style.key as any)}
                 className="py-2.5 rounded-xl border text-center font-bold transition-all"
                 style={{
-                  background: personality === style.key ? green : "white",
-                  color: personality === style.key ? "white" : muted,
-                  borderColor: personality === style.key ? green : "rgba(16,32,26,0.06)",
+                  background: personality === style.key ? green : 'white',
+                  color: personality === style.key ? 'white' : muted,
+                  borderColor:
+                    personality === style.key ? green : 'rgba(16,32,26,0.06)',
                 }}
               >
                 {style.label}
@@ -66,15 +74,27 @@ export default function ProfileLivaScreen({
         </div>
 
         {/* Liva's Memory list */}
-        <div className="rounded-[24px] bg-white p-5 border border-slate-100 text-left space-y-3.5" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">What Liva Knows (AI Memory)</h3>
-          
+        <div
+          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left space-y-3.5"
+          style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
+        >
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">
+            What Liva Knows (AI Memory)
+          </h3>
+
           <div className="space-y-2">
             {memories.map((m) => (
-              <div key={m.id} className="flex justify-between items-start gap-4 pb-2 border-b border-slate-50 last:border-b-0">
+              <div
+                key={m.id}
+                className="flex justify-between items-start gap-4 pb-2 border-b border-slate-50 last:border-b-0"
+              >
                 <div>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide block">{m.category}</span>
-                  <span className="text-xs font-medium text-slate-700 leading-relaxed block mt-0.5">"{m.text}"</span>
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide block">
+                    {m.category}
+                  </span>
+                  <span className="text-xs font-medium text-slate-700 leading-relaxed block mt-0.5">
+                    "{m.text}"
+                  </span>
                 </div>
                 <button
                   onClick={() => handleDeleteMemory(m.id)}
@@ -88,8 +108,13 @@ export default function ProfileLivaScreen({
         </div>
 
         {/* Teach Liva input box */}
-        <div className="rounded-[24px] bg-white p-5 border border-slate-100 text-left" style={{ boxShadow: "0 6px 18px rgba(16,32,26,0.03)" }}>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">Teach Liva Something New</h3>
+        <div
+          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left"
+          style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
+        >
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+            Teach Liva Something New
+          </h3>
           <form onSubmit={handleTeachLiva} className="flex gap-2">
             <input
               type="text"

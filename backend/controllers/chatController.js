@@ -1,40 +1,47 @@
-import { 
-  genAI, 
-  detectIntent, 
-  parseLogs, 
-  buildLivaBrain 
+import {
+  genAI,
+  detectIntent,
+  parseLogs,
+  buildLivaBrain,
 } from '../services/chatService.js';
 
 export const handleChat = async (req, res) => {
-  const { message, profile, previousMessages = [], loggedMeals = [], remainingCalories, customVocabulary = {} } = req.body || {};
+  const {
+    message,
+    profile,
+    previousMessages = [],
+    loggedMeals = [],
+    remainingCalories,
+    customVocabulary = {},
+  } = req.body || {};
 
-  console.log("=== INCOMING CHAT REQUEST ===");
-  console.log("Message:", message);
-  console.log("LoggedMeals:", JSON.stringify(loggedMeals, null, 2));
-  console.log("CustomVocabulary:", JSON.stringify(customVocabulary));
-  console.log("LocalDateStr:", req.body.localDateStr);
-  console.log("===============================");
+  console.log('=== INCOMING CHAT REQUEST ===');
+  console.log('Message:', message);
+  console.log('LoggedMeals:', JSON.stringify(loggedMeals, null, 2));
+  console.log('CustomVocabulary:', JSON.stringify(customVocabulary));
+  console.log('LocalDateStr:', req.body.localDateStr);
+  console.log('===============================');
 
-  if (!message || message.trim() === "") {
+  if (!message || message.trim() === '') {
     return res.status(400).json({
-      error: "Message is required.",
+      error: 'Message is required.',
     });
   }
 
   const userProfile = profile || {
-    name: "User",
-    goal: "Health",
-    diet: "Standard",
+    name: 'User',
+    goal: 'Health',
+    diet: 'Standard',
     dailyCalories: 2000,
-    motivationStyle: "Friendly",
-    language: "English",
+    motivationStyle: 'Friendly',
+    language: 'English',
   };
 
   const intent = detectIntent(message);
 
   // Use frontend loggedMeals to ensure Liva's context perfectly matches the user's UI
   // The frontend sends them as { id (timestamp), name, calories, protein, carbs, fat, mealType, dateString, timestamp (time string) }
-  const combinedMeals = (loggedMeals || []).map(m => ({
+  const combinedMeals = (loggedMeals || []).map((m) => ({
     id: m.id,
     mealType: m.mealType,
     foodItem: m.name,
@@ -43,38 +50,55 @@ export const handleChat = async (req, res) => {
     carbs: m.carbs || 0,
     fat: m.fat || 0,
     loggedAt: new Date(parseInt(m.id)),
-    dateString: m.dateString // provided by frontend
+    dateString: m.dateString, // provided by frontend
   }));
 
   // Calculate dynamic remaining calories based on frontend meals (only for today)
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
-  const todaysMeals = combinedMeals.filter(meal => meal.loggedAt >= startOfToday);
-  
-  const consumedCalories = todaysMeals.reduce((sum, meal) => sum + (meal.calories || 0), 0);
-  const dynamicRemainingCalories = Math.max(0, userProfile.dailyCalories - consumedCalories);
+  const todaysMeals = combinedMeals.filter(
+    (meal) => meal.loggedAt >= startOfToday
+  );
+
+  const consumedCalories = todaysMeals.reduce(
+    (sum, meal) => sum + (meal.calories || 0),
+    0
+  );
+  const dynamicRemainingCalories = Math.max(
+    0,
+    userProfile.dailyCalories - consumedCalories
+  );
 
   // Pass the user's local date from the frontend to avoid timezone discrepancies
   const userLocalDateStr = req.body.localDateStr || new Date().toDateString();
 
   try {
     // ---------- GEMINI MODEL ----------
-    const systemPrompt = buildLivaBrain(message, userProfile, combinedMeals, dynamicRemainingCalories, userLocalDateStr, customVocabulary);
+    const systemPrompt = buildLivaBrain(
+      message,
+      userProfile,
+      combinedMeals,
+      dynamicRemainingCalories,
+      userLocalDateStr,
+      customVocabulary
+    );
 
-    console.log("=== SYSTEM PROMPT ===");
+    console.log('=== SYSTEM PROMPT ===');
     console.log(systemPrompt);
-    console.log("=====================");
+    console.log('=====================');
 
     const history = [];
 
     previousMessages.forEach((msg) => {
       history.push({
-        role: msg.sender === "user" ? "user" : "model",
+        role: msg.sender === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }],
       });
     });
 
-    const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : "";
+    const apiKey = process.env.GEMINI_API_KEY
+      ? process.env.GEMINI_API_KEY.trim()
+      : '';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent`;
 
     const finalPrompt = `
@@ -135,46 +159,58 @@ EXPECTED JSON FORMAT:
 }
 `;
 
-    const contents = history.map(msg => ({
+    const contents = history.map((msg) => ({
       role: msg.role,
-      parts: msg.parts
+      parts: msg.parts,
     }));
-    contents.push({ role: "user", parts: [{ text: finalPrompt }] });
+    contents.push({ role: 'user', parts: [{ text: finalPrompt }] });
 
     const body = {
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: contents,
       generationConfig: {
-        responseMimeType: "application/json"
-      }
+        responseMimeType: 'application/json',
+      },
     };
 
     const fetchPromise = fetch(url, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await Promise.race([
       fetchPromise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Gemini Timeout")), 30000))
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini Timeout')), 30000)
+      ),
     ]);
 
     const data = await result.json();
     if (!result.ok) {
-      throw new Error(data.error?.message || "Google API Error");
+      throw new Error(data.error?.message || 'Google API Error');
     }
 
     let response = data.candidates[0].content.parts[0].text;
 
-    const { cleanResponse, mealData, summaryData, waterData, deleteData, updateVocabularyData, recommendationData, greeting, motivation } = parseLogs(response);
+    const {
+      cleanResponse,
+      mealData,
+      summaryData,
+      waterData,
+      deleteData,
+      updateVocabularyData,
+      recommendationData,
+      greeting,
+      motivation,
+    } = parseLogs(response);
 
     return res.json({
       success: true,
-      source: "gemini",
+      source: 'gemini',
       intent,
       response: cleanResponse,
       greeting,
@@ -187,13 +223,15 @@ EXPECTED JSON FORMAT:
       recommendationData,
     });
   } catch (error) {
-    console.error("Liva Error:", error.message || error);
+    console.error('Liva Error:', error.message || error);
 
-    const errorMessage = error.message || "Unknown error";
-    let customResponse = "I'm having a little trouble connecting to my brain right now. Can you try again in a moment?";
-    
-    if (errorMessage.includes("API key not valid")) {
-      customResponse = "It looks like the Gemini API Key is invalid! Please check the key in Vercel.";
+    const errorMessage = error.message || 'Unknown error';
+    let customResponse =
+      "I'm having a little trouble connecting to my brain right now. Can you try again in a moment?";
+
+    if (errorMessage.includes('API key not valid')) {
+      customResponse =
+        'It looks like the Gemini API Key is invalid! Please check the key in Vercel.';
     } else {
       // Temporarily send the raw error to the frontend so we can see what's wrong!
       customResponse = `System Error: ${errorMessage}`;
@@ -201,8 +239,8 @@ EXPECTED JSON FORMAT:
 
     return res.status(500).json({
       success: false,
-      error: "Failed to generate AI response",
-      response: customResponse
+      error: 'Failed to generate AI response',
+      response: customResponse,
     });
   }
 };

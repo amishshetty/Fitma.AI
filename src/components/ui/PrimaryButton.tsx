@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 export default function PrimaryButton({
   children,
@@ -19,8 +19,10 @@ export default function PrimaryButton({
       onClick={disabled ? undefined : onClick}
       className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl px-5 py-4 text-base font-semibold text-white"
       style={{
-        background: disabled ? "#b9dec5" : "linear-gradient(135deg, #34C759 0%, #25ad48 100%)",
-        boxShadow: disabled ? "none" : "0 12px 28px rgba(52,199,89,0.34)",
+        background: disabled
+          ? '#b9dec5'
+          : 'linear-gradient(135deg, #34C759 0%, #25ad48 100%)',
+        boxShadow: disabled ? 'none' : '0 12px 28px rgba(52,199,89,0.34)',
       }}
     >
       {children}

@@ -7,7 +7,8 @@
     "build": "vite build",
     "dev": "vite",
     "server": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"backend/**/*.{js,ts}\" \"*.{js,json,html}\""
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -86,6 +87,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-react": "4.7.0",
+    "prettier": "^3.9.6",
     "tailwindcss": "4.1.12",
     "ts-morph": "^28.0.0",
     "typescript": "^7.0.2",

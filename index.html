@@ -1,33 +1,47 @@
-<!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <script>
-        window.addEventListener("error", function (e) {
-          var errorNode = document.createElement("div");
-          errorNode.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,0,0,0.9);color:white;z-index:99999;padding:20px;font-family:monospace;white-space:pre-wrap;overflow:auto;";
-          errorNode.textContent = "CRASH: " + (e.error ? e.error.stack : e.message);
-          document.body.appendChild(errorNode);
-        });
-      </script>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Fitma.ai Onboarding Flow</title>
-      <meta name="description" content="Fitma.ai is an AI-driven nutrition companion that helps busy professionals effortlessly track meals and receive personalized dietary guidance." />
-      <meta name="robots" content="noindex, nofollow" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="theme-color" content="#ffffff" />
-      <link rel="manifest" href="/manifest.json" />
-      <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
-      <link rel="icon" type="image/png" href="/icon-v6-rounded.png" />
-      <link rel="apple-touch-icon" href="/icon-v6.png" />
-    </head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      window.addEventListener('error', function (e) {
+        var errorNode = document.createElement('div');
+        errorNode.style.cssText =
+          'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,0,0,0.9);color:white;z-index:99999;padding:20px;font-family:monospace;white-space:pre-wrap;overflow:auto;';
+        errorNode.textContent =
+          'CRASH: ' + (e.error ? e.error.stack : e.message);
+        document.body.appendChild(errorNode);
+      });
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitma.ai Onboarding Flow</title>
+    <meta
+      name="description"
+      content="Fitma.ai is an AI-driven nutrition companion that helps busy professionals effortlessly track meals and receive personalized dietary guidance."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="/manifest.json" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      #root {
+        height: 100%;
+      }
+    </style>
+    <link rel="icon" type="image/png" href="/icon-v6-rounded.png" />
+    <link rel="apple-touch-icon" href="/icon-v6.png" />
+  </head>
 
-    <body>
-      
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-      
-    </body>
-  </html>
-  
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

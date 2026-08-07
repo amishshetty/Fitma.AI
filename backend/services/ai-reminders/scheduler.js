@@ -15,7 +15,9 @@ class AIReminderEngine {
   start() {
     console.log('[Liva AI] Initializing Smart Reminder Engine...');
     this.cronTask = cron.schedule(this.interval, async () => {
-      console.log(`[Liva AI] Running 1-minute evaluation loop at ${new Date().toISOString()}`);
+      console.log(
+        `[Liva AI] Running 1-minute evaluation loop at ${new Date().toISOString()}`
+      );
       await this.evaluateUsers();
     });
     console.log('[Liva AI] Engine running.');
@@ -31,29 +33,33 @@ class AIReminderEngine {
   async evaluateUsers() {
     try {
       const db = getDatabase();
-      
+
       // Fetch all users
       const usersSnapshot = await db.ref('users').once('value');
       const users = usersSnapshot.val() || {};
-      
+
       // Filter for users with pushSubscription
       const activeUsers = Object.entries(users)
         .map(([deviceId, userData]) => ({ deviceId, ...userData }))
-        .filter(user => user.pushSubscription != null);
-      
-      console.log(`[Liva AI] Evaluating ${activeUsers.length} active users with Web Push subscriptions.`);
+        .filter((user) => user.pushSubscription != null);
+
+      console.log(
+        `[Liva AI] Evaluating ${activeUsers.length} active users with Web Push subscriptions.`
+      );
 
       for (const user of activeUsers) {
-        const behaviourSnapshot = await db.ref(`userBehaviours/${user.deviceId}`).once('value');
+        const behaviourSnapshot = await db
+          .ref(`userBehaviours/${user.deviceId}`)
+          .once('value');
         let profile = behaviourSnapshot.val();
-        
+
         if (!profile) {
           // If no behavioral profile exists yet, create a default one based on user settings
           profile = {
             userId: user.deviceId,
             averageMealTimes: { lunch: '13:00' },
             averageSleepSchedule: { sleepTime: '23:00' },
-            notificationStats: { ignoredConsecutive: 0 }
+            notificationStats: { ignoredConsecutive: 0 },
           };
           await db.ref(`userBehaviours/${user.deviceId}`).set(profile);
         }
@@ -67,9 +73,9 @@ class AIReminderEngine {
   }
 
   async contextEngine(profile, user) {
-    // Stage 1: Wait and Learn phase. 
+    // Stage 1: Wait and Learn phase.
     // We check if it's time to send a mock notification or calculate predictions.
-    
+
     // Check fatigue (disabled in local test mode to avoid MongoDB dependency)
     /*
     const recentNotifications = await NotificationHistory.find({ userId: profile.userId })
@@ -90,26 +96,31 @@ class AIReminderEngine {
 
     // Evaluate engines
     const pendingNotifications = [];
-    
+
     // Extract today's logs from the user object directly, as the frontend saves it there
-    const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-    const todayStart = new Date().setHours(0,0,0,0);
-    const todayEnd = new Date().setHours(23,59,59,999);
-    
+    const todayStr = new Date(
+      Date.now() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .split('T')[0];
+    const todayStart = new Date().setHours(0, 0, 0, 0);
+    const todayEnd = new Date().setHours(23, 59, 59, 999);
+
     let userMeals = user.meals || [];
     if (!Array.isArray(userMeals)) {
       userMeals = Object.values(userMeals);
     }
-    const todaysMeals = userMeals.filter(m => {
-       const time = parseInt(m.id);
-       return time >= todayStart && time <= todayEnd;
+    const todaysMeals = userMeals.filter((m) => {
+      const time = parseInt(m.id);
+      return time >= todayStart && time <= todayEnd;
     });
 
-    const todayHistory = (user.history && user.history[todayStr]) ? user.history[todayStr] : {};
+    const todayHistory =
+      user.history && user.history[todayStr] ? user.history[todayStr] : {};
 
     const formattedLogs = {
       meals: todaysMeals,
-      water: todayHistory.water || 0
+      water: todayHistory.water || 0,
     };
 
     const mealNotif = mealEngine.evaluateUser(profile, formattedLogs, user);
@@ -117,18 +128,31 @@ class AIReminderEngine {
 
     const waterNotif = waterEngine.evaluateUser(profile, formattedLogs, user);
     if (waterNotif) pendingNotifications.push(waterNotif);
-    
-    const calorieNotif = calorieEngine.evaluateUser(profile, formattedLogs, user);
+
+    const calorieNotif = calorieEngine.evaluateUser(
+      profile,
+      formattedLogs,
+      user
+    );
     if (calorieNotif) pendingNotifications.push(calorieNotif);
 
     if (pendingNotifications.length === 0) return;
 
-    const finalNotifications = priorityManager.mergeNotifications(pendingNotifications);
+    const finalNotifications =
+      priorityManager.mergeNotifications(pendingNotifications);
 
     for (const notif of finalNotifications) {
-      const allowed = await priorityManager.checkLimits(profile.userId, notif.category, notif.message);
+      const allowed = await priorityManager.checkLimits(
+        profile.userId,
+        notif.category,
+        notif.message
+      );
       if (allowed) {
-         await notificationSender.dispatch(profile.userId, notif, user.pushSubscription);
+        await notificationSender.dispatch(
+          profile.userId,
+          notif,
+          user.pushSubscription
+        );
       }
     }
   }

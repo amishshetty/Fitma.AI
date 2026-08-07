@@ -1,6 +1,6 @@
-import { Utensils, Plus } from "lucide-react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { ink, green, muted, softGreen } from "../../constants";
+import { Utensils, Plus } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ink, green, muted, softGreen } from '../../constants';
 
 export default function FoodCard({
   name,
@@ -16,8 +16,14 @@ export default function FoodCard({
   onAdd?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl bg-white p-4" style={{ boxShadow: "0 4px 16px rgba(16,32,26,0.06)" }}>
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: softGreen, color: green }}>
+    <div
+      className="flex items-center gap-4 rounded-2xl bg-white p-4"
+      style={{ boxShadow: '0 4px 16px rgba(16,32,26,0.06)' }}
+    >
+      <div
+        className="flex h-14 w-14 items-center justify-center rounded-2xl"
+        style={{ background: softGreen, color: green }}
+      >
         <Utensils size={24} />
       </div>
       <div className="min-w-0 flex-1">
@@ -27,7 +33,7 @@ export default function FoodCard({
         <p className="mt-1 text-xs" style={{ color: muted }}>
           {calories} kcal - {protein}g protein
         </p>
-        <p className="text-xs" style={{ color: "#9bb2a5" }}>
+        <p className="text-xs" style={{ color: '#9bb2a5' }}>
           {serving}
         </p>
       </div>

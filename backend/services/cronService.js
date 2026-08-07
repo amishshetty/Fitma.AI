@@ -1,47 +1,56 @@
-import cron from "node-cron";
-import { sendPushNotification } from "./pushService.js";
+import cron from 'node-cron';
+import { sendPushNotification } from './pushService.js';
 import { getDatabase } from 'firebase-admin/database';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 // Function to generate a proactive message using Gemini
 const generateProactiveMessage = async (userName, mealType) => {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) return `Hey ${userName}, it's time for your ${mealType}! Don't forget to log it.`;
+  if (!GEMINI_API_KEY)
+    return `Hey ${userName}, it's time for your ${mealType}! Don't forget to log it.`;
 
   try {
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY.trim()}`,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: `Write a short, engaging, 1-sentence notification reminding a user named ${userName} to log their ${mealType}. Keep it friendly and motivating as an AI diet coach named Liva.` }] }]
-        })
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Write a short, engaging, 1-sentence notification reminding a user named ${userName} to log their ${mealType}. Keep it friendly and motivating as an AI diet coach named Liva.`,
+                },
+              ],
+            },
+          ],
+        }),
       }
     );
     const data = await response.json();
     return data.candidates[0].content.parts[0].text.replace(/["*]/g, '');
   } catch (err) {
-    console.error("Cron Gemini Error:", err);
+    console.error('Cron Gemini Error:', err);
     return `Hey ${userName}, it's time for your ${mealType}! Don't forget to log it.`;
   }
 };
 
 export const startCronJobs = () => {
   // Run every hour at minute 0
-  cron.schedule("0 * * * *", async () => {
-    console.log("⏰ Running Proactive Coach Cron Job");
+  cron.schedule('0 * * * *', async () => {
+    console.log('⏰ Running Proactive Coach Cron Job');
     try {
       const currentHour = new Date().getHours();
       // Only send notifications between 8 AM and 9 PM
       if (currentHour < 8 || currentHour >= 21) return;
 
-      let expectedMeal = "";
-      if (currentHour >= 8 && currentHour <= 10) expectedMeal = "breakfast";
-      else if (currentHour >= 12 && currentHour <= 14) expectedMeal = "lunch";
-      else if (currentHour >= 19 && currentHour <= 21) expectedMeal = "dinner";
+      let expectedMeal = '';
+      if (currentHour >= 8 && currentHour <= 10) expectedMeal = 'breakfast';
+      else if (currentHour >= 12 && currentHour <= 14) expectedMeal = 'lunch';
+      else if (currentHour >= 19 && currentHour <= 21) expectedMeal = 'dinner';
 
       if (!expectedMeal) return; // Not a meal time
 
@@ -50,43 +59,47 @@ export const startCronJobs = () => {
       const startOfDayTimestamp = startOfDay.getTime();
 
       const db = getDatabase();
-      
+
       // Find all users who have a push subscription
       const usersSnapshot = await db.ref('users').once('value');
       const usersDict = usersSnapshot.val() || {};
       const users = Object.entries(usersDict)
         .map(([deviceId, data]) => ({ deviceId, ...data }))
-        .filter(u => u.pushSubscription != null);
+        .filter((u) => u.pushSubscription != null);
 
       for (const user of users) {
         // Check if user has already logged this meal today
-        const mealsSnapshot = await db.ref(`mealLogs/${user.deviceId}`)
+        const mealsSnapshot = await db
+          .ref(`mealLogs/${user.deviceId}`)
           .orderByChild('loggedAt')
           .startAt(startOfDayTimestamp)
           .once('value');
-          
+
         let hasLogged = false;
         if (mealsSnapshot.exists()) {
           const meals = Object.values(mealsSnapshot.val());
-          hasLogged = meals.some(m => m.mealType === expectedMeal);
+          hasLogged = meals.some((m) => m.mealType === expectedMeal);
         }
 
         if (!hasLogged) {
-          const message = await generateProactiveMessage("Friend", expectedMeal);
+          const message = await generateProactiveMessage(
+            'Friend',
+            expectedMeal
+          );
           console.log(`Sending push to User ${user.deviceId}: ${message}`);
-          
+
           await sendPushNotification(user.pushSubscription, {
-            title: "Liva 🌿",
+            title: 'Liva 🌿',
             body: message,
-            icon: "/pwa-192x192.png",
-            badge: "/pwa-192x192.png"
+            icon: '/pwa-192x192.png',
+            badge: '/pwa-192x192.png',
           });
         }
       }
     } catch (error) {
-      console.error("Cron Job Error:", error);
+      console.error('Cron Job Error:', error);
     }
   });
-  
-  console.log("🕒 Cron Jobs Initialized");
+
+  console.log('🕒 Cron Jobs Initialized');
 };

@@ -1,5 +1,12 @@
-import React from "react";
-import { Leaf, Lightbulb, ChevronRight, Flame, Egg, Droplet } from "lucide-react";
+import React from 'react';
+import {
+  Leaf,
+  Lightbulb,
+  ChevronRight,
+  Flame,
+  Egg,
+  Droplet,
+} from 'lucide-react';
 
 interface AlternativeFood {
   name: string;
@@ -26,27 +33,37 @@ export const FoodRecommendationCard: React.FC<FoodRecommendationCardProps> = ({
   message_suffix,
   alternatives,
   tip,
-  onQuickAction
+  onQuickAction,
 }) => {
   return (
     <div className="flex flex-col gap-2 w-full animate-fadeIn mt-1">
       {meal && (
         <div className="bg-[#f8faf8] border border-slate-100 rounded-xl p-3 shadow-sm flex justify-between items-center">
           <span className="font-bold text-[14px] text-slate-800">{meal}</span>
-          {calories && <span className="text-[12px] font-semibold text-[#34C759]">{calories} kcal</span>}
+          {calories && (
+            <span className="text-[12px] font-semibold text-[#34C759]">
+              {calories} kcal
+            </span>
+          )}
         </div>
       )}
 
       {message_suffix && (
-        <p className="text-[13px] text-slate-600 italic leading-snug">{message_suffix}</p>
+        <p className="text-[13px] text-slate-600 italic leading-snug">
+          {message_suffix}
+        </p>
       )}
 
       {why && why.length > 0 && (
         <div className="pl-1">
-          <h4 className="text-[12px] font-bold text-slate-700 mb-1">Why it's good:</h4>
+          <h4 className="text-[12px] font-bold text-slate-700 mb-1">
+            Why it's good:
+          </h4>
           <ul className="list-disc pl-4 space-y-0.5">
             {why.map((reason, idx) => (
-              <li key={idx} className="text-[12px] text-slate-600 leading-snug">{reason}</li>
+              <li key={idx} className="text-[12px] text-slate-600 leading-snug">
+                {reason}
+              </li>
             ))}
           </ul>
         </div>
@@ -55,19 +72,20 @@ export const FoodRecommendationCard: React.FC<FoodRecommendationCardProps> = ({
       {alternatives && alternatives.length > 0 && (
         <AlternativeFoodsCard alternatives={alternatives} />
       )}
-      
-      {tip && (
-        <LivaTipCard tip={tip} />
-      )}
+
+      {tip && <LivaTipCard tip={tip} />}
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-1.5 mt-1">
         {[
-          { label: "Log This Meal", query: `Log this meal: ${meal || "this meal"}` },
-          { label: "Show Another Option", query: "Show Another Option" },
-          { label: "Vegetarian Version", query: "Vegetarian Version" },
-          { label: "High Protein", query: "High Protein" },
-          { label: "Takes <15 mins", query: "Takes <15 mins" }
+          {
+            label: 'Log This Meal',
+            query: `Log this meal: ${meal || 'this meal'}`,
+          },
+          { label: 'Show Another Option', query: 'Show Another Option' },
+          { label: 'Vegetarian Version', query: 'Vegetarian Version' },
+          { label: 'High Protein', query: 'High Protein' },
+          { label: 'Takes <15 mins', query: 'Takes <15 mins' },
         ].map((action, idx) => (
           <button
             key={idx}
@@ -84,12 +102,13 @@ export const FoodRecommendationCard: React.FC<FoodRecommendationCardProps> = ({
   );
 };
 
-
 interface AlternativeFoodsCardProps {
   alternatives: AlternativeFood[];
 }
 
-export const AlternativeFoodsCard: React.FC<AlternativeFoodsCardProps> = ({ alternatives }) => {
+export const AlternativeFoodsCard: React.FC<AlternativeFoodsCardProps> = ({
+  alternatives,
+}) => {
   if (!alternatives || alternatives.length === 0) return null;
 
   return (
@@ -100,26 +119,35 @@ export const AlternativeFoodsCard: React.FC<AlternativeFoodsCardProps> = ({ alte
         </div>
         <h4 className="text-[13px] font-bold text-slate-800">Alternatives</h4>
       </div>
-      
+
       <div className="flex flex-col rounded-xl border border-slate-100 bg-white overflow-hidden shadow-sm">
         {alternatives.map((alt, idx) => {
           const isString = typeof alt === 'string';
-          const name = isString ? alt : (alt?.name || "Alternative Option");
-          const description = isString ? "" : (alt?.description || "");
-          
+          const name = isString ? alt : alt?.name || 'Alternative Option';
+          const description = isString ? '' : alt?.description || '';
+
           return (
             <div key={idx}>
-              {idx > 0 && <div className="border-t border-dashed border-slate-100 mx-3" />}
+              {idx > 0 && (
+                <div className="border-t border-dashed border-slate-100 mx-3" />
+              )}
               <div className="flex items-center justify-between px-3 py-2 group hover:bg-slate-50 transition-colors cursor-pointer">
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col justify-center">
-                    <span className="text-[13px] font-bold text-slate-800 leading-tight">{name}</span>
+                    <span className="text-[13px] font-bold text-slate-800 leading-tight">
+                      {name}
+                    </span>
                     {description && (
-                      <span className="text-[11px] text-slate-500 font-medium leading-tight">{description}</span>
+                      <span className="text-[11px] text-slate-500 font-medium leading-tight">
+                        {description}
+                      </span>
                     )}
                   </div>
                 </div>
-                <ChevronRight size={14} className="text-[#34C759] flex-shrink-0 opacity-70" />
+                <ChevronRight
+                  size={14}
+                  className="text-[#34C759] flex-shrink-0 opacity-70"
+                />
               </div>
             </div>
           );
@@ -138,31 +166,59 @@ export const LivaTipCard = ({ tip }: { tip: string }) => {
       </div>
       <div className="flex-1">
         <h4 className="text-[11px] font-bold text-[#2a9d48] mb-0.5">Tip</h4>
-        <p className="text-[12px] font-medium text-slate-700 leading-snug">{tip}</p>
+        <p className="text-[12px] font-medium text-slate-700 leading-snug">
+          {tip}
+        </p>
       </div>
     </div>
   );
 };
 
-export const NutritionSummaryCard = ({ calories, protein, carbs, fat }: { calories: number, protein: number, carbs: number, fat: number }) => {
+export const NutritionSummaryCard = ({
+  calories,
+  protein,
+  carbs,
+  fat,
+}: {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}) => {
   return (
     <div className="w-full mt-2 bg-white rounded-xl border border-slate-100 shadow-sm p-3 animate-fadeIn">
       <div className="grid grid-cols-4 gap-1">
         <div className="flex flex-col items-center justify-center border-r border-slate-100">
-          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">Cals</span>
-          <div className="font-extrabold text-slate-800 text-[13px] leading-none">{calories}</div>
+          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">
+            Cals
+          </span>
+          <div className="font-extrabold text-slate-800 text-[13px] leading-none">
+            {calories}
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center border-r border-slate-100">
-          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">Pro</span>
-          <div className="font-extrabold text-slate-800 text-[13px] leading-none">{protein}g</div>
+          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">
+            Pro
+          </span>
+          <div className="font-extrabold text-slate-800 text-[13px] leading-none">
+            {protein}g
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center border-r border-slate-100">
-          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">Carbs</span>
-          <div className="font-extrabold text-slate-800 text-[13px] leading-none">{carbs}g</div>
+          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">
+            Carbs
+          </span>
+          <div className="font-extrabold text-slate-800 text-[13px] leading-none">
+            {carbs}g
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">Fat</span>
-          <div className="font-extrabold text-slate-800 text-[13px] leading-none">{fat}g</div>
+          <span className="text-[10px] font-semibold text-slate-500 mb-0.5">
+            Fat
+          </span>
+          <div className="font-extrabold text-slate-800 text-[13px] leading-none">
+            {fat}g
+          </div>
         </div>
       </div>
     </div>

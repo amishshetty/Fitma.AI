@@ -1,11 +1,11 @@
-import { ChevronRight } from "lucide-react";
-import { motion } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import BottomNav from "../components/layout/BottomNav";
-import ScreenShell from "./ScreenShell";
-import { ink, muted } from "../constants";
-import { Screen, EntryMode } from "../types";
-import { quickOptions } from "../constants";
+import { ChevronRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import BottomNav from '../components/layout/BottomNav';
+import ScreenShell from './ScreenShell';
+import { ink, muted } from '../constants';
+import { Screen, EntryMode } from '../types';
+import { quickOptions } from '../constants';
 
 export default function QuickLogScreen({
   onSelect,
@@ -18,7 +18,11 @@ export default function QuickLogScreen({
 }) {
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
-      <ScreenShell title="Log Your Meal" subtitle="Choose the easiest way." onBack={onBack}>
+      <ScreenShell
+        title="Log Your Meal"
+        subtitle="Choose the easiest way."
+        onBack={onBack}
+      >
         <div className="space-y-4">
           {quickOptions.map((option) => {
             const Icon = option.icon;
@@ -28,16 +32,25 @@ export default function QuickLogScreen({
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onSelect(option.mode)}
                 className="flex w-full items-center gap-5 rounded-[28px] bg-white p-5 text-left"
-                style={{ boxShadow: "0 8px 24px rgba(16,32,26,0.07)" }}
+                style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.07)' }}
               >
-                <span className="flex h-16 w-16 items-center justify-center rounded-[22px]" style={{ background: option.bg, color: option.tint }}>
+                <span
+                  className="flex h-16 w-16 items-center justify-center rounded-[22px]"
+                  style={{ background: option.bg, color: option.tint }}
+                >
                   <Icon size={30} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-lg font-bold" style={{ color: ink }}>
+                  <span
+                    className="block text-lg font-bold"
+                    style={{ color: ink }}
+                  >
                     {option.title}
                   </span>
-                  <span className="mt-1 block text-sm leading-relaxed" style={{ color: muted }}>
+                  <span
+                    className="mt-1 block text-sm leading-relaxed"
+                    style={{ color: muted }}
+                  >
                     {option.description}
                   </span>
                 </span>
@@ -50,8 +63,20 @@ export default function QuickLogScreen({
               Recent Meals
             </h2>
             <div className="grid grid-cols-2 gap-2.5">
-              {["Paneer Paratha", "Chicken Biryani", "Dal Rice", "Oats Breakfast"].map((meal) => (
-                <button key={meal} className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-semibold" style={{ color: ink, border: "1px solid rgba(52,199,89,0.14)" }}>
+              {[
+                'Paneer Paratha',
+                'Chicken Biryani',
+                'Dal Rice',
+                'Oats Breakfast',
+              ].map((meal) => (
+                <button
+                  key={meal}
+                  className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-semibold"
+                  style={{
+                    color: ink,
+                    border: '1px solid rgba(52,199,89,0.14)',
+                  }}
+                >
                   {meal}
                 </button>
               ))}

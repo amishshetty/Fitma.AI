@@ -11,19 +11,23 @@ const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 try {
   if (!getApps().length) {
     let serviceAccount;
-    
+
     if (serviceAccountKey) {
       // Check if it's a JSON string
       if (serviceAccountKey.trim().startsWith('{')) {
         serviceAccount = JSON.parse(serviceAccountKey);
-      } 
+      }
       // Check if it's a file path
       else if (fs.existsSync(path.resolve(serviceAccountKey))) {
-        serviceAccount = JSON.parse(fs.readFileSync(path.resolve(serviceAccountKey), 'utf8'));
+        serviceAccount = JSON.parse(
+          fs.readFileSync(path.resolve(serviceAccountKey), 'utf8')
+        );
       }
       // Otherwise, assume it's a Base64 encoded string
       else {
-        const decodedString = Buffer.from(serviceAccountKey, 'base64').toString('utf8');
+        const decodedString = Buffer.from(serviceAccountKey, 'base64').toString(
+          'utf8'
+        );
         serviceAccount = JSON.parse(decodedString);
       }
     }
@@ -31,25 +35,38 @@ try {
     if (serviceAccount) {
       initializeApp({
         credential: cert(serviceAccount),
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
+        databaseURL:
+          process.env.FIREBASE_DATABASE_URL ||
+          'https://fitma-ai-default-rtdb.firebaseio.com',
       });
-      console.log('[Firebase Admin] Initialized successfully with service account.');
+      console.log(
+        '[Firebase Admin] Initialized successfully with service account.'
+      );
     } else {
       initializeApp({
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
+        databaseURL:
+          process.env.FIREBASE_DATABASE_URL ||
+          'https://fitma-ai-default-rtdb.firebaseio.com',
       });
-      console.log('[Firebase Admin] Initialized with application default credentials (or local mock).');
+      console.log(
+        '[Firebase Admin] Initialized with application default credentials (or local mock).'
+      );
     }
   }
 } catch (error) {
-  console.warn('[Firebase Admin] Failed to initialize, falling back to mock mode:', error.message);
+  console.warn(
+    '[Firebase Admin] Failed to initialize, falling back to mock mode:',
+    error.message
+  );
   try {
     if (!getApps().length) {
       initializeApp({
-        databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://fitma-ai-default-rtdb.firebaseio.com'
+        databaseURL:
+          process.env.FIREBASE_DATABASE_URL ||
+          'https://fitma-ai-default-rtdb.firebaseio.com',
       });
     }
-  } catch(e) {}
+  } catch (e) {}
 }
 
 export default {};

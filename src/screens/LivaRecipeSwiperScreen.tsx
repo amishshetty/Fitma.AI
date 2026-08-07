@@ -1,15 +1,39 @@
-import { Check } from "lucide-react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import PrimaryButton from "../components/ui/PrimaryButton";
-import ScreenShell from "./ScreenShell";
-import { ink, green, muted } from "../constants";
-import { Screen } from "../types";
+import { Check } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import ScreenShell from './ScreenShell';
+import { ink, green, muted } from '../constants';
+import { Screen } from '../types';
 
-export default function LivaRecipeSwiperScreen({ onBack, onNavigate }: { onBack: () => void; onNavigate: (screen: Screen) => void }) {
+export default function LivaRecipeSwiperScreen({
+  onBack,
+  onNavigate,
+}: {
+  onBack: () => void;
+  onNavigate: (screen: Screen) => void;
+}) {
   const recipes = [
-    { id: 1, title: "High-Protein Lentil Wrap", kcal: 340, macro: "18g Protein", img: mealRecommendationImg },
-    { id: 2, title: "Lemon Herb Quinoa Salad", kcal: 290, macro: "11g Protein", img: recipeHeroImg },
-    { id: 3, title: "Greek Yogurt Berry Bowl", kcal: 210, macro: "16g Protein", img: mealRecommendationImg }
+    {
+      id: 1,
+      title: 'High-Protein Lentil Wrap',
+      kcal: 340,
+      macro: '18g Protein',
+      img: mealRecommendationImg,
+    },
+    {
+      id: 2,
+      title: 'Lemon Herb Quinoa Salad',
+      kcal: 290,
+      macro: '11g Protein',
+      img: recipeHeroImg,
+    },
+    {
+      id: 3,
+      title: 'Greek Yogurt Berry Bowl',
+      kcal: 210,
+      macro: '16g Protein',
+      img: mealRecommendationImg,
+    },
   ];
 
   const [index, setIndex] = useState(0);
@@ -30,9 +54,16 @@ export default function LivaRecipeSwiperScreen({ onBack, onNavigate }: { onBack:
     >
       <div className="flex h-full flex-col justify-center items-center">
         {!isDeckEmpty ? (
-          <div className="w-full max-w-[280px] bg-white rounded-[32px] border border-[#34C759]/16 overflow-hidden relative" style={{ boxShadow: "0 12px 30px rgba(16,32,26,0.06)" }}>
+          <div
+            className="w-full max-w-[280px] bg-white rounded-[32px] border border-[#34C759]/16 overflow-hidden relative"
+            style={{ boxShadow: '0 12px 30px rgba(16,32,26,0.06)' }}
+          >
             <div className="h-48 w-full bg-slate-200">
-              <img src={recipes[index].img} alt={recipes[index].title} className="h-full w-full object-cover" />
+              <img
+                src={recipes[index].img}
+                alt={recipes[index].title}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="p-5 text-center">
               <h3 className="text-base font-bold" style={{ color: ink }}>
@@ -67,9 +98,18 @@ export default function LivaRecipeSwiperScreen({ onBack, onNavigate }: { onBack:
               <Check size={36} />
             </div>
             <div>
-              <h3 className="text-lg font-bold" style={{ color: ink }}>Swipe Deck Complete</h3>
-              <p className="mt-2 text-xs leading-relaxed" style={{ color: muted }}>
-                You saved <span className="font-bold text-[#34C759]">{savedCount} recipes</span> to your favorite vault!
+              <h3 className="text-lg font-bold" style={{ color: ink }}>
+                Swipe Deck Complete
+              </h3>
+              <p
+                className="mt-2 text-xs leading-relaxed"
+                style={{ color: muted }}
+              >
+                You saved{' '}
+                <span className="font-bold text-[#34C759]">
+                  {savedCount} recipes
+                </span>{' '}
+                to your favorite vault!
               </p>
             </div>
             <PrimaryButton onClick={onBack}>Return to Dashboard</PrimaryButton>

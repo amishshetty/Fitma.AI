@@ -1,11 +1,11 @@
-import { motion } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import LivaAvatar from "./LivaAvatar";
+import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import LivaAvatar from './LivaAvatar';
 
 export default function LivaSiriOverlay({
   text,
   onClose,
-  cueCard
+  cueCard,
 }: {
   text: string;
   onClose: () => void;
@@ -25,9 +25,11 @@ export default function LivaSiriOverlay({
       {/* Siri Glowing wave container */}
       <div className="relative bg-white/94 backdrop-blur-md rounded-t-[32px] p-6 pb-9 border-t border-white/20 flex flex-col items-center text-center space-y-5 shadow-2xl z-10">
         <LivaAvatar size={74} floating />
-        
+
         <div className="space-y-1">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liva Assistant</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            Liva Assistant
+          </p>
           <p className="text-sm font-bold text-slate-800 leading-relaxed px-4 whitespace-pre-wrap">
             {text}
           </p>
@@ -44,7 +46,7 @@ export default function LivaSiriOverlay({
             transition={{
               duration: 2.5,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
             }}
             className="w-56 h-12 bg-gradient-to-r from-teal-400 via-purple-500 via-pink-400 to-[#34c759] rounded-full blur-lg opacity-85 absolute bottom-[-24px]"
           />

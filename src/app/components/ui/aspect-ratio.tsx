@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 function AspectRatio({
   ...props

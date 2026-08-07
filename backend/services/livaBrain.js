@@ -5,22 +5,22 @@
 
 export function getTimeOfDay() {
   const hour = new Date().getHours();
-  if (hour < 12) return "morning";
-  if (hour < 17) return "afternoon";
-  if (hour < 21) return "evening";
-  return "night";
+  if (hour < 12) return 'morning';
+  if (hour < 17) return 'afternoon';
+  if (hour < 21) return 'evening';
+  return 'night';
 }
 
 export function buildGreeting(profile) {
   const time = getTimeOfDay();
-  const name = profile.name || "Friend";
+  const name = profile.name || 'Friend';
 
   switch (time) {
-    case "morning":
+    case 'morning':
       return `Good morning ${name} ☀️`;
-    case "afternoon":
+    case 'afternoon':
       return `Good afternoon ${name} 🌿`;
-    case "evening":
+    case 'evening':
       return `Good evening ${name} 🌙`;
     default:
       return `Hope you're doing well ${name} ✨`;
@@ -51,27 +51,27 @@ export function detectEmotion(message) {
   const text = message.toLowerCase();
 
   if (
-    text.includes("sad") ||
-    text.includes("depressed") ||
-    text.includes("stressed")
+    text.includes('sad') ||
+    text.includes('depressed') ||
+    text.includes('stressed')
   )
-    return "sad";
+    return 'sad';
 
   if (
-    text.includes("happy") ||
-    text.includes("great") ||
-    text.includes("awesome")
+    text.includes('happy') ||
+    text.includes('great') ||
+    text.includes('awesome')
   )
-    return "happy";
+    return 'happy';
 
-  if (text.includes("tired") || text.includes("lazy")) return "tired";
+  if (text.includes('tired') || text.includes('lazy')) return 'tired';
 
-  return "neutral";
+  return 'neutral';
 }
 
 export function buildResponseStyle(profile) {
   switch (profile.motivationStyle) {
-    case "Friendly":
+    case 'Friendly':
       return `
 Respond warmly.
 Celebrate progress.
@@ -79,14 +79,14 @@ Be cheerful.
 Use encouraging language.
 `;
 
-    case "Tough":
+    case 'Tough':
       return `
 Be disciplined.
 Challenge excuses.
 Keep the user accountable.
 `;
 
-    case "Data":
+    case 'Data':
       return `
 Focus on numbers.
 Explain calories.
@@ -94,7 +94,7 @@ Mention protein.
 Mention progress.
 `;
 
-    case "Supportive":
+    case 'Supportive':
       return `
 Be calm.
 Empathetic.

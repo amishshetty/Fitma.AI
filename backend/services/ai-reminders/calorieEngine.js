@@ -12,11 +12,14 @@ class CalorieEngine {
 
     // Default daily calorie goal
     const goal = 2000;
-    
+
     // Sum up the calories from today's meals
     let consumedCalories = 0;
     if (todayLogs.meals && todayLogs.meals.length > 0) {
-      consumedCalories = todayLogs.meals.reduce((total, meal) => total + (Number(meal.calories) || 0), 0);
+      consumedCalories = todayLogs.meals.reduce(
+        (total, meal) => total + (Number(meal.calories) || 0),
+        0
+      );
     }
 
     if (consumedCalories >= goal) {
@@ -35,7 +38,7 @@ class CalorieEngine {
       category: 'CALORIES',
       priority: 'MEDIUM',
       message: `You have ${Math.round(remaining)} calories remaining today! How about a light, healthy evening snack?`,
-      reminderNumber: 1
+      reminderNumber: 1,
     };
   }
 }

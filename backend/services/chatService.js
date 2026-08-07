@@ -1,16 +1,18 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : null;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+  ? process.env.GEMINI_API_KEY.trim()
+  : null;
 
 // We use raw fetch in chatController, but we export a boolean here so server.js knows we have a key
 export let genAI = null;
-if (GEMINI_API_KEY && GEMINI_API_KEY !== "your_gemini_api_key_here") {
-  genAI = true; 
-  console.log("🧠 Liva Brain Initialized");
+if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+  genAI = true;
+  console.log('🧠 Liva Brain Initialized');
 } else {
-  console.log("⚠ Gemini not configured. Running in mock mode.");
+  console.log('⚠ Gemini not configured. Running in mock mode.');
 }
 
 // ---------------------------------------------------------
@@ -19,38 +21,44 @@ if (GEMINI_API_KEY && GEMINI_API_KEY !== "your_gemini_api_key_here") {
 
 export function getTimeOfDay() {
   const hour = new Date().getHours();
-  if (hour < 12) return "morning";
-  if (hour < 17) return "afternoon";
-  if (hour < 21) return "evening";
-  return "night";
+  if (hour < 12) return 'morning';
+  if (hour < 17) return 'afternoon';
+  if (hour < 21) return 'evening';
+  return 'night';
 }
 
 export function buildGreeting(profile) {
   const time = getTimeOfDay();
-  const name = profile.name || "Friend";
+  const name = profile.name || 'Friend';
 
   switch (time) {
-    case "morning":
+    case 'morning':
       return `Good morning ${name} ☀️`;
-    case "afternoon":
+    case 'afternoon':
       return `Good afternoon ${name} 🌿`;
-    case "evening":
+    case 'evening':
       return `Good evening ${name} 🌙`;
     default:
       return `Hope you're doing well ${name} ✨`;
   }
 }
 
-export function buildHealthContext(profile, loggedMeals, remainingCalories = null, userLocalDateStr = null) {
+export function buildHealthContext(
+  profile,
+  loggedMeals,
+  remainingCalories = null,
+  userLocalDateStr = null
+) {
   // We use placeholder data for future-proofing if they don't exist yet
-  const waterIntake = profile.waterIntake || "Not tracked today";
-  const sleepQuality = profile.sleepQuality || "Unknown";
-  const workoutStatus = profile.workoutStatus || "Not logged yet";
-  const weightGoal = profile.weightGoal || profile.goal || "Maintain weight";
-  
-  const caloriesLeftText = remainingCalories !== null 
-    ? `\nCalories Remaining for Today : ${remainingCalories} kcal (CRITICAL: Meal suggestions MUST STRICTLY fit within this calorie limit!)`
-    : "";
+  const waterIntake = profile.waterIntake || 'Not tracked today';
+  const sleepQuality = profile.sleepQuality || 'Unknown';
+  const workoutStatus = profile.workoutStatus || 'Not logged yet';
+  const weightGoal = profile.weightGoal || profile.goal || 'Maintain weight';
+
+  const caloriesLeftText =
+    remainingCalories !== null
+      ? `\nCalories Remaining for Today : ${remainingCalories} kcal (CRITICAL: Meal suggestions MUST STRICTLY fit within this calorie limit!)`
+      : '';
 
   const currentDateStr = userLocalDateStr || new Date().toDateString();
   const todayDateObj = new Date(currentDateStr);
@@ -80,16 +88,26 @@ Keep answers practical.
 Never overload them.
 
 User's Recent Logged Meals (Last 3 Days):
-${loggedMeals && loggedMeals.length > 0 
-  ? loggedMeals.map((m) => {
-      const dStr = m.dateString || (m.loggedAt ? new Date(m.loggedAt).toDateString() : 'Unknown');
-      let label = "";
-      if (dStr === currentDateStr) label = " (Today)";
-      else if (dStr === yesterdayDateStr) label = " (Yesterday)";
-      const tStr = m.timestamp || (m.loggedAt ? new Date(m.loggedAt).toLocaleTimeString() : 'Unknown');
-      return `- [ID: ${m.id}] ${m.mealType || 'snack'}: ${m.foodItem || m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${dStr}${label} - Time: ${tStr}]`;
-    }).join("\n") 
-  : "No meals logged yet."}
+${
+  loggedMeals && loggedMeals.length > 0
+    ? loggedMeals
+        .map((m) => {
+          const dStr =
+            m.dateString ||
+            (m.loggedAt ? new Date(m.loggedAt).toDateString() : 'Unknown');
+          let label = '';
+          if (dStr === currentDateStr) label = ' (Today)';
+          else if (dStr === yesterdayDateStr) label = ' (Yesterday)';
+          const tStr =
+            m.timestamp ||
+            (m.loggedAt
+              ? new Date(m.loggedAt).toLocaleTimeString()
+              : 'Unknown');
+          return `- [ID: ${m.id}] ${m.mealType || 'snack'}: ${m.foodItem || m.name} (${m.calories} kcal, Protein: ${m.protein}g, Carbs: ${m.carbs || 0}g, Fat: ${m.fat || 0}g) [Date: ${dStr}${label} - Time: ${tStr}]`;
+        })
+        .join('\n')
+    : 'No meals logged yet.'
+}
 `;
 }
 
@@ -97,47 +115,47 @@ export function detectEmotion(message) {
   const text = message.toLowerCase();
 
   if (
-    text.includes("sad") ||
-    text.includes("depressed") ||
-    text.includes("stressed")
+    text.includes('sad') ||
+    text.includes('depressed') ||
+    text.includes('stressed')
   )
-    return "sad";
+    return 'sad';
 
   if (
-    text.includes("happy") ||
-    text.includes("great") ||
-    text.includes("awesome")
+    text.includes('happy') ||
+    text.includes('great') ||
+    text.includes('awesome')
   )
-    return "happy";
+    return 'happy';
 
-  if (text.includes("tired") || text.includes("lazy")) return "tired";
+  if (text.includes('tired') || text.includes('lazy')) return 'tired';
 
-  return "neutral";
+  return 'neutral';
 }
 
 export function buildResponseStyle(profile) {
   switch (profile.motivationStyle) {
-    case "Friendly":
+    case 'Friendly':
       return `
 Respond warmly.
 Celebrate progress.
 Be cheerful.
 Use encouraging language.
 `;
-    case "Tough":
+    case 'Tough':
       return `
 Be disciplined.
 Challenge excuses.
 Keep the user accountable.
 `;
-    case "Data":
+    case 'Data':
       return `
 Focus on numbers.
 Explain calories.
 Mention protein.
 Mention progress.
 `;
-    case "Supportive":
+    case 'Supportive':
       return `
 Be calm.
 Empathetic.
@@ -150,13 +168,21 @@ Be friendly.
   }
 }
 
-export function buildLivaBrain(message, profile, loggedMeals = [], remainingCalories = null, userLocalDateStr = null, customVocabulary = {}) {
+export function buildLivaBrain(
+  message,
+  profile,
+  loggedMeals = [],
+  remainingCalories = null,
+  userLocalDateStr = null,
+  customVocabulary = {}
+) {
   const emotion = detectEmotion(message);
 
   const customVocabKeys = Object.keys(customVocabulary);
-  const customVocabText = customVocabKeys.length > 0 
-    ? `\nCUSTOM VOCABULARY MAPPINGS (CRITICAL):\nThe user's speech recognition often mishears certain words. Use this mapping to correct the user's input before processing it:\n${customVocabKeys.map(k => `- When user says "${k}", they actually mean "${customVocabulary[k]}"`).join("\n")}\n`
-    : "";
+  const customVocabText =
+    customVocabKeys.length > 0
+      ? `\nCUSTOM VOCABULARY MAPPINGS (CRITICAL):\nThe user's speech recognition often mishears certain words. Use this mapping to correct the user's input before processing it:\n${customVocabKeys.map((k) => `- When user says "${k}", they actually mean "${customVocabulary[k]}"`).join('\n')}\n`
+      : '';
 
   return `
 You are Liva.
@@ -383,17 +409,16 @@ CRITICAL: ONLY return JSON. Do not return any other text.
 `;
 }
 
-
 // ---------------------------------------------------------
 // LIVA CORE ENGINE (from server.js)
 // ---------------------------------------------------------
 
 export function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  if (hour < 21) return "Good evening";
-  return "Good night";
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  if (hour < 21) return 'Good evening';
+  return 'Good night';
 }
 
 export function detectIntent(message) {
@@ -401,100 +426,100 @@ export function detectIntent(message) {
 
   // Defer to WATER_LOG if water keywords are prominent
   if (
-    text.includes("i drank") ||
-    text.includes("glass of water") ||
-    text.includes("glasses of water") ||
-    text.includes("add water") ||
-    text.includes("ml of water") ||
-    (text.includes("water") && (text.includes("log") || text.includes("add")))
+    text.includes('i drank') ||
+    text.includes('glass of water') ||
+    text.includes('glasses of water') ||
+    text.includes('add water') ||
+    text.includes('ml of water') ||
+    (text.includes('water') && (text.includes('log') || text.includes('add')))
   )
-    return "WATER_LOG";
+    return 'WATER_LOG';
 
   if (
-    text.includes("i had") ||
-    text.includes("i ate") ||
-    text.includes("just ate") ||
-    text.includes("just had") ||
-    text.includes("eaten") ||
-    text.includes("i had breakfast") ||
-    text.includes("i had lunch") ||
-    text.includes("i had dinner") ||
-    text.includes("log") ||
-    text.includes("add") ||
-    text.includes("record") ||
-    text.includes("for breakfast") ||
-    text.includes("for lunch") ||
-    text.includes("for dinner") ||
-    text.includes("for snack")
+    text.includes('i had') ||
+    text.includes('i ate') ||
+    text.includes('just ate') ||
+    text.includes('just had') ||
+    text.includes('eaten') ||
+    text.includes('i had breakfast') ||
+    text.includes('i had lunch') ||
+    text.includes('i had dinner') ||
+    text.includes('log') ||
+    text.includes('add') ||
+    text.includes('record') ||
+    text.includes('for breakfast') ||
+    text.includes('for lunch') ||
+    text.includes('for dinner') ||
+    text.includes('for snack')
   )
-    return "MEAL_LOG";
+    return 'MEAL_LOG';
 
   if (
-    text.includes("calorie") ||
-    text.includes("protein") ||
-    text.includes("carbs") ||
-    text.includes("fat") ||
-    text.includes("nutrition")
+    text.includes('calorie') ||
+    text.includes('protein') ||
+    text.includes('carbs') ||
+    text.includes('fat') ||
+    text.includes('nutrition')
   )
-    return "NUTRITION";
+    return 'NUTRITION';
 
   if (
-    text.includes("motivate") ||
-    text.includes("lazy") ||
-    text.includes("tired") ||
-    text.includes("give up") ||
+    text.includes('motivate') ||
+    text.includes('lazy') ||
+    text.includes('tired') ||
+    text.includes('give up') ||
     text.includes("can't do this")
   )
-    return "MOTIVATION";
+    return 'MOTIVATION';
 
   if (
-    text.includes("hello") ||
-    text.includes("hi") ||
-    text.includes("hey") ||
-    text.includes("good morning") ||
-    text.includes("good evening")
+    text.includes('hello') ||
+    text.includes('hi') ||
+    text.includes('hey') ||
+    text.includes('good morning') ||
+    text.includes('good evening')
   )
-    return "GREETING";
+    return 'GREETING';
 
   if (
-    text.includes("suggest") ||
-    text.includes("recommend") ||
-    text.includes("what should i eat") ||
-    text.includes("meal plan") ||
-    text.includes("balance") ||
-    text.includes("modify") ||
-    text.includes("more protein") ||
-    text.includes("less fat")
+    text.includes('suggest') ||
+    text.includes('recommend') ||
+    text.includes('what should i eat') ||
+    text.includes('meal plan') ||
+    text.includes('balance') ||
+    text.includes('modify') ||
+    text.includes('more protein') ||
+    text.includes('less fat')
   )
-    return "RECOMMENDATION";
+    return 'RECOMMENDATION';
 
   if (
-    text.includes("summary") ||
-    text.includes("recap") ||
-    text.includes("overview")
+    text.includes('summary') ||
+    text.includes('recap') ||
+    text.includes('overview')
   )
-    return "SUMMARY";
+    return 'SUMMARY';
 
   if (
-    text.includes("doctor") ||
-    text.includes("medicine") ||
-    text.includes("pain") ||
-    text.includes("fever") ||
-    text.includes("disease")
+    text.includes('doctor') ||
+    text.includes('medicine') ||
+    text.includes('pain') ||
+    text.includes('fever') ||
+    text.includes('disease')
   )
-    return "MEDICAL";
+    return 'MEDICAL';
 
-  return "GENERAL";
+  return 'GENERAL';
 }
 
 export function buildContext(profile = {}) {
   return {
-    name: profile.name || "Friend",
-    goal: profile.goal || "Weight Loss",
-    diet: profile.diet || "Vegetarian",
+    name: profile.name || 'Friend',
+    goal: profile.goal || 'Weight Loss',
+    diet: profile.diet || 'Vegetarian',
     dailyCalories: profile.dailyCalories || 1800,
-    motivationStyle: profile.motivationStyle || "Friendly",
-    language: profile.language || "English",
+    motivationStyle: profile.motivationStyle || 'Friendly',
+    language: profile.language || 'English',
     today: new Date().toDateString(),
     greeting: getGreeting(),
   };
@@ -517,18 +542,21 @@ export function parseLogs(responseText) {
 
   try {
     let jsonStr = responseText;
-    
+
     // Find the first { and the last }
     const firstBrace = jsonStr.indexOf('{');
     const lastBrace = jsonStr.lastIndexOf('}');
-    
+
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
     }
-    
+
     // Clean up potential markdown formatting if the AI still includes it inside or around
-    jsonStr = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
-    
+    jsonStr = jsonStr
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+
     // Parse the JSON
     const parsedData = JSON.parse(jsonStr);
 
@@ -543,14 +571,17 @@ export function parseLogs(responseText) {
       motivation = parsedData.motivation;
     }
 
-    const recs = parsedData.recommendations || parsedData.recommendationData || parsedData.recommendation;
+    const recs =
+      parsedData.recommendations ||
+      parsedData.recommendationData ||
+      parsedData.recommendation;
     if (recs && Array.isArray(recs)) {
-      recommendationData = recs.map(rec => {
+      recommendationData = recs.map((rec) => {
         // Robust parsing: if AI returned strings instead of objects for alternatives
         if (rec.alternatives && Array.isArray(rec.alternatives)) {
-          rec.alternatives = rec.alternatives.map(alt => {
+          rec.alternatives = rec.alternatives.map((alt) => {
             if (typeof alt === 'string') {
-              return { name: alt, description: "A healthy alternative." };
+              return { name: alt, description: 'A healthy alternative.' };
             }
             return alt;
           });
@@ -562,21 +593,21 @@ export function parseLogs(responseText) {
     if (parsedData.action && parsedData.action.type) {
       const type = parsedData.action.type;
       const data = parsedData.action.data;
-      
-      if (type === "MEAL_LOG") {
+
+      if (type === 'MEAL_LOG') {
         mealData = data;
-      } else if (type === "WATER_LOG") {
+      } else if (type === 'WATER_LOG') {
         waterData = data;
-      } else if (type === "DELETE_LOG") {
+      } else if (type === 'DELETE_LOG') {
         deleteData = data;
-      } else if (type === "SUMMARY_LOG") {
+      } else if (type === 'SUMMARY_LOG') {
         summaryData = data;
-      } else if (type === "UPDATE_VOCABULARY") {
+      } else if (type === 'UPDATE_VOCABULARY') {
         updateVocabularyData = data;
       }
     }
   } catch (error) {
-    console.error("Failed to parse AI JSON response:", error);
+    console.error('Failed to parse AI JSON response:', error);
     // If it completely fails, we just return the raw text (fallback)
     cleanResponse = responseText;
   }
@@ -590,6 +621,6 @@ export function parseLogs(responseText) {
     updateVocabularyData,
     recommendationData,
     greeting,
-    motivation
+    motivation,
   };
 }

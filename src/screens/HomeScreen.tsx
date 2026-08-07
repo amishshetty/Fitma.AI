@@ -1,13 +1,32 @@
-import { Mic, Camera, Keyboard, Bell, MessageCircle, Send, Plus, Sparkles, Droplets, Minus, Sunrise, Sun, Moon, Coffee, Leaf, Trash2, ArrowRight, Zap } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import BottomNav from "../components/layout/BottomNav";
-import LivaAvatar from "../components/layout/LivaAvatar";
-import ProgressRing from "../components/ui/ProgressRing";
-import { ink, green, muted, softGreen } from "../constants";
-import { Screen, EntryMode } from "../types";
-import { getGreeting } from "../utils";
-import { GoalConfig, LoggedMeal } from "../types";
+import {
+  Mic,
+  Camera,
+  Keyboard,
+  Bell,
+  MessageCircle,
+  Send,
+  Plus,
+  Sparkles,
+  Droplets,
+  Minus,
+  Sunrise,
+  Sun,
+  Moon,
+  Coffee,
+  Leaf,
+  Trash2,
+  ArrowRight,
+  Zap,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import BottomNav from '../components/layout/BottomNav';
+import LivaAvatar from '../components/layout/LivaAvatar';
+import ProgressRing from '../components/ui/ProgressRing';
+import { ink, green, muted, softGreen } from '../constants';
+import { Screen, EntryMode } from '../types';
+import { getGreeting } from '../utils';
+import { GoalConfig, LoggedMeal } from '../types';
 
 export default function HomeScreen({
   onNavigate,
@@ -36,15 +55,26 @@ export default function HomeScreen({
   onDeleteMeal?: (mealId: string) => void;
   onSetChatInitialMsg?: (msg: string) => void;
 }) {
-  const [askLivaText, setAskLivaText] = useState("");
+  const [askLivaText, setAskLivaText] = useState('');
   const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
-  const [selectedMealCategory, setSelectedMealCategory] = useState<string | null>(null);
+  const [selectedMealCategory, setSelectedMealCategory] = useState<
+    string | null
+  >(null);
   const waterGlasses = Math.min(12, Math.round(waterLogged / 250));
 
-  const calPercent = Math.min(100, Math.round((caloriesLogged / (goals?.calories || 2000)) * 100));
-  const waterPercent = Math.min(100, Math.round((waterLogged / (goals?.water || 2500)) * 100));
-  
-  const proteinPercent = Math.min(100, Math.round((proteinLogged / (goals?.protein || 100)) * 100));
+  const calPercent = Math.min(
+    100,
+    Math.round((caloriesLogged / (goals?.calories || 2000)) * 100)
+  );
+  const waterPercent = Math.min(
+    100,
+    Math.round((waterLogged / (goals?.water || 2500)) * 100)
+  );
+
+  const proteinPercent = Math.min(
+    100,
+    Math.round((proteinLogged / (goals?.protein || 100)) * 100)
+  );
 
   const insights = useMemo(() => {
     const hour = new Date().getHours();
@@ -54,81 +84,87 @@ export default function HomeScreen({
     const protTarget = goals?.protein || 100;
     const calRemaining = Math.max(0, calTarget - caloriesLogged);
     const protRemaining = Math.max(0, protTarget - proteinLogged);
-    
+
     // Check which meals are already logged
-    const hasBreakfast = loggedMeals.some(m => m.mealType === 'breakfast');
-    const hasLunch = loggedMeals.some(m => m.mealType === 'lunch');
-    const hasDinner = loggedMeals.some(m => m.mealType === 'dinner');
-    
+    const hasBreakfast = loggedMeals.some((m) => m.mealType === 'breakfast');
+    const hasLunch = loggedMeals.some((m) => m.mealType === 'lunch');
+    const hasDinner = loggedMeals.some((m) => m.mealType === 'dinner');
+
     // 1. Time-based Logic (Most immediate context)
     if (hour >= 17) {
       if (!hasDinner) {
         generated.push({
-          id: "time-dinner",
+          id: 'time-dinner',
           icon: <Moon size={16} />,
-          title: "Evening Update",
-          text: calRemaining > 800 
-            ? "You have enough calories left. Enjoy a good dinner!"
-            : "Calories are low. Try a light dinner like soup or salad.",
-          actionText: "Log dinner",
-          onClick: () => onStartLog("text"),
-          color: "#00C4B0"
+          title: 'Evening Update',
+          text:
+            calRemaining > 800
+              ? 'You have enough calories left. Enjoy a good dinner!'
+              : 'Calories are low. Try a light dinner like soup or salad.',
+          actionText: 'Log dinner',
+          onClick: () => onStartLog('text'),
+          color: '#00C4B0',
         });
       } else {
         generated.push({
-          id: "time-dinner-done",
+          id: 'time-dinner-done',
           icon: <Moon size={16} />,
-          title: "Evening Update",
-          text: "Dinner is logged! Have a relaxing evening.",
-          color: "#00C4B0"
+          title: 'Evening Update',
+          text: 'Dinner is logged! Have a relaxing evening.',
+          color: '#00C4B0',
         });
       }
     } else if (hour < 11) {
       if (!hasBreakfast) {
         generated.push({
-          id: "time-morning",
+          id: 'time-morning',
           icon: <Sunrise size={16} />,
-          title: "Morning Routine",
-          text: waterGlasses < 3 
-            ? "You need more water today. Drink a glass now!"
-            : "Start your day right with a healthy breakfast!",
-          actionText: waterGlasses < 3 ? "Add water" : "Log breakfast",
-          onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
-          color: "#00C4B0"
+          title: 'Morning Routine',
+          text:
+            waterGlasses < 3
+              ? 'You need more water today. Drink a glass now!'
+              : 'Start your day right with a healthy breakfast!',
+          actionText: waterGlasses < 3 ? 'Add water' : 'Log breakfast',
+          onClick:
+            waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog('text'),
+          color: '#00C4B0',
         });
       } else {
         generated.push({
-          id: "time-morning-done",
+          id: 'time-morning-done',
           icon: <Sunrise size={16} />,
-          title: "Morning Routine",
-          text: waterGlasses < 3 
-            ? "You need more water today. Drink a glass now!"
-            : "Great start today! Keep up the good work.",
-          actionText: waterGlasses < 3 ? "Add water" : "Log snack",
-          onClick: waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog("text"),
-          color: "#00C4B0"
+          title: 'Morning Routine',
+          text:
+            waterGlasses < 3
+              ? 'You need more water today. Drink a glass now!'
+              : 'Great start today! Keep up the good work.',
+          actionText: waterGlasses < 3 ? 'Add water' : 'Log snack',
+          onClick:
+            waterGlasses < 3 ? () => onLogWater(250) : () => onStartLog('text'),
+          color: '#00C4B0',
         });
       }
     } else {
       if (!hasLunch) {
         generated.push({
-          id: "time-lunch",
+          id: 'time-lunch',
           icon: <Sun size={16} />,
-          title: "Mid-day Check",
-          text: caloriesLogged < calTarget * 0.3 
-            ? "You've barely eaten today! Make sure to grab a nutritious lunch."
-            : "Time for lunch! Refuel your body.",
-          actionText: "Log lunch",
-          onClick: () => onStartLog("text"),
-          color: "#00C4B0"
+          title: 'Mid-day Check',
+          text:
+            caloriesLogged < calTarget * 0.3
+              ? "You've barely eaten today! Make sure to grab a nutritious lunch."
+              : 'Time for lunch! Refuel your body.',
+          actionText: 'Log lunch',
+          onClick: () => onStartLog('text'),
+          color: '#00C4B0',
         });
       } else {
         generated.push({
-          id: "time-lunch-done",
+          id: 'time-lunch-done',
           icon: <Sun size={16} />,
-          title: "Mid-day Check",
+          title: 'Mid-day Check',
           text: "You're doing great on your meals! A quick walk can give you a mid-day energy boost.",
-          color: "#00C4B0"
+          color: '#00C4B0',
         });
       }
     }
@@ -136,104 +172,175 @@ export default function HomeScreen({
     // 2. Macro Logic
     if (proteinPercent < calPercent - 15) {
       generated.push({
-        id: "macro-protein",
+        id: 'macro-protein',
         icon: <Sparkles size={16} />,
-        title: "Protein Check",
+        title: 'Protein Check',
         text: `You need ${protRemaining}g more protein, but only have ${calRemaining} calories left. Try to eat lean meat.`,
-        actionText: "High-protein snacks",
-        onClick: () => onNavigate("liva-home"),
-        color: "#0EA5E9"
+        actionText: 'High-protein snacks',
+        onClick: () => onNavigate('liva-home'),
+        color: '#0EA5E9',
       });
     } else {
       generated.push({
-        id: "macro-track",
+        id: 'macro-track',
         icon: <Sparkles size={16} />,
-        title: "Macro Balance",
-        text: "Your protein and calories look great today. Keep it up! 💪",
-        color: "#0EA5E9"
+        title: 'Macro Balance',
+        text: 'Your protein and calories look great today. Keep it up! 💪',
+        color: '#0EA5E9',
       });
     }
 
     // 3. Weekly Fat Trend Nudge
     generated.push({
-      id: "trend-fat",
+      id: 'trend-fat',
       icon: <Zap size={16} />,
-      title: "Weekly Trend",
-      text: "You ate a lot of fats this week. Try eating more veggies today. 🌱",
-      actionText: "Get light recipes",
-      onClick: () => onNavigate("liva-home"),
-      color: "#34C759"
+      title: 'Weekly Trend',
+      text: 'You ate a lot of fats this week. Try eating more veggies today. 🌱',
+      actionText: 'Get light recipes',
+      onClick: () => onNavigate('liva-home'),
+      color: '#34C759',
     });
-    
+
     return generated.slice(0, 3);
-  }, [caloriesLogged, proteinLogged, waterGlasses, goals, proteinPercent, calPercent, onNavigate, onStartLog, onLogWater]);
+  }, [
+    caloriesLogged,
+    proteinLogged,
+    waterGlasses,
+    goals,
+    proteinPercent,
+    calPercent,
+    onNavigate,
+    onStartLog,
+    onLogWater,
+  ]);
 
   const nutrition = [
-    { 
-      label: "Calories", 
-      value: calPercent, 
-      detail: `${(caloriesLogged || 0).toLocaleString()} / ${(goals?.calories || 2000).toLocaleString()}`, 
-      color: green 
+    {
+      label: 'Calories',
+      value: calPercent,
+      detail: `${(caloriesLogged || 0).toLocaleString()} / ${(goals?.calories || 2000).toLocaleString()}`,
+      color: green,
     },
-    { 
-      label: "Protein", 
-      value: proteinPercent, 
-      detail: `${proteinLogged}g / ${(goals?.protein || 100)}g`, 
-      color: "#0EA5E9" 
+    {
+      label: 'Protein',
+      value: proteinPercent,
+      detail: `${proteinLogged}g / ${goals?.protein || 100}g`,
+      color: '#0EA5E9',
     },
-    { 
-      label: "Water", 
-      value: waterPercent, 
-      detail: `${(waterLogged / 1000).toFixed(1)} / ${(goals?.water / 1000 || 2.5).toFixed(1)}L`, 
-      color: "#00C4B0" 
+    {
+      label: 'Water',
+      value: waterPercent,
+      detail: `${(waterLogged / 1000).toFixed(1)} / ${(goals?.water / 1000 || 2.5).toFixed(1)}L`,
+      color: '#00C4B0',
     },
   ];
   const logActions = [
-    { label: "Voice", icon: Mic, mode: "voice" as EntryMode, color: green, bg: "#ecfbf1" },
-    { label: "Camera", icon: Camera, mode: "camera" as EntryMode, color: "#0EA5E9", bg: "#e9f7ff" },
-    { label: "Text", icon: Keyboard, mode: "text" as EntryMode, color: "#7C3AED", bg: "#f3edff" },
+    {
+      label: 'Voice',
+      icon: Mic,
+      mode: 'voice' as EntryMode,
+      color: green,
+      bg: '#ecfbf1',
+    },
+    {
+      label: 'Camera',
+      icon: Camera,
+      mode: 'camera' as EntryMode,
+      color: '#0EA5E9',
+      bg: '#e9f7ff',
+    },
+    {
+      label: 'Text',
+      icon: Keyboard,
+      mode: 'text' as EntryMode,
+      color: '#7C3AED',
+      bg: '#f3edff',
+    },
   ];
 
-  const getMealCategoryData = (category: string, defaultCal: string, defaultStatus: string) => {
-    const categoryMeals = loggedMeals.filter(m => m.mealType === category);
+  const getMealCategoryData = (
+    category: string,
+    defaultCal: string,
+    defaultStatus: string
+  ) => {
+    const categoryMeals = loggedMeals.filter((m) => m.mealType === category);
     if (categoryMeals.length === 0) {
-      return { calories: "0 kcal", status: "Not logged yet", active: false };
+      return { calories: '0 kcal', status: 'Not logged yet', active: false };
     }
     const totalCal = categoryMeals.reduce((sum, m) => sum + m.calories, 0);
-    const names = categoryMeals.map(m => m.name).join(", ");
+    const names = categoryMeals.map((m) => m.name).join(', ');
     return { calories: `${totalCal} kcal`, status: names, active: true };
   };
 
-  const breakfastData = getMealCategoryData("breakfast", "360 kcal", "Pending");
-  const lunchData = getMealCategoryData("lunch", "620 kcal", "Suggested");
-  const dinnerData = getMealCategoryData("dinner", "720 kcal", "Pending");
-  const snackData = getMealCategoryData("snack", "180 kcal", "Optional");
+  const breakfastData = getMealCategoryData('breakfast', '360 kcal', 'Pending');
+  const lunchData = getMealCategoryData('lunch', '620 kcal', 'Suggested');
+  const dinnerData = getMealCategoryData('dinner', '720 kcal', 'Pending');
+  const snackData = getMealCategoryData('snack', '180 kcal', 'Optional');
 
   const meals = [
-    { label: "Breakfast", time: "8:30 AM", calories: breakfastData.calories, status: breakfastData.status, active: breakfastData.active },
-    { label: "Lunch", time: "1:00 PM", calories: lunchData.calories, status: lunchData.status, active: lunchData.active },
-    { label: "Dinner", time: "8:00 PM", calories: dinnerData.calories, status: dinnerData.status, active: dinnerData.active },
-    { label: "Snack", time: "Anytime", calories: snackData.calories, status: snackData.status, active: snackData.active },
+    {
+      label: 'Breakfast',
+      time: '8:30 AM',
+      calories: breakfastData.calories,
+      status: breakfastData.status,
+      active: breakfastData.active,
+    },
+    {
+      label: 'Lunch',
+      time: '1:00 PM',
+      calories: lunchData.calories,
+      status: lunchData.status,
+      active: lunchData.active,
+    },
+    {
+      label: 'Dinner',
+      time: '8:00 PM',
+      calories: dinnerData.calories,
+      status: dinnerData.status,
+      active: dinnerData.active,
+    },
+    {
+      label: 'Snack',
+      time: 'Anytime',
+      calories: snackData.calories,
+      status: snackData.status,
+      active: snackData.active,
+    },
   ];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col" style={{ background: "linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)" }}>
+    <div
+      className="flex min-h-0 flex-1 flex-col"
+      style={{
+        background: 'linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)',
+      }}
+    >
       <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-5 pt-11">
         <section className="mb-4">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold leading-tight" style={{ color: ink }}>
+              <h1
+                className="text-2xl font-bold leading-tight"
+                style={{ color: ink }}
+              >
                 {getGreeting()}, {userName}
               </h1>
-              <p className="mt-2 max-w-[250px] text-sm leading-relaxed" style={{ color: muted }}>
-                Small wins today. Log meals quickly and let Liva keep the numbers tidy.
+              <p
+                className="mt-2 max-w-[250px] text-sm leading-relaxed"
+                style={{ color: muted }}
+              >
+                Small wins today. Log meals quickly and let Liva keep the
+                numbers tidy.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => onNavigate("reminder-center")}
+                onClick={() => onNavigate('reminder-center')}
                 className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-100/80"
-                style={{ color: green, boxShadow: "0 4px 14px rgba(16,32,26,0.06)" }}
+                style={{
+                  color: green,
+                  boxShadow: '0 4px 14px rgba(16,32,26,0.06)',
+                }}
                 aria-label="Notifications"
               >
                 <Bell size={20} />
@@ -246,16 +353,16 @@ export default function HomeScreen({
         <section
           className="mb-4 rounded-[24px] bg-white/40 p-3.5 cursor-pointer hover:bg-white/60 transition-colors"
           style={{
-            boxShadow: "0 6px 20px rgba(16,32,26,0.04)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(255, 255, 255, 0.4)",
+            boxShadow: '0 6px 20px rgba(16,32,26,0.04)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
           }}
           onClick={(e) => {
             if ((e.target as HTMLElement).tagName !== 'INPUT') {
               if (askLivaText.trim()) {
                 if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
-                onNavigate("liva-home");
+                onNavigate('liva-home');
               }
             }
           }}
@@ -269,30 +376,31 @@ export default function HomeScreen({
               <div
                 className="mt-2 flex items-center gap-2 rounded-2xl bg-[#f2faf5]/50 px-3 py-2.5"
                 style={{
-                  border: "1px solid rgba(52,199,89,0.1)",
+                  border: '1px solid rgba(52,199,89,0.1)',
                 }}
               >
                 <MessageCircle size={16} color={green} />
-                <input 
-                  className="min-w-0 flex-1 bg-transparent text-xs outline-none" 
+                <input
+                  className="min-w-0 flex-1 bg-transparent text-xs outline-none"
                   placeholder="What did you eat today?"
                   value={askLivaText}
                   onChange={(e) => setAskLivaText(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       if (askLivaText.trim()) {
-                        if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
-                        onNavigate("liva-home");
+                        if (onSetChatInitialMsg)
+                          onSetChatInitialMsg(askLivaText);
+                        onNavigate('liva-home');
                       }
                     }
                   }}
                 />
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     if (askLivaText.trim()) {
                       if (onSetChatInitialMsg) onSetChatInitialMsg(askLivaText);
-                      onNavigate("liva-home");
+                      onNavigate('liva-home');
                     }
                   }}
                   className="p-1 hover:bg-[#34C759]/10 rounded-full transition-colors"
@@ -304,14 +412,22 @@ export default function HomeScreen({
           </div>
         </section>
 
-        <section className="mb-4 rounded-[28px] p-4" style={{ background: "linear-gradient(135deg, #34C759 0%, #00C4B0 100%)", boxShadow: "0 12px 30px rgba(52,199,89,0.24)" }}>
+        <section
+          className="mb-4 rounded-[28px] p-4"
+          style={{
+            background: 'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)',
+            boxShadow: '0 12px 30px rgba(52,199,89,0.24)',
+          }}
+        >
           <div className="mb-3 flex items-center justify-between">
             <div>
               <p className="text-lg font-bold text-white">Quick Log Meal</p>
-              <p className="text-sm font-medium text-white/78">Under 15 seconds</p>
+              <p className="text-sm font-medium text-white/78">
+                Under 15 seconds
+              </p>
             </div>
             <button
-              onClick={() => onNavigate("quick-log")}
+              onClick={() => onNavigate('quick-log')}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white"
               aria-label="Open quick log"
             >
@@ -329,7 +445,10 @@ export default function HomeScreen({
                   className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-[20px] bg-white text-sm font-bold"
                   style={{ color: ink }}
                 >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: action.bg, color: action.color }}>
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-2xl"
+                    style={{ background: action.bg, color: action.color }}
+                  >
                     <Icon size={23} />
                   </span>
                   {action.label}
@@ -339,7 +458,10 @@ export default function HomeScreen({
           </div>
         </section>
 
-        <section className="mb-6 rounded-[32px] bg-white p-6" style={{ boxShadow: "0 12px 32px rgba(0,0,0,0.04)" }}>
+        <section
+          className="mb-6 rounded-[32px] bg-white p-6"
+          style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
+        >
           <div className="mb-6 flex items-center justify-between">
             <div>
               <p className="text-lg font-black tracking-tight text-slate-800">
@@ -358,15 +480,22 @@ export default function HomeScreen({
               const parts = item.detail.split('/');
               const current = parts[0]?.trim();
               const total = parts[1]?.trim();
-              
+
               return (
-                <div key={item.label} className="rounded-[24px] bg-slate-50/70 p-4 flex flex-col items-center justify-center border border-slate-100 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.03)] relative overflow-hidden">
+                <div
+                  key={item.label}
+                  className="rounded-[24px] bg-slate-50/70 p-4 flex flex-col items-center justify-center border border-slate-100 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.03)] relative overflow-hidden"
+                >
                   <div className="absolute top-0 right-0 w-16 h-16 bg-white/60 blur-xl rounded-full translate-x-1/2 -translate-y-1/2" />
-                  
+
                   <div className="flex justify-center mb-4 relative z-10">
-                    <ProgressRing value={item.value} size={64} color={item.color} />
+                    <ProgressRing
+                      value={item.value}
+                      size={64}
+                      color={item.color}
+                    />
                   </div>
-                  
+
                   <div className="text-center relative z-10 flex flex-col items-center w-full">
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
                       {item.label}
@@ -386,19 +515,22 @@ export default function HomeScreen({
           </div>
         </section>
 
-        <section className="mb-8 rounded-[32px] bg-white p-6" style={{ boxShadow: "0 12px 32px rgba(0,0,0,0.04)" }}>
+        <section
+          className="mb-8 rounded-[32px] bg-white p-6"
+          style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
+        >
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <p className="text-lg font-bold text-slate-800">
-                Water Intake
-              </p>
+              <p className="text-lg font-bold text-slate-800">Water Intake</p>
               <p className="text-xs font-medium text-slate-400">
                 {Math.round(waterGlasses * 250)} ml logged today
               </p>
             </div>
             <div className="flex items-center gap-1.5 rounded-full bg-[#f2faf5] px-3 py-1.5 border border-[#e9fbf7]">
               <Droplets size={16} className="text-[#00C4B0]" />
-              <span className="text-sm font-bold text-[#00C4B0]">{waterGlasses}/12</span>
+              <span className="text-sm font-bold text-[#00C4B0]">
+                {waterGlasses}/12
+              </span>
             </div>
           </div>
 
@@ -412,9 +544,12 @@ export default function HomeScreen({
                 }}
                 aria-label={`Set water intake to ${(index + 1) * 250} ml`}
                 className="flex-1 rounded-sm transition-all duration-300"
-                style={{ 
-                  background: index < waterGlasses ? "linear-gradient(180deg, #34C759, #00C4B0)" : "#f1f5f9",
-                  opacity: index < waterGlasses ? 1 : 0.6
+                style={{
+                  background:
+                    index < waterGlasses
+                      ? 'linear-gradient(180deg, #34C759, #00C4B0)'
+                      : '#f1f5f9',
+                  opacity: index < waterGlasses ? 1 : 0.6,
                 }}
               />
             ))}
@@ -431,7 +566,10 @@ export default function HomeScreen({
             <button
               onClick={() => onLogWater(250)}
               className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl text-sm font-bold text-white shadow-lg active:scale-[0.98] transition-all"
-              style={{ background: "linear-gradient(135deg, #00C4B0, #34C759)", boxShadow: "0 8px 16px rgba(0, 196, 176, 0.2)" }}
+              style={{
+                background: 'linear-gradient(135deg, #00C4B0, #34C759)',
+                boxShadow: '0 8px 16px rgba(0, 196, 176, 0.2)',
+              }}
             >
               <Droplets size={18} />
               Add 250 ml
@@ -440,7 +578,7 @@ export default function HomeScreen({
               onClick={() => onLogWater(250)}
               className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9fbf7]"
               aria-label="Increase water"
-              style={{ color: "#009c8b" }}
+              style={{ color: '#009c8b' }}
             >
               <Plus size={18} />
             </button>
@@ -452,45 +590,70 @@ export default function HomeScreen({
             <h2 className="text-sm font-bold" style={{ color: ink }}>
               Today's Meals Timeline
             </h2>
-            <button onClick={() => onNavigate("quick-log")} className="text-xs font-bold" style={{ color: green }}>
+            <button
+              onClick={() => onNavigate('quick-log')}
+              className="text-xs font-bold"
+              style={{ color: green }}
+            >
               Add
             </button>
           </div>
           <div className="space-y-3">
             {meals.map((meal) => (
-              <div 
-                key={meal.label} 
+              <div
+                key={meal.label}
                 onClick={() => {
                   if (meal.active) {
                     setSelectedMealCategory(meal.label.toLowerCase());
                     setIsMealDrawerOpen(true);
                   }
                 }}
-                className={`flex items-center gap-4 rounded-[24px] p-4 border transition-all ${meal.active ? 'bg-white border-transparent cursor-pointer active:scale-95' : 'bg-slate-50/50 border-slate-100'}`} 
-                style={{ boxShadow: meal.active ? "0 8px 24px rgba(0,0,0,0.04)" : "none" }}
+                className={`flex items-center gap-4 rounded-[24px] p-4 border transition-all ${meal.active ? 'bg-white border-transparent cursor-pointer active:scale-95' : 'bg-slate-50/50 border-slate-100'}`}
+                style={{
+                  boxShadow: meal.active
+                    ? '0 8px 24px rgba(0,0,0,0.04)'
+                    : 'none',
+                }}
               >
-                <div 
-                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 shadow-sm" 
+                <div
+                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 shadow-sm"
                   style={{ color: meal.active ? green : muted }}
                 >
-                  {meal.label === 'Breakfast' ? <Sunrise size={20} /> : 
-                   meal.label === 'Lunch' ? <Sun size={20} /> : 
-                   meal.label === 'Dinner' ? <Moon size={20} /> : 
-                   <Coffee size={20} />}
+                  {meal.label === 'Breakfast' ? (
+                    <Sunrise size={20} />
+                  ) : meal.label === 'Lunch' ? (
+                    <Sun size={20} />
+                  ) : meal.label === 'Dinner' ? (
+                    <Moon size={20} />
+                  ) : (
+                    <Coffee size={20} />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold" style={{ color: meal.active ? ink : '#64748b' }}>
+                  <p
+                    className="text-sm font-bold"
+                    style={{ color: meal.active ? ink : '#64748b' }}
+                  >
                     {meal.label}
                   </p>
-                  <p className="mt-0.5 text-xs font-medium line-clamp-1" style={{ color: meal.active ? '#64748b' : '#94a3b8' }}>
+                  <p
+                    className="mt-0.5 text-xs font-medium line-clamp-1"
+                    style={{ color: meal.active ? '#64748b' : '#94a3b8' }}
+                  >
                     {meal.status}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-bold" style={{ color: meal.active ? ink : '#64748b' }}>
+                  <p
+                    className="text-sm font-bold"
+                    style={{ color: meal.active ? ink : '#64748b' }}
+                  >
                     {meal.calories}
                   </p>
-                  <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ color: muted }}>
+                  <p
+                    className="mt-0.5 text-[10px] font-bold uppercase tracking-wider"
+                    style={{ color: muted }}
+                  >
                     {meal.time}
                   </p>
                 </div>
@@ -508,23 +671,35 @@ export default function HomeScreen({
               Liva's Active Analysis
             </h2>
           </div>
-          
+
           <div className="space-y-3 relative z-10">
             {insights.map((insight) => (
-              <div 
-                key={insight.id} 
+              <div
+                key={insight.id}
                 className="relative overflow-hidden rounded-[24px] p-4 border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] transition-all active:scale-[0.98]"
               >
-                <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20" style={{ background: insight.color, transform: "translate(30%, -30%)" }} />
+                <div
+                  className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20"
+                  style={{
+                    background: insight.color,
+                    transform: 'translate(30%, -30%)',
+                  }}
+                />
                 <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/30 to-transparent pointer-events-none" />
-                
+
                 <div className="relative z-10 flex flex-col gap-2.5">
                   <div className="flex gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white/80" style={{ color: insight.color }}>
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white/80"
+                      style={{ color: insight.color }}
+                    >
                       {insight.icon}
                     </span>
                     <div className="flex-1 min-w-0 pt-0.5">
-                      <p className="text-[13px] font-bold mb-0.5" style={{ color: insight.color }}>
+                      <p
+                        className="text-[13px] font-bold mb-0.5"
+                        style={{ color: insight.color }}
+                      >
                         {insight.title}
                       </p>
                       <p className="text-[13px] leading-snug text-slate-600 pr-2">
@@ -533,7 +708,7 @@ export default function HomeScreen({
                     </div>
                   </div>
                   {insight.actionText && insight.onClick && (
-                    <button 
+                    <button
                       onClick={insight.onClick}
                       className="self-start ml-[52px] flex items-center gap-1.5 text-[12px] font-bold transition-all px-3 py-1.5 rounded-xl bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm hover:bg-white"
                       style={{ color: insight.color }}
@@ -561,41 +736,65 @@ export default function HomeScreen({
               className="absolute inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
             />
             <motion.div
-              initial={{ y: "100%" }}
+              initial={{ y: '100%' }}
               animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="absolute bottom-0 left-0 right-0 z-50 rounded-t-[32px] bg-white p-6 pb-12 shadow-2xl"
             >
               <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-200" />
-              <h2 className="mb-6 text-2xl font-bold capitalize" style={{ color: ink }}>
+              <h2
+                className="mb-6 text-2xl font-bold capitalize"
+                style={{ color: ink }}
+              >
                 {selectedMealCategory} Details
               </h2>
-              
+
               <div className="space-y-4">
-                {loggedMeals.filter(m => m.mealType === selectedMealCategory).length === 0 ? (
-                  <p className="text-center text-sm text-slate-500 py-4">No meals logged for this category.</p>
+                {loggedMeals.filter((m) => m.mealType === selectedMealCategory)
+                  .length === 0 ? (
+                  <p className="text-center text-sm text-slate-500 py-4">
+                    No meals logged for this category.
+                  </p>
                 ) : (
-                  loggedMeals.filter(m => m.mealType === selectedMealCategory).map(m => (
-                    <div key={m.id} className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50">
-                      <div>
-                        <p className="font-bold text-sm" style={{ color: ink }}>{m.name}</p>
-                        <p className="text-xs text-slate-500 mt-1">{m.calories} kcal • {m.protein}g protein</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{m.timestamp}</p>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          if (onDeleteMeal) onDeleteMeal(m.id);
-                          if (loggedMeals.filter(meal => meal.mealType === selectedMealCategory).length <= 1) {
-                            setIsMealDrawerOpen(false);
-                          }
-                        }}
-                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 active:scale-95 transition-transform"
+                  loggedMeals
+                    .filter((m) => m.mealType === selectedMealCategory)
+                    .map((m) => (
+                      <div
+                        key={m.id}
+                        className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50"
                       >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))
+                        <div>
+                          <p
+                            className="font-bold text-sm"
+                            style={{ color: ink }}
+                          >
+                            {m.name}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-1">
+                            {m.calories} kcal • {m.protein}g protein
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-0.5">
+                            {m.timestamp}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (onDeleteMeal) onDeleteMeal(m.id);
+                            if (
+                              loggedMeals.filter(
+                                (meal) => meal.mealType === selectedMealCategory
+                              ).length <= 1
+                            ) {
+                              setIsMealDrawerOpen(false);
+                            }
+                          }}
+                          className="h-10 w-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 active:scale-95 transition-transform"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))
                 )}
               </div>
             </motion.div>

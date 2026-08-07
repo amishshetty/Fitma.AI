@@ -1,13 +1,22 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import PrimaryButton from "../components/ui/PrimaryButton";
-import QuantityStepper from "../components/ui/QuantityStepper";
-import ScreenShell from "./ScreenShell";
-import { ink, green, muted, mealItems } from "../constants";
-import { Screen } from "../types";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import QuantityStepper from '../components/ui/QuantityStepper';
+import ScreenShell from './ScreenShell';
+import { ink, green, muted, mealItems } from '../constants';
+import { Screen } from '../types';
 
-export default function PortionSelectionScreen({ onBack, onContinue }: { onBack: () => void; onContinue: () => void }) {
+export default function PortionSelectionScreen({
+  onBack,
+  onContinue,
+}: {
+  onBack: () => void;
+  onContinue: () => void;
+}) {
   const [quantities, setQuantities] = useState([2, 1, 1]);
-  const calories = mealItems.reduce((sum, item, index) => sum + item.calories * quantities[index], 0);
+  const calories = mealItems.reduce(
+    (sum, item, index) => sum + item.calories * quantities[index],
+    0
+  );
 
   return (
     <ScreenShell
@@ -30,7 +39,11 @@ export default function PortionSelectionScreen({ onBack, onContinue }: { onBack:
     >
       <div className="space-y-3">
         {mealItems.map((item, index) => (
-          <div key={item.name} className="rounded-[24px] bg-white p-4" style={{ boxShadow: "0 5px 18px rgba(16,32,26,0.06)" }}>
+          <div
+            key={item.name}
+            className="rounded-[24px] bg-white p-4"
+            style={{ boxShadow: '0 5px 18px rgba(16,32,26,0.06)' }}
+          >
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-base font-bold" style={{ color: ink }}>
@@ -52,15 +65,27 @@ export default function PortionSelectionScreen({ onBack, onContinue }: { onBack:
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <button className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold" style={{ color: ink }}>
+              <button
+                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold"
+                style={{ color: ink }}
+              >
                 Portion size
-                <span className="mt-1 block font-semibold" style={{ color: muted }}>
+                <span
+                  className="mt-1 block font-semibold"
+                  style={{ color: muted }}
+                >
                   Medium
                 </span>
               </button>
-              <button className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold" style={{ color: ink }}>
+              <button
+                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold"
+                style={{ color: ink }}
+              >
                 Weight
-                <span className="mt-1 block font-semibold" style={{ color: muted }}>
+                <span
+                  className="mt-1 block font-semibold"
+                  style={{ color: muted }}
+                >
                   120 g
                 </span>
               </button>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import LivaAvatar from "./LivaAvatar";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import LivaAvatar from './LivaAvatar';
 
 export default function FloatingLiva({ onClick }: { onClick?: () => void }) {
   return (

@@ -5,17 +5,17 @@ async function test() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      message: "I had one bowl of rice and 1 bowl of channa sabji for dinner",
+      message: 'I had one bowl of rice and 1 bowl of channa sabji for dinner',
       history: [],
       profile: {
-        name: "Test",
-        goal: "Lose Weight",
-        diet: "Vegetarian",
+        name: 'Test',
+        goal: 'Lose Weight',
+        diet: 'Vegetarian',
         dailyCalories: 2000,
-        language: "English",
-        motivationStyle: "Friendly"
-      }
-    })
+        language: 'English',
+        motivationStyle: 'Friendly',
+      },
+    }),
   });
   const data = await res.json();
   console.log(JSON.stringify(data, null, 2));

@@ -3,8 +3,10 @@ import { getDatabase, ServerValue } from 'firebase-admin/database';
 
 class NotificationSender {
   async dispatch(userId, notificationPayload, subscription) {
-    console.log(`[Notification Sender] Sending to ${userId}: ${notificationPayload.message}`);
-    
+    console.log(
+      `[Notification Sender] Sending to ${userId}: ${notificationPayload.message}`
+    );
+
     // Save to Firebase Realtime Database
     try {
       const db = getDatabase();
@@ -13,12 +15,15 @@ class NotificationSender {
         message: notificationPayload.message,
         priority: notificationPayload.priority,
         status: 'SENT',
-        sentAt: ServerValue.TIMESTAMP
+        sentAt: ServerValue.TIMESTAMP,
       });
     } catch (err) {
-      console.error(`[Notification Sender] Failed to save history for ${userId}:`, err.message);
+      console.error(
+        `[Notification Sender] Failed to save history for ${userId}:`,
+        err.message
+      );
     }
-    
+
     // Dispatch via Web Push
     try {
       if (subscription) {
@@ -30,22 +35,29 @@ class NotificationSender {
         } else if (notificationPayload.category === 'CALORIE') {
           niceTitle = 'Nutrition Update 🥗';
         }
-        
+
         const payload = JSON.stringify({
           title: notificationPayload.title || niceTitle,
           body: notificationPayload.message,
-          icon: '/icon-v5.png',
+          icon: '/icon-v6.png',
           url: '/',
-          actions: notificationPayload.actions || []
+          actions: notificationPayload.actions || [],
         });
-        
+
         await webpush.sendNotification(subscription, payload);
-        console.log(`[Notification Sender] Successfully sent Web Push notification to ${userId}`);
+        console.log(
+          `[Notification Sender] Successfully sent Web Push notification to ${userId}`
+        );
       } else {
-        console.log(`[Notification Sender] No Web Push subscription found for user ${userId}.`);
+        console.log(
+          `[Notification Sender] No Web Push subscription found for user ${userId}.`
+        );
       }
     } catch (error) {
-      console.error(`[Notification Sender] Web Push Failed for ${userId}:`, error.message);
+      console.error(
+        `[Notification Sender] Web Push Failed for ${userId}:`,
+        error.message
+      );
     }
   }
 }

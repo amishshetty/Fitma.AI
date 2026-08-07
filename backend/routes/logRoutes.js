@@ -1,24 +1,27 @@
-import express from "express";
-import { getDatabase, ServerValue } from "firebase-admin/database";
+import express from 'express';
+import { getDatabase, ServerValue } from 'firebase-admin/database';
 
 const router = express.Router();
 
-router.post("/meal", async (req, res) => {
+router.post('/meal', async (req, res) => {
   const { deviceId, mealType, notes, calories, protein, carbs, fat } = req.body;
 
   if (!deviceId || !mealType) {
-    return res.status(400).json({ error: "Missing deviceId or mealType" });
+    return res.status(400).json({ error: 'Missing deviceId or mealType' });
   }
 
   try {
     const db = getDatabase();
-    
+
     // YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
     const mealsRef = db.ref(`userLogs/${deviceId}/${today}/meals`);
-    
-    const timeout = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("Firebase database update timed out")), 5000)
+
+    const timeout = new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error('Firebase database update timed out')),
+        5000
+      )
     );
 
     await Promise.race([
@@ -27,72 +30,77 @@ router.post("/meal", async (req, res) => {
         if (mealType !== 'snack') {
           const snapshot = await mealsRef.once('value');
           if (snapshot.exists()) {
-            snapshot.forEach(child => {
+            snapshot.forEach((child) => {
               if (child.val().type === mealType) {
                 existingKey = child.key;
               }
             });
           }
         }
-        
-        const logRef = existingKey ? mealsRef.child(existingKey) : mealsRef.push();
-        
+
+        const logRef = existingKey
+          ? mealsRef.child(existingKey)
+          : mealsRef.push();
+
         await logRef.set({
           type: mealType,
-          notes: notes || "",
+          notes: notes || '',
           calories: calories || 0,
           protein: protein || 0,
           carbs: carbs || 0,
           fat: fat || 0,
-          timestamp: ServerValue.TIMESTAMP
+          timestamp: ServerValue.TIMESTAMP,
         });
-        
+
         return logRef.key;
       })(),
-      timeout
-    ]).then(key => {
-      res.status(201).json({ message: "Meal logged successfully", logId: key });
+      timeout,
+    ]).then((key) => {
+      res.status(201).json({ message: 'Meal logged successfully', logId: key });
     });
   } catch (error) {
-    console.error("Error logging meal:", error);
-    res.status(500).json({ error: "Failed to log meal: " + error.message });
+    console.error('Error logging meal:', error);
+    res.status(500).json({ error: 'Failed to log meal: ' + error.message });
   }
 });
 
-router.post("/water", async (req, res) => {
+router.post('/water', async (req, res) => {
   const { deviceId, amountMl } = req.body;
 
   if (!deviceId || !amountMl) {
-    return res.status(400).json({ error: "Missing deviceId or amountMl" });
+    return res.status(400).json({ error: 'Missing deviceId or amountMl' });
   }
 
   try {
     const db = getDatabase();
     const today = new Date().toISOString().split('T')[0];
-    
+
     // We can just keep a running total for the day, or push individual logs.
     // Let's keep a running total to make engine querying easier.
     const waterRef = db.ref(`userLogs/${deviceId}/${today}/waterObj`);
-    
-    const timeout = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("Firebase database update timed out")), 5000)
+
+    const timeout = new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error('Firebase database update timed out')),
+        5000
+      )
     );
-    
+
     await Promise.race([
       waterRef.transaction((currentData) => {
         const currentTotal = currentData ? currentData.total : 0;
         return {
           total: currentTotal + amountMl,
-          lastUpdate: ServerValue.TIMESTAMP
+          lastUpdate: ServerValue.TIMESTAMP,
         };
       }),
-      timeout
+      timeout,
     ]);
 
-    res.status(200).json({ message: "Water logged successfully" });
+    res.status(200).json({ message: 'Water logged successfully' });
   } catch (error) {
-    console.error("Error logging water:", error);
-    res.status(500).json({ error: "Failed to log water: " + error.message });
+    console.error('Error logging water:', error);
+    res.status(500).json({ error: 'Failed to log water: ' + error.message });
   }
 });
 

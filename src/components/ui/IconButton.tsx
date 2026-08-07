@@ -1,6 +1,6 @@
-import { motion } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { ink } from "../../constants";
+import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ink } from '../../constants';
 
 export default function IconButton({
   children,
@@ -18,7 +18,7 @@ export default function IconButton({
       aria-label={label}
       title={label}
       className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white"
-      style={{ color: ink, boxShadow: "0 4px 14px rgba(16,32,26,0.08)" }}
+      style={{ color: ink, boxShadow: '0 4px 14px rgba(16,32,26,0.08)' }}
     >
       {children}
     </motion.button>

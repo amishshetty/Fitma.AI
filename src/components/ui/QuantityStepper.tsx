@@ -1,8 +1,14 @@
-import { Minus, Plus } from "lucide-react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { ink, green } from "../../constants";
+import { Minus, Plus } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ink, green } from '../../constants';
 
-export default function QuantityStepper({ value, onChange }: { value: number; onChange: (value: number) => void }) {
+export default function QuantityStepper({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+}) {
   return (
     <div className="flex items-center gap-3 rounded-full bg-[#f2faf5] p-1">
       <button
@@ -12,7 +18,10 @@ export default function QuantityStepper({ value, onChange }: { value: number; on
       >
         <Minus size={16} />
       </button>
-      <span className="w-6 text-center text-sm font-bold" style={{ color: ink }}>
+      <span
+        className="w-6 text-center text-sm font-bold"
+        style={{ color: ink }}
+      >
         {value}
       </span>
       <button

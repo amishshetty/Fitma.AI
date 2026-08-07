@@ -1,6 +1,6 @@
-import { motion } from "motion/react";
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { ink, green, muted } from "../../constants";
+import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ink, green, muted } from '../../constants';
 
 export default function ProgressRing({
   value,
@@ -18,7 +18,14 @@ export default function ProgressRing({
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg className="-rotate-90" viewBox="0 0 96 96">
-        <circle cx="48" cy="48" r={radius} fill="none" stroke="#e4f4ea" strokeWidth="9" />
+        <circle
+          cx="48"
+          cy="48"
+          r={radius}
+          fill="none"
+          stroke="#e4f4ea"
+          strokeWidth="9"
+        />
         <motion.circle
           cx="48"
           cy="48"
@@ -30,7 +37,7 @@ export default function ProgressRing({
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: circumference * (1 - value / 100) }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
