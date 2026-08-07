@@ -34,7 +34,7 @@ class NotificationSender {
         const payload = JSON.stringify({
           title: notificationPayload.title || niceTitle,
           body: notificationPayload.message,
-          icon: '/icon.png',
+          icon: '/icon-v2.png',
           url: '/',
           actions: notificationPayload.actions || []
         });
