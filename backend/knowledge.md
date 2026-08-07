@@ -39,3 +39,21 @@ The Fitma.ai backend is a Node.js/Express application that serves the frontend, 
 - Use ES Modules (`import/export`).
 - Use async/await for asynchronous operations.
 - Ensure all endpoints return consistent JSON structures (e.g., `{ success: true, data: ... }` or `{ success: false, error: ... }`).
+
+## Push Notification System & Timings
+- The scheduler.js runs a cron job every 15 minutes to evaluate if push notifications need to be sent.
+
+### 1. Meal Reminders
+- **Base Times**: Breakfast (09:00), Lunch (13:00), Dinner (19:30).
+- If a meal is unlogged, reminders trigger at:
+  - **+20 mins** (Reminder 1: Gentle nudge)
+  - **+60 mins** (Reminder 2: Quick protein suggestion)
+  - **+120 mins** (Reminder 3: Streak warning)
+
+### 2. Water Reminders
+- **Active Hours**: 9:00 AM to 9:00 PM.
+- **Condition**: Triggers every **3 hours** since the last water log (or from 9 AM) if the daily goal (2500ml) is not yet met.
+
+### 3. Calorie Check
+- **Time**: Exactly **8:30 PM**.
+- **Condition**: Triggers only if the user has more than 200 calories remaining from their daily goal (2000 kcal), suggesting a light evening snack.
