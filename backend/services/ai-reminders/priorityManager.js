@@ -13,7 +13,7 @@ class PriorityManager {
     };
   }
 
-  async checkLimits(userId, category) {
+  async checkLimits(userId, category, message) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayTimestamp = today.getTime();
@@ -32,6 +32,15 @@ class PriorityManager {
       return false; 
     }
 
+    // Check if the exact same message was already sent today (to prevent duplicate reminders)
+    if (message) {
+      const alreadySent = sentToday.find(n => n.message === message);
+      if (alreadySent) {
+        console.log(`[Priority Manager] Identical notification already sent today for user ${userId}. Skipping.`);
+        return false;
+      }
+    }
+
     // Check category specific limits
     const categoryCount = sentToday.filter(n => n.category === category).length;
     
@@ -44,35 +53,9 @@ class PriorityManager {
   }
 
   mergeNotifications(pendingNotifications) {
-    // Example: if we have a WATER (Medium) and MEAL (High) for the same user, 
-    // we merge them into one to prevent fatigue.
-    
-    if (pendingNotifications.length <= 1) return pendingNotifications;
-
-    // Sort by priority
-    const priorityWeight = { 'CRITICAL': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
-    pendingNotifications.sort((a, b) => priorityWeight[b.priority] - priorityWeight[a.priority]);
-
-    const primary = pendingNotifications[0];
-    
-    // Check if we can merge
-    const hasWater = pendingNotifications.find(n => n.category === 'WATER');
-    const hasMeal = pendingNotifications.find(n => n.category === 'MEAL');
-
-    if (hasWater && hasMeal) {
-       console.log('[Priority Manager] Merging WATER and MEAL notifications');
-       return [{
-         category: 'MEAL', // Assume meal is higher priority
-         priority: 'HIGH',
-         title: "MISSED ROUTINE",
-         message: "Skipped breakfast again, Amish? Keep a routine for better metabolism.",
-         actions: [{ action: "log-meal", title: "Log Breakfast" }],
-         mergedFrom: ['MEAL', 'WATER']
-       }];
-    }
-    
-    // By default just take the highest priority if we have multiple clashing at the exact same 15min block
-    return [primary];
+    // Return all notifications independently as requested by user.
+    // They will be handled individually in the loop.
+    return pendingNotifications;
   }
 }
 

@@ -38,7 +38,7 @@ class MealEngine {
     if (!activeMeal) return null; // Not currently around any meal time
     
     // Check if user logged the active meal today
-    const hasLoggedMeal = (todayLogs.meals || []).some(m => m.type && m.type.toLowerCase() === activeMeal.toLowerCase());
+    const hasLoggedMeal = (todayLogs.meals || []).some(m => m.mealType && m.mealType.toLowerCase() === activeMeal.toLowerCase());
     if (hasLoggedMeal) {
       console.log(`[Meal Engine] User already logged ${activeMeal}. Stopping reminders.`);
       return null;

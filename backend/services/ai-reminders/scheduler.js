@@ -91,16 +91,25 @@ class AIReminderEngine {
     // Evaluate engines
     const pendingNotifications = [];
     
-    // Fetch real user logs for today
-    const db = getDatabase();
-    const today = new Date().toISOString().split('T')[0];
-    const logsSnapshot = await db.ref(`userLogs/${profile.userId}/${today}`).once('value');
-    const todayLogs = logsSnapshot.val() || { meals: {}, water: 0 };
+    // Extract today's logs from the user object directly, as the frontend saves it there
+    const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    const todayStart = new Date().setHours(0,0,0,0);
+    const todayEnd = new Date().setHours(23,59,59,999);
+    
+    let userMeals = user.meals || [];
+    if (!Array.isArray(userMeals)) {
+      userMeals = Object.values(userMeals);
+    }
+    const todaysMeals = userMeals.filter(m => {
+       const time = parseInt(m.id);
+       return time >= todayStart && time <= todayEnd;
+    });
 
-    // Format meals into an array for easier parsing by the engines
+    const todayHistory = (user.history && user.history[todayStr]) ? user.history[todayStr] : {};
+
     const formattedLogs = {
-      meals: todayLogs.meals ? Object.values(todayLogs.meals) : [],
-      water: todayLogs.water || 0
+      meals: todaysMeals,
+      water: todayHistory.water || 0
     };
 
     const mealNotif = mealEngine.evaluateUser(profile, formattedLogs, user);
@@ -117,7 +126,7 @@ class AIReminderEngine {
     const finalNotifications = priorityManager.mergeNotifications(pendingNotifications);
 
     for (const notif of finalNotifications) {
-      const allowed = await priorityManager.checkLimits(profile.userId, notif.category);
+      const allowed = await priorityManager.checkLimits(profile.userId, notif.category, notif.message);
       if (allowed) {
          await notificationSender.dispatch(profile.userId, notif, user.pushSubscription);
       }
