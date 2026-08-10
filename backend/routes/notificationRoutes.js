@@ -147,5 +147,17 @@ router.post('/send', async (req, res) => {
     res.status(500).json({ error: 'Failed to send notification' });
   }
 });
+// @route GET /api/notifications/cron/evaluate
+// @desc Trigger the reminder evaluation loop manually (useful for external cron services if hosted on Vercel/Render)
+router.get('/cron/evaluate', async (req, res) => {
+  try {
+    const aiReminderEngine = (await import('../services/ai-reminders/scheduler.js')).default;
+    await aiReminderEngine.evaluateUsers();
+    res.status(200).json({ message: 'Evaluation loop executed successfully' });
+  } catch (error) {
+    console.error('Error executing evaluation loop via cron endpoint:', error);
+    res.status(500).json({ error: 'Failed to execute evaluation loop' });
+  }
+});
 
 export default router;

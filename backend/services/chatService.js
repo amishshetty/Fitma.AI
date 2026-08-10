@@ -352,6 +352,7 @@ For any other natural language command (e.g. "I ate 2 rotis", "Log 2 rotis for b
     "date": "today" | "yesterday"
   }
 }
+- CRITICAL: If the user explicitly mentions "yesterday" or a past event, you MUST set "date" to "yesterday". If you set it to "today" by mistake, you will delete their today's meal!
 - You MUST mathematically calculate calories, protein, carbs, and fat based on exact quantities for ALL items combined.
 - CRITICAL: You MUST include ALL food items the user mentioned in the "items" array. Do not skip any item.
 - CRITICAL MEAL UPDATE RULE: The frontend completely REPLACES an existing meal with your new output. So if the user ADDS an item to a meal they already logged (e.g. "add salad to my dinner"), you MUST check their "User's Recent Logged Meals", find their existing dinner, and output the COMBINED items (e.g. ["rice and dal", "salad"]) and COMBINED calories/macros. If you only output "salad", their previous food will be deleted!

@@ -9,7 +9,7 @@ import { getDatabase } from 'firebase-admin/database';
 class AIReminderEngine {
   constructor() {
     this.cronTask = null;
-    this.interval = '15,30,45,0 * * * *'; // Production: every 15 mins
+    this.interval = '* * * * *'; // Production: every 1 minute for faster testing
   }
 
   start() {

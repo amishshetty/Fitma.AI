@@ -418,6 +418,7 @@ export default function App() {
     )
       .toISOString()
       .split('T')[0];
+
     setLoggedMeals((prevMeals) => {
       const targetDate = isYesterday
         ? new Date(Date.now() - 86400000).toDateString()
