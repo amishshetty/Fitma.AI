@@ -176,9 +176,12 @@ export default function ProgressDashboardScreen({
   return (
     <div
       className="relative flex min-h-0 flex-1 flex-col"
-      style={{ background: '#f7fffe' }}
+      style={{ 
+        background: '#f7fffe',
+        paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)'
+      }}
     >
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 pt-11 space-y-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 space-y-6">
         {/* Header Section */}
         <div>
           <h1 className="text-3xl font-extrabold" style={{ color: ink }}>

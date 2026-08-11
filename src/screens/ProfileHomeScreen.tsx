@@ -26,9 +26,12 @@ export default function ProfileHomeScreen({
   return (
     <div
       className="relative flex min-h-0 flex-1 flex-col"
-      style={{ background: '#f8fdfb' }}
+      style={{ 
+        background: '#f8fdfb',
+        paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)'
+      }}
     >
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 pt-11 space-y-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 space-y-6">
         {/* Profile Card Header */}
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-[#34C759] to-[#00C4B0] flex items-center justify-center text-white text-2xl font-black shadow-md border-2 border-white uppercase">

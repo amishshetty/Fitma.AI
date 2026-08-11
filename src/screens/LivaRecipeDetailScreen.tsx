@@ -56,7 +56,10 @@ export default function LivaRecipeDetailScreen({
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
             {/* Back Button */}
-            <div className="absolute left-4 top-10">
+            <div 
+              className="absolute left-4 z-10"
+              style={{ top: 'max(calc(env(safe-area-inset-top) + 16px), 40px)' }}
+            >
               <IconButton onClick={onBack} label="Back">
                 <ArrowLeft size={19} />
               </IconButton>

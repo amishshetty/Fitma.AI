@@ -459,8 +459,11 @@ export default function LivaChatScreen({
     >
       {/* Header (Mockup 1) */}
       <div
-        className="flex items-center justify-between px-6 pt-11 pb-4 bg-white"
-        style={{ borderBottom: '1px solid rgba(52,199,89,0.08)' }}
+        className="flex items-center justify-between px-6 pb-4 bg-white shrink-0 z-10 relative"
+        style={{ 
+          borderBottom: '1px solid rgba(52,199,89,0.08)',
+          paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)'
+        }}
       >
         <div className="flex items-center gap-3">
           <IconButton onClick={onBack} label="Back">
