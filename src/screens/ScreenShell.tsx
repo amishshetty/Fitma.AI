@@ -24,7 +24,10 @@ export default function ScreenShell({
       className="flex min-h-0 flex-1 flex-col"
       style={{ background: '#f7fffe' }}
     >
-      <div className="flex items-center gap-3 px-6 pt-10">
+      <div 
+        className="flex items-center gap-3 px-6"
+        style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 40px)' }}
+      >
         {onBack && (
           <IconButton onClick={onBack} label="Back">
             <ArrowLeft size={19} />

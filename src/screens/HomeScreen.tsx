@@ -315,7 +315,10 @@ export default function HomeScreen({
         background: 'linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)',
       }}
     >
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-5 pt-11">
+      <div 
+        className="min-h-0 flex-1 overflow-y-auto px-6 pb-5"
+        style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)' }}
+      >
         <section className="mb-4">
           <div className="flex items-start justify-between gap-4">
             <div>
