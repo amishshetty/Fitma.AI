@@ -165,4 +165,36 @@ router.get('/cron/evaluate', async (req, res) => {
   }
 });
 
+// @route GET /api/notifications/cron/force
+// @desc Temporarily force send a notification to all users to test if Web Push is working
+router.get('/cron/force', async (req, res) => {
+  try {
+    const db = getDatabase();
+    const usersSnapshot = await db.ref('users').once('value');
+    const users = usersSnapshot.val() || {};
+    
+    const activeUsers = Object.entries(users)
+      .map(([deviceId, userData]) => ({ deviceId, ...userData }))
+      .filter((user) => user.pushSubscription != null);
+
+    let successCount = 0;
+    for (const user of activeUsers) {
+      try {
+        const payload = JSON.stringify({
+          title: 'Fitma AI Test',
+          body: 'If you see this, push notifications are working perfectly!',
+          url: '/'
+        });
+        await webpush.sendNotification(user.pushSubscription, payload);
+        successCount++;
+      } catch (e) {
+        console.error('Push fail for', user.deviceId, e.message);
+      }
+    }
+    res.status(200).json({ message: `Force sent to ${successCount} out of ${activeUsers.length} active users` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
