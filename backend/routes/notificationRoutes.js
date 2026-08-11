@@ -152,11 +152,16 @@ router.post('/send', async (req, res) => {
 router.get('/cron/evaluate', async (req, res) => {
   try {
     const aiReminderEngine = (await import('../services/ai-reminders/scheduler.js')).default;
-    await aiReminderEngine.evaluateUsers();
-    res.status(200).json({ message: 'Evaluation loop executed successfully' });
+    
+    // Fire and forget: run in background so we don't timeout the HTTP request
+    aiReminderEngine.evaluateUsers().catch(err => {
+      console.error('Error in background evaluation loop:', err);
+    });
+
+    res.status(200).json({ message: 'Evaluation loop triggered successfully' });
   } catch (error) {
-    console.error('Error executing evaluation loop via cron endpoint:', error);
-    res.status(500).json({ error: 'Failed to execute evaluation loop' });
+    console.error('Error triggering evaluation loop via cron endpoint:', error);
+    res.status(500).json({ error: 'Failed to trigger evaluation loop' });
   }
 });
 
