@@ -36,12 +36,19 @@ const ModernSlider = ({
           <span className="text-xs text-slate-400 font-semibold">{unit}</span>
         </span>
       </div>
-      <div className="relative h-2 w-full bg-slate-100 rounded-full">
+      <div className="relative h-2 w-full bg-slate-100 rounded-full flex items-center">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
-          className="absolute top-0 left-0 h-full rounded-full"
+          className="absolute left-0 h-full rounded-full"
           style={{ backgroundColor: color }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+        />
+        <motion.div
+          className="absolute w-5 h-5 rounded-full bg-white border-2 shadow-sm pointer-events-none"
+          initial={{ left: 0 }}
+          animate={{ left: `calc(${percentage}% - 10px)` }}
+          style={{ borderColor: color }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         />
         <input
@@ -49,7 +56,7 @@ const ModernSlider = ({
           min={min}
           max={max}
           step={step}
-          className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+          className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
         />
