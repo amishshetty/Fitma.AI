@@ -144,7 +144,7 @@ export default function MyPlanScreen({
       className="relative flex min-h-0 flex-1 flex-col"
       style={{ 
         background: '#f8f9fa',
-        paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)'
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
       {/* Header */}

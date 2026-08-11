@@ -26,7 +26,7 @@ export default function ScreenShell({
     >
       <div 
         className="flex items-center gap-3 px-6"
-        style={{ paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 40px)' }}
+        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}
       >
         {onBack && (
           <IconButton onClick={onBack} label="Back">

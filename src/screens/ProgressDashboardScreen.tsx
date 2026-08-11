@@ -178,7 +178,7 @@ export default function ProgressDashboardScreen({
       className="relative flex min-h-0 flex-1 flex-col"
       style={{ 
         background: '#f7fffe',
-        paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)'
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
       <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 space-y-6">

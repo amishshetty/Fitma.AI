@@ -58,7 +58,7 @@ export default function LivaRecipeDetailScreen({
             {/* Back Button */}
             <div 
               className="absolute left-4 z-10"
-              style={{ top: 'max(calc(env(safe-area-inset-top) + 16px), 40px)' }}
+              style={{ top: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}
             >
               <IconButton onClick={onBack} label="Back">
                 <ArrowLeft size={19} />

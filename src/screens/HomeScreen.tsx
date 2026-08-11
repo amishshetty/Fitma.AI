@@ -313,7 +313,7 @@ export default function HomeScreen({
       className="flex min-h-0 flex-1 flex-col"
       style={{
         background: 'linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)',
-        paddingTop: 'max(calc(env(safe-area-inset-top) + 16px), 48px)',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
       }}
     >
       <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-5">
