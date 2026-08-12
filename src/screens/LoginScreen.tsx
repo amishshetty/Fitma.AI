@@ -738,29 +738,8 @@ export default function LoginScreen({
             animate={{ y: 0, opacity: 1 }}
             className="mb-4 mt-2"
           >
-            <div className="relative mb-3 h-14">
-              <div className="absolute left-2 top-2 h-12 w-12 rounded-full bg-[#34C759]/10 blur-lg" />
-              <div
-                className="relative flex h-12 w-12 items-center justify-center rounded-[16px] text-white"
-                style={{
-                  background:
-                    'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)',
-                  boxShadow: '0 8px 18px rgba(52,199,89,0.2)',
-                }}
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 48 48"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M24 8C24 8 10 16 10 28C10 35.732 16.268 42 24 42C31.732 42 38 35.732 38 28C38 16 24 8 24 8Z"
-                    fill="white"
-                  />
-                </svg>
-              </div>
+            <div className="relative mb-3">
+              <LivaAvatar size={52} />
             </div>
             <h1 className="text-xl font-extrabold text-foreground" >
               {view === 'signin' && 'Welcome back'}
