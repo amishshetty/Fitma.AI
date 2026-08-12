@@ -55,28 +55,28 @@ export default function LivaRecommendationsScreen({
         {recommendations.map((rec) => (
           <div
             key={rec.id}
-            className="overflow-hidden rounded-[26px] bg-white border border-[#34C759]/10"
+            className="overflow-hidden rounded-[26px] bg-card text-card-foreground border border-[#34C759]/10"
             style={{ boxShadow: '0 6px 20px rgba(16,32,26,0.05)' }}
           >
-            <div className="h-32 w-full bg-slate-100 relative">
+            <div className="h-32 w-full bg-slate-50 dark:bg-muted relative">
               <img
                 src={rec.image}
                 alt={rec.title}
                 className="h-full w-full object-cover"
               />
-              <div className="absolute right-3.5 top-3.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#197a38] backdrop-blur-sm">
+              <div className="absolute right-3.5 top-3.5 rounded-full bg-card/90 text-card-foreground px-2.5 py-1 text-[10px] font-bold text-[#197a38] backdrop-blur-sm">
                 ★ {rec.score} Score
               </div>
             </div>
             <div className="p-4.5">
-              <h3 className="text-base font-bold" style={{ color: ink }}>
+              <h3 className="text-base font-bold text-foreground" >
                 {rec.title}
               </h3>
-              <p className="mt-1 text-xs" style={{ color: muted }}>
+              <p className="mt-1 text-xs text-muted-foreground" >
                 {rec.description}
               </p>
 
-              <div className="mt-4 flex items-center justify-between text-xs font-semibold text-slate-500 border-t border-[#34C759]/06 pt-3.5">
+              <div className="mt-4 flex items-center justify-between text-xs font-semibold text-muted-foreground border-t border-[#34C759]/06 pt-3.5">
                 <span>🔥 {rec.calories} kcal</span>
                 <span>💪 {rec.protein} Prot</span>
                 <span>⏱ {rec.prepTime}</span>

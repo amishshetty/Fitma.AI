@@ -86,10 +86,8 @@ export default function ReminderCenterScreen({
         <div className="flex gap-3">
           <button
             onClick={handleMarkAllRead}
-            className="flex-1 flex items-center justify-center rounded-xl bg-white text-[13px] font-semibold transition-all hover:bg-slate-50"
+            className="flex-1 flex items-center justify-center rounded-xl bg-card text-[#475569] dark:text-foreground text-[13px] font-semibold transition-all hover:bg-slate-50 dark:hover:bg-muted border border-[#dcf4e6] dark:border-primary/20"
             style={{
-              color: '#475569',
-              border: '1px solid #dcf4e6',
               minHeight: '56px',
             }}
           >
@@ -116,7 +114,7 @@ export default function ReminderCenterScreen({
     >
       <div className="space-y-4 pb-8">
         {/* Tab Selectors */}
-        <div className="flex bg-[#f4f9f6] p-1 rounded-2xl relative mb-6">
+        <div className="flex bg-[#f4f9f6] dark:bg-muted p-1 rounded-2xl relative mb-6">
           <div
             className="absolute top-1 bottom-1 w-1/2 bg-[#34C759] rounded-xl transition-transform duration-300 shadow-sm"
             style={{
@@ -127,7 +125,7 @@ export default function ReminderCenterScreen({
             <button
               key={tab}
               onClick={() => setActiveTab(tab as 'today' | 'earlier')}
-              className={`flex-1 py-2.5 text-xs font-bold rounded-xl relative z-10 transition-colors duration-300 capitalize ${activeTab === tab ? 'text-white' : 'text-[#6d8779]'}`}
+              className={`flex-1 py-2.5 text-xs font-bold rounded-xl relative z-10 transition-colors duration-300 capitalize ${activeTab === tab ? 'text-white' : 'text-[#6d8779] dark:text-muted-foreground hover:text-foreground'}`}
             >
               {tab}
             </button>
@@ -140,25 +138,22 @@ export default function ReminderCenterScreen({
             filtered.map((item) => (
               <div
                 key={item.id}
-                className="overflow-hidden rounded-[24px] bg-white border border-slate-100 p-4 flex gap-3 relative transition-all"
+                className={`overflow-hidden rounded-[24px] bg-card text-card-foreground border border-slate-100 dark:border-border p-4 flex gap-3 relative transition-all ${!item.read ? 'border-l-[#34C759] border-l-4' : ''}`}
                 style={{
                   boxShadow: '0 4px 12px rgba(16,32,26,0.02)',
                   opacity: item.read ? 0.78 : 1,
-                  borderLeft: !item.read
-                    ? `4px solid ${green}`
-                    : '1px solid rgba(16,32,26,0.06)',
                 }}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-xl font-bold flex-shrink-0">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 dark:bg-muted text-xl font-bold flex-shrink-0">
                   {item.icon}
                 </span>
 
                 <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex justify-between items-center text-[10px] font-semibold text-slate-400">
+                  <div className="flex justify-between items-center text-[10px] font-semibold text-muted-foreground">
                     <span>{item.category}</span>
                     <span>{item.time}</span>
                   </div>
-                  <p className="text-xs leading-relaxed" style={{ color: ink }}>
+                  <p className="text-xs leading-relaxed text-foreground" >
                     {item.text}
                   </p>
 
@@ -166,14 +161,14 @@ export default function ReminderCenterScreen({
                     {item.screen && (
                       <button
                         onClick={() => onNavigate(item.screen!)}
-                        className="text-[11px] font-bold text-[#34C759] bg-white border border-[#dcf4e6] px-3.5 py-1.5 rounded-xl hover:bg-[#f4f9f6] transition-colors"
+                        className="text-[11px] font-bold text-[#34C759] dark:text-primary border border-[#dcf4e6] dark:border-primary/20 px-3.5 py-1.5 rounded-xl hover:bg-[#f4f9f6] dark:hover:bg-primary/10 transition-colors"
                       >
                         Act Now
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="text-[11px] font-bold text-slate-400 bg-slate-50 px-3.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+                      className="text-[11px] font-bold text-muted-foreground bg-slate-50 dark:bg-muted px-3.5 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-muted transition-colors"
                     >
                       Clear
                     </button>
@@ -182,7 +177,7 @@ export default function ReminderCenterScreen({
               </div>
             ))
           ) : (
-            <div className="text-center py-10 text-slate-400 text-xs font-semibold">
+            <div className="text-center py-10 text-muted-foreground text-xs font-semibold">
               No notifications in this folder.
             </div>
           )}

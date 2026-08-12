@@ -45,9 +45,11 @@ function ResizableHandle({
       {...props}
     >
       {withHandle && (
-        <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
-          <GripVerticalIcon className="size-2.5" />
-        </div>
+        <div className="overflow-hidden relative bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <GripVerticalIcon className="size-2.5" />
+  </div>
+</div>
       )}
     </ResizablePrimitive.PanelResizeHandle>
   );

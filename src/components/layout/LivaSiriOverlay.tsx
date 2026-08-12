@@ -23,14 +23,14 @@ export default function LivaSiriOverlay({
       )}
 
       {/* Siri Glowing wave container */}
-      <div className="relative bg-white/94 backdrop-blur-md rounded-t-[32px] p-6 pb-9 border-t border-white/20 flex flex-col items-center text-center space-y-5 shadow-2xl z-10">
+      <div className="relative bg-card/94 text-card-foreground backdrop-blur-md rounded-t-[32px] p-6 pb-9 border-t border-white/20 flex flex-col items-center text-center space-y-5 shadow-2xl z-10">
         <LivaAvatar size={74} floating />
 
         <div className="space-y-1">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Liva Assistant
           </p>
-          <p className="text-sm font-bold text-slate-800 leading-relaxed px-4 whitespace-pre-wrap">
+          <p className="text-sm font-bold text-foreground leading-relaxed px-4 whitespace-pre-wrap">
             {text}
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function LivaSiriOverlay({
 
         <button
           onClick={onClose}
-          className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 bg-slate-50 hover:bg-slate-100 px-4 py-2 rounded-full"
+          className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground bg-slate-50 dark:bg-muted hover:bg-slate-50 dark:hover:bg-muted px-4 py-2 rounded-full"
         >
           Dismiss Liva
         </button>

@@ -55,10 +55,10 @@ export default function LivaRecipeSwiperScreen({
       <div className="flex h-full flex-col justify-center items-center">
         {!isDeckEmpty ? (
           <div
-            className="w-full max-w-[280px] bg-white rounded-[32px] border border-[#34C759]/16 overflow-hidden relative"
+            className="w-full max-w-[280px] bg-card text-card-foreground rounded-[32px] border border-[#34C759]/16 overflow-hidden relative"
             style={{ boxShadow: '0 12px 30px rgba(16,32,26,0.06)' }}
           >
-            <div className="h-48 w-full bg-slate-200">
+            <div className="h-48 w-full bg-border">
               <img
                 src={recipes[index].img}
                 alt={recipes[index].title}
@@ -66,10 +66,10 @@ export default function LivaRecipeSwiperScreen({
               />
             </div>
             <div className="p-5 text-center">
-              <h3 className="text-base font-bold" style={{ color: ink }}>
+              <h3 className="text-base font-bold text-foreground" >
                 {recipes[index].title}
               </h3>
-              <div className="mt-2.5 flex justify-center gap-3 text-xs font-semibold text-slate-500">
+              <div className="mt-2.5 flex justify-center gap-3 text-xs font-semibold text-muted-foreground">
                 <span>🔥 {recipes[index].kcal} kcal</span>
                 <span>🥚 {recipes[index].macro}</span>
               </div>
@@ -78,7 +78,7 @@ export default function LivaRecipeSwiperScreen({
               <div className="mt-6 flex justify-around gap-3">
                 <button
                   onClick={() => handleSwipe(false)}
-                  className="flex h-12 w-24 items-center justify-center rounded-xl bg-slate-100 text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors"
+                  className="flex h-12 w-24 items-center justify-center rounded-xl bg-slate-50 dark:bg-muted text-xs font-bold text-muted-foreground hover:bg-border transition-colors"
                 >
                   Skip
                 </button>
@@ -94,16 +94,18 @@ export default function LivaRecipeSwiperScreen({
           </div>
         ) : (
           <div className="text-center py-10 space-y-6">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#ecfbf1] text-[#34C759] mx-auto">
-              <Check size={36} />
-            </div>
+            <div className="overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-full bg-[#ecfbf1] text-[#34C759] mx-auto">
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Check size={36} />
+  </div>
+</div>
             <div>
-              <h3 className="text-lg font-bold" style={{ color: ink }}>
+              <h3 className="text-lg font-bold text-foreground" >
                 Swipe Deck Complete
               </h3>
               <p
-                className="mt-2 text-xs leading-relaxed"
-                style={{ color: muted }}
+                className="mt-2 text-xs leading-relaxed text-muted-foreground"
+                
               >
                 You saved{' '}
                 <span className="font-bold text-[#34C759]">

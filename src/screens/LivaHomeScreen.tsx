@@ -47,6 +47,8 @@ export default function LivaHomeScreen({
     name: string;
     goal: string;
     diet: string;
+    activity?: string;
+    allergies?: string[];
     dailyCalories: number;
     motivationStyle?: string;
     language?: string;
@@ -60,6 +62,7 @@ export default function LivaHomeScreen({
   }) => void;
   remainingCalories?: number;
   loggedMeals?: any[];
+  memories?: any[];
   initialMessage?: string;
   initialResponse?: any;
 }) {
@@ -281,6 +284,7 @@ export default function LivaHomeScreen({
             motivationStyle: 'Friendly',
             language: 'English',
           },
+          memories: memories || [],
           previousMessages: messages.map((m) => ({
             sender: m.sender,
             text: m.text,
@@ -548,9 +552,8 @@ export default function LivaHomeScreen({
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col"
+      className="flex min-h-0 flex-1 flex-col bg-background"
       style={{ 
-        background: '#f8faf8',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
@@ -559,12 +562,12 @@ export default function LivaHomeScreen({
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-extrabold" style={{ color: ink }}>
+            <h1 className="text-3xl font-extrabold text-foreground" >
               Hi {userName || 'User'} 👋
             </h1>
             <p
-              className="mt-1.5 text-sm font-semibold"
-              style={{ color: muted }}
+              className="mt-1.5 text-sm font-semibold text-muted-foreground"
+              
             >
               Liva Coach Mode is active
             </p>
@@ -573,7 +576,7 @@ export default function LivaHomeScreen({
             {messages.length > 0 && (
               <button
                 onClick={() => setMessages([])}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-muted text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
                 title="Clear Chat"
               >
                 <Trash2 size={20} />
@@ -584,21 +587,23 @@ export default function LivaHomeScreen({
         </div>
 
         {/* Coach Insight */}
-        <div className="mb-8 relative overflow-hidden rounded-[20px] p-5 border border-[#d1f2db] bg-[#f1fcf5]">
+        <div className="mb-8 relative overflow-hidden rounded-[20px] p-5 border border-[#d1f2db] dark:border-primary/20 bg-[#f1fcf5] dark:bg-primary/5">
           {/* Background Graphic Suggestion */}
           <div className="absolute right-[-40px] top-1/2 -translate-y-1/2 text-[#34C759] opacity-[0.08] pointer-events-none">
             <PieChart size={160} strokeWidth={2} />
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-2.5 mb-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#34C759] shadow-sm">
-                <BarChart2 size={16} strokeWidth={2.5} />
-              </span>
-              <p className="text-[11px] font-extrabold text-[#0e793c] uppercase tracking-wider">
+              <span className="overflow-hidden relative flex h-8 w-8 items-center justify-center rounded-full bg-card text-card-foreground text-[#34C759] shadow-sm">
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <BarChart2 size={16} strokeWidth={2.5} />
+  </div>
+</span>
+              <p className="text-[11px] font-extrabold text-[#0e793c] dark:text-primary uppercase tracking-wider">
                 Coach Insight
               </p>
             </div>
-            <p className="text-[14px] font-bold text-[#1e293b] leading-snug mb-4">
+            <p className="text-[14px] font-bold text-[#1e293b] dark:text-foreground leading-snug mb-4">
               You have{' '}
               <span className="text-[#34C759]">
                 {remainingCalories} calories
@@ -631,7 +636,7 @@ export default function LivaHomeScreen({
         <div className="space-y-4">
           {messages.length > 0 && (
             <div className="flex justify-center mb-6">
-              <span className="bg-slate-100 text-slate-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="bg-slate-50 dark:bg-muted text-muted-foreground text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 Today{' '}
                 {new Date().toLocaleTimeString([], {
                   hour: '2-digit',
@@ -657,21 +662,21 @@ export default function LivaHomeScreen({
                   </div>
                 ) : (
                   /* Liva Bubble (Mockup 2) */
-                  <div className="bg-white rounded-3xl p-3.5 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
+                  <div className="bg-card text-card-foreground rounded-3xl p-3.5 border border-slate-100 dark:border-border shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
                     {msg.greeting && (
-                      <h3 className="text-[15px] font-bold text-slate-800 mb-1.5">
+                      <h3 className="text-[15px] font-bold text-foreground mb-1.5">
                         {msg.greeting}
                       </h3>
                     )}
 
                     {msg.text && (
-                      <p className="text-[14px] leading-snug text-slate-700 mb-2">
+                      <p className="text-[14px] leading-snug text-foreground mb-2">
                         {msg.text}
                       </p>
                     )}
 
                     {msg.motivation && (
-                      <p className="text-[14px] leading-snug text-slate-700 font-medium">
+                      <p className="text-[14px] leading-snug text-foreground font-medium">
                         {msg.motivation}
                       </p>
                     )}
@@ -706,7 +711,7 @@ export default function LivaHomeScreen({
                 )}
 
                 <span
-                  className={`text-[9px] font-semibold text-slate-400 px-1 mt-1 flex items-center gap-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
+                  className={`text-[9px] font-semibold text-muted-foreground px-1 mt-1 flex items-center gap-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
                 >
                   {msg.timestamp}{' '}
                   {msg.sender === 'user' && (
@@ -720,7 +725,7 @@ export default function LivaHomeScreen({
           {isTyping && (
             <div className="flex items-end gap-2.5 justify-start animate-pulse">
               <LivaAvatar size={32} />
-              <div className="rounded-[22px] px-4.5 py-3.5 bg-white border border-[#34C759]/10 shadow-sm">
+              <div className="rounded-[22px] px-4.5 py-3.5 bg-card text-card-foreground border border-[#34C759]/10 shadow-sm">
                 <div className="flex items-center gap-1">
                   <span
                     className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce"
@@ -744,13 +749,13 @@ export default function LivaHomeScreen({
       </div>
 
       {/* Persistent Input Section */}
-      <div className="absolute bottom-20 left-0 right-0 z-20 pointer-events-none bg-gradient-to-t from-[#f8faf8] via-[#f8faf8] to-transparent pt-8">
+      <div className="absolute bottom-20 left-0 right-0 z-20 pointer-events-none bg-gradient-to-t from-background via-background to-transparent pt-8">
         {/* Quick Suggestions with Scroll Arrows */}
         <div className="relative mb-4 pointer-events-auto px-6">
           {/* Left Arrow */}
           <button
             onClick={() => scrollSuggestions('left')}
-            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white border border-[#34C759]/20 shadow-md text-[#34C759] hover:bg-[#f2faf5] transition-colors"
+            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-card text-card-foreground border border-[#34C759]/20 shadow-md text-[#34C759] hover:bg-[#f2faf5] transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
@@ -767,7 +772,7 @@ export default function LivaHomeScreen({
                 <button
                   key={idx}
                   onClick={suggestion.action}
-                  className={`flex flex-col items-center justify-center flex-shrink-0 ${isMore ? 'w-[48px]' : 'w-[84px]'} h-[84px] rounded-[20px] bg-white border border-[#34C759]/15 shadow-sm hover:border-[#34C759]/40 transition-colors`}
+                  className={`flex flex-col items-center justify-center flex-shrink-0 ${isMore ? 'w-[48px]' : 'w-[84px]'} h-[84px] rounded-[20px] bg-card text-card-foreground border border-[#34C759]/15 shadow-sm hover:border-[#34C759]/40 transition-colors`}
                 >
                   <Icon
                     size={isMore ? 20 : 24}
@@ -775,7 +780,7 @@ export default function LivaHomeScreen({
                     strokeWidth={2}
                   />
                   {!isMore && (
-                    <span className="text-[10px] font-bold text-slate-600 text-center leading-tight px-1 mt-2">
+                    <span className="text-[10px] font-bold text-muted-foreground text-center leading-tight px-1 mt-2">
                       {suggestion.label}
                     </span>
                   )}
@@ -787,7 +792,7 @@ export default function LivaHomeScreen({
           {/* Right Arrow */}
           <button
             onClick={() => scrollSuggestions('right')}
-            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white border border-[#34C759]/20 shadow-md text-[#34C759] hover:bg-[#f2faf5] transition-colors"
+            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-card text-card-foreground border border-[#34C759]/20 shadow-md text-[#34C759] hover:bg-[#f2faf5] transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -796,14 +801,14 @@ export default function LivaHomeScreen({
         {/* Input Bar */}
         <div className="px-6 pb-6 pointer-events-auto">
           <div
-            className="rounded-[24px] bg-white border border-[#34C759]/20 p-4"
+            className="rounded-[24px] bg-card text-card-foreground border border-[#34C759]/20 p-4"
             style={{ boxShadow: '0 8px 32px rgba(16,32,26,0.06)' }}
           >
             {/* Top Text Input Area */}
             <div className="flex items-center gap-2 mb-4 px-1">
               <input
-                className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 font-medium"
-                style={{ color: ink }}
+                className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground font-medium text-foreground"
+                
                 placeholder={
                   isListening ? 'Listening...' : 'Ask Liva anything...'
                 }
@@ -831,14 +836,14 @@ export default function LivaHomeScreen({
               {/* Voice Button */}
               <button
                 onClick={toggleVoiceInput}
-                className="flex items-center gap-2.5 justify-center rounded-full bg-white py-1 transition-colors hover:bg-slate-50"
+                className="flex items-center gap-2.5 justify-center rounded-full bg-card text-card-foreground py-1 transition-colors hover:bg-slate-50 dark:hover:bg-muted"
               >
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full ${isListening ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse' : 'bg-[#ecfbf1] text-[#34C759]'}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${isListening ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse' : 'bg-[#ecfbf1] dark:bg-primary/10 text-[#34C759]'}`}
                 >
                   <Mic size={15} />
                 </div>
-                <span className="text-[11px] font-bold text-slate-500 pr-2">
+                <span className="text-[11px] font-bold text-muted-foreground pr-2">
                   Voice
                 </span>
               </button>
@@ -846,12 +851,14 @@ export default function LivaHomeScreen({
               {/* Camera Button */}
               <button
                 onClick={() => onStartLog('camera')}
-                className="flex items-center gap-2.5 justify-center rounded-full bg-white py-1 transition-colors hover:bg-slate-50"
+                className="flex items-center gap-2.5 justify-center rounded-full bg-card text-card-foreground py-1 transition-colors hover:bg-slate-50 dark:hover:bg-muted"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500">
-                  <Camera size={15} />
-                </div>
-                <span className="text-[11px] font-bold text-slate-500 pr-2">
+                <div className="overflow-hidden relative flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 dark:bg-muted border border-slate-100 dark:border-border text-muted-foreground">
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Camera size={15} />
+  </div>
+</div>
+                <span className="text-[11px] font-bold text-muted-foreground pr-2">
                   Camera
                 </span>
               </button>
@@ -859,12 +866,14 @@ export default function LivaHomeScreen({
               {/* Keyboard Button */}
               <button
                 onClick={() => document.querySelector('input')?.focus()}
-                className="flex items-center gap-2.5 justify-center rounded-full bg-white py-1 transition-colors hover:bg-slate-50"
+                className="flex items-center gap-2.5 justify-center rounded-full bg-card text-card-foreground py-1 transition-colors hover:bg-slate-50 dark:hover:bg-muted"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500">
-                  <Keyboard size={15} />
-                </div>
-                <span className="text-[11px] font-bold text-slate-500 pr-2">
+                <div className="overflow-hidden relative flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 dark:bg-muted border border-slate-100 dark:border-border text-muted-foreground">
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Keyboard size={15} />
+  </div>
+</div>
+                <span className="text-[11px] font-bold text-muted-foreground pr-2">
                   Keyboard
                 </span>
               </button>

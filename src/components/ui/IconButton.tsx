@@ -16,11 +16,12 @@ export default function IconButton({
       whileTap={{ scale: 0.96 }}
       onClick={onClick}
       aria-label={label}
-      title={label}
-      className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white"
-      style={{ color: ink, boxShadow: '0 4px 14px rgba(16,32,26,0.08)' }}
+      className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] text-foreground hover:bg-white/50 dark:hover:bg-black/40 transition-all duration-300 relative overflow-hidden"
     >
-      {children}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 dark:to-transparent opacity-50 rounded-2xl pointer-events-none" />
+      <div className="relative z-10 flex items-center justify-center">
+        {children}
+      </div>
     </motion.button>
   );
 }

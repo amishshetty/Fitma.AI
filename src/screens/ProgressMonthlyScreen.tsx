@@ -71,11 +71,11 @@ export default function ProgressMonthlyScreen({
       <div className="space-y-5 pb-8">
         {/* Weight Trend Line Chart */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-slate-100"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
               Weight Journey Trend
             </h3>
             <span className="text-xs font-bold text-[#f43f5e]">
@@ -83,7 +83,7 @@ export default function ProgressMonthlyScreen({
             </span>
           </div>
           {/* SVG Weight Line representation */}
-          <div className="relative h-28 w-full border-b border-slate-100">
+          <div className="relative h-28 w-full border-b border-slate-100 dark:border-border">
             <svg className="w-full h-full" viewBox="0 0 200 80">
               <path
                 d="M 10 70 L 40 66 L 80 62 L 120 58 L 160 55 L 190 52"
@@ -104,7 +104,7 @@ export default function ProgressMonthlyScreen({
                 />
               ))}
             </svg>
-            <div className="flex justify-between text-[8px] text-slate-400 mt-2 font-semibold">
+            <div className="flex justify-between text-[8px] text-muted-foreground mt-2 font-semibold">
               <span>Week 1</span>
               <span>Week 2</span>
               <span>Week 3</span>
@@ -116,24 +116,24 @@ export default function ProgressMonthlyScreen({
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 gap-3">
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Average Calorie
             </span>
             <span
-              className="text-base font-extrabold block mt-1"
-              style={{ color: ink }}
+              className="text-base font-extrabold block mt-1 text-foreground"
+              
             >
               {stats.avgCalories.toLocaleString()} kcal
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Protein Average
             </span>
             <span className="text-base font-extrabold block mt-1 text-[#0EA5E9]">
@@ -141,10 +141,10 @@ export default function ProgressMonthlyScreen({
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Water Average
             </span>
             <span className="text-base font-extrabold block mt-1 text-[#00c4b0]">
@@ -152,10 +152,10 @@ export default function ProgressMonthlyScreen({
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Logged Days
             </span>
             <span className="text-base font-extrabold block mt-1 text-[#34C759]">
@@ -163,24 +163,24 @@ export default function ProgressMonthlyScreen({
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Meal Consistency
             </span>
             <span
-              className="text-base font-extrabold block mt-1"
-              style={{ color: ink }}
+              className="text-base font-extrabold block mt-1 text-foreground"
+              
             >
               86%
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-4 border border-slate-100"
+            className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[10px] font-bold text-slate-400 block">
+            <span className="text-[10px] font-bold text-muted-foreground block">
               Skipped Breakfasts
             </span>
             <span className="text-base font-extrabold block mt-1 text-[#f43f5e]">
@@ -191,22 +191,22 @@ export default function ProgressMonthlyScreen({
 
         {/* Favorite Foods Card */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
             Favorite Foods
           </h3>
           <div className="space-y-2">
             {stats.topFoods.map((food, idx) => (
               <div
                 key={idx}
-                className="flex justify-between items-center text-xs border-b border-slate-50 pb-2"
+                className="flex justify-between items-center text-xs border-b border-slate-100 dark:border-border/50 pb-2"
               >
-                <span className="font-bold" style={{ color: ink }}>
+                <span className="font-bold text-foreground" >
                   {food.name}
                 </span>
-                <span className="text-slate-400 font-semibold">
+                <span className="text-muted-foreground font-semibold">
                   {food.count}
                 </span>
               </div>

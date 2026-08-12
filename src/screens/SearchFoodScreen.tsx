@@ -22,7 +22,7 @@ export default function SearchFoodScreen({
       footer={<PrimaryButton onClick={onContinue}>Continue</PrimaryButton>}
     >
       <div
-        className="mb-5 flex items-center gap-3 rounded-2xl bg-white px-4 py-3"
+        className="mb-5 flex items-center gap-3 rounded-2xl bg-card text-card-foreground px-4 py-3"
         style={{ boxShadow: '0 4px 16px rgba(16,32,26,0.05)' }}
       >
         <Search size={20} color={muted} />
@@ -33,7 +33,7 @@ export default function SearchFoodScreen({
       </div>
       <div className="space-y-5">
         <section>
-          <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
+          <h2 className="mb-3 text-sm font-bold text-foreground" >
             Recent Searches
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -43,7 +43,7 @@ export default function SearchFoodScreen({
           </div>
         </section>
         <section>
-          <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
+          <h2 className="mb-3 text-sm font-bold text-foreground" >
             Popular Foods
           </h2>
           <div className="space-y-3">
@@ -62,7 +62,7 @@ export default function SearchFoodScreen({
           </div>
         </section>
         <section>
-          <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
+          <h2 className="mb-3 text-sm font-bold text-foreground" >
             Suggested Foods
           </h2>
           <div className="space-y-3">

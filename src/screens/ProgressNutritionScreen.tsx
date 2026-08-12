@@ -131,7 +131,7 @@ export default function ProgressNutritionScreen({
       <div className="space-y-5 pb-8">
         {/* Macro Donut SVG Card */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-slate-100 flex items-center justify-around"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border flex items-center justify-around"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
           <div className="relative h-28 w-28">
@@ -179,10 +179,10 @@ export default function ProgressNutritionScreen({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xs font-black" style={{ color: ink }}>
+              <span className="text-xs font-black text-foreground" >
                 Macros
               </span>
-              <span className="text-[8px] text-slate-400 uppercase font-bold">
+              <span className="text-[8px] text-muted-foreground uppercase font-bold">
                 Split
               </span>
             </div>
@@ -195,7 +195,7 @@ export default function ProgressNutritionScreen({
                   className="h-2.5 w-2.5 rounded-full"
                   style={{ background: mac.color }}
                 />
-                <span className="text-xs font-bold" style={{ color: ink }}>
+                <span className="text-xs font-bold text-foreground" >
                   {mac.label}: {mac.value} ({mac.percent}%)
                 </span>
               </div>
@@ -204,15 +204,15 @@ export default function ProgressNutritionScreen({
         </div>
 
         {/* Nutrient Gaps alerts */}
-        <div className="rounded-[24px] p-4.5 bg-[#fff8eb] border border-[#fb923c]/20 space-y-2">
-          <h4 className="text-xs font-bold text-[#c2410c] uppercase tracking-wider">
+        <div className="rounded-[24px] p-4.5 bg-[#fff8eb] dark:bg-orange-500/10 border border-[#fb923c]/20 dark:border-orange-500/20 space-y-2 p-4">
+          <h4 className="text-xs font-bold text-[#c2410c] dark:text-orange-500 uppercase tracking-wider">
             Nutrient Alerts
           </h4>
           {alerts.map((alertText, idx) => (
             <p
               key={idx}
-              className="text-xs leading-relaxed"
-              style={{ color: muted }}
+              className="text-xs leading-relaxed text-muted-foreground"
+              
             >
               {alertText}
             </p>
@@ -221,10 +221,10 @@ export default function ProgressNutritionScreen({
 
         {/* Daily Nutrient progress bars */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 space-y-4"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border space-y-4"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Nutrient Targets
           </h3>
           <div className="space-y-3">
@@ -236,15 +236,15 @@ export default function ProgressNutritionScreen({
               return (
                 <div key={nut.label} className="space-y-1">
                   <div
-                    className="flex justify-between text-xs font-bold"
-                    style={{ color: ink }}
+                    className="flex justify-between text-xs font-bold text-foreground"
+                    
                   >
                     <span>{nut.label}</span>
                     <span>
                       {nut.current} / {nut.target} {nut.unit}
                     </span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-2 w-full rounded-full bg-slate-50 dark:bg-muted overflow-hidden">
                     <div
                       className="h-full rounded-full"
                       style={{ width: `${percent}%`, background: nut.color }}

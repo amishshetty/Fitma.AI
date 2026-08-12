@@ -29,12 +29,12 @@ export default function OnboardingSuccessScreen({
           <Check size={62} />
         </motion.div>
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: ink }}>
+          <h1 className="text-3xl font-bold text-foreground" >
             You're all set.
           </h1>
           <p
-            className="mt-3 text-base leading-relaxed"
-            style={{ color: muted }}
+            className="mt-3 text-base leading-relaxed text-muted-foreground"
+            
           >
             Liva is ready to help you log your first meal in under 15 seconds.
           </p>

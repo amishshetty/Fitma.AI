@@ -7,9 +7,13 @@ import { ink } from '../constants';
 export default function TextLoggingDrawer({
   onClose,
   onLogMeal,
+  userProfile,
+  memories,
 }: {
   onClose: () => void;
   onLogMeal: (meal: any) => void;
+  userProfile: any;
+  memories: any[];
 }) {
   const [text, setText] = useState('');
   const [isParsing, setIsParsing] = useState(false);
@@ -27,7 +31,7 @@ export default function TextLoggingDrawer({
         body: JSON.stringify({
           message: text,
           deviceId: 'text-logger',
-          profile: {
+          profile: userProfile || {
             name: 'User',
             goal: 'maintenance',
             diet: 'any',
@@ -35,9 +39,10 @@ export default function TextLoggingDrawer({
             motivationStyle: 'friendly',
             language: 'english',
           },
+          memories: memories || [],
           previousMessages: [],
           loggedMeals: [],
-          remainingCalories: 2000,
+          remainingCalories: userProfile?.dailyCalories || 2000,
         }),
       });
 
@@ -100,18 +105,18 @@ export default function TextLoggingDrawer({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="relative bg-[#F8F9FA] rounded-t-[32px] p-6 pb-8 shadow-2xl flex flex-col"
+        className="relative bg-card text-card-foreground rounded-t-[32px] p-6 pb-8 shadow-2xl flex flex-col"
       >
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-800">Smart Meal Log</h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <h2 className="text-xl font-bold text-foreground">Smart Meal Log</h2>
+            <p className="text-sm text-muted-foreground mt-1">
               Type naturally. We'll extract the details.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-slate-200/50 text-slate-500 active:scale-95 transition-transform"
+            className="p-2 rounded-full bg-border text-muted-foreground active:scale-95 transition-transform"
           >
             <X size={20} />
           </button>
@@ -125,16 +130,11 @@ export default function TextLoggingDrawer({
                 setText(e.target.value);
                 if (pendingInternalMeal) setPendingInternalMeal(null);
               }}
-              className="min-h-32 w-full resize-none rounded-[24px] bg-white p-5 text-base outline-none transition-shadow focus:ring-4 focus:ring-[#34C759]/20"
+              className="min-h-32 w-full resize-none rounded-[24px] bg-card text-foreground p-5 text-base outline-none transition-shadow focus:ring-4 focus:ring-primary/20 shadow-sm border border-slate-100 dark:border-border"
               placeholder='"I had 2 rotis and 2 eggs for breakfast"'
-              style={{
-                color: ink,
-                boxShadow: '0 4px 20px rgba(16,32,26,0.04)',
-                border: '1px solid #e2e8f0',
-              }}
             />
             {/* Decorative AI icon */}
-            <div className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-[#34C759]/10 px-3 py-1.5 text-xs font-bold text-[#34C759]">
+            <div className="absolute right-4 bottom-4 flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
               <Activity size={14} /> AI Powered
             </div>
           </div>
@@ -147,8 +147,8 @@ export default function TextLoggingDrawer({
                 exit={{ opacity: 0, y: -10, height: 0 }}
                 className="flex flex-col items-start w-full space-y-2 overflow-hidden"
               >
-                <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-white/50 max-w-[85%]">
-                  <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">
+                <div className="bg-card text-card-foreground px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-sm border border-slate-100 dark:border-border max-w-[85%]">
+                  <p className="text-foreground font-extrabold text-[13px] tracking-tight">
                     Which meal is this?
                   </p>
                 </div>
@@ -164,7 +164,7 @@ export default function TextLoggingDrawer({
                         setPendingInternalMeal(null);
                         onClose();
                       }}
-                      className="bg-white hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-colors flex-shrink-0"
+                      className="bg-card text-card-foreground hover:bg-secondary text-primary font-bold py-2 px-4 rounded-lg shadow-sm border border-slate-100 dark:border-border text-[12px] whitespace-nowrap transition-colors flex-shrink-0"
                     >
                       {section}
                     </button>
@@ -176,7 +176,7 @@ export default function TextLoggingDrawer({
         </div>
 
         <div className="mb-6">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
             Try these examples
           </p>
           <div className="flex flex-col gap-2">
@@ -184,7 +184,7 @@ export default function TextLoggingDrawer({
               <button
                 key={suggestion}
                 onClick={() => setText(suggestion)}
-                className="text-left rounded-xl bg-white p-3 text-sm text-slate-600 active:bg-slate-50 transition-colors border border-slate-100 shadow-sm"
+                className="text-left rounded-xl bg-card text-card-foreground p-3 text-sm text-muted-foreground active:bg-slate-50 dark:active:bg-muted transition-colors border border-slate-100 dark:border-border shadow-sm"
               >
                 "{suggestion}"
               </button>

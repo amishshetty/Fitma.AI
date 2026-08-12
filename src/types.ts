@@ -57,7 +57,11 @@ export type Screen =
   | 'profile-premium'
   | 'profile-privacy'
   | 'profile-help'
-  | 'profile-settings';
+  | 'profile-settings'
+  | 'profile-theme'
+  | 'profile-legal'
+  | 'profile-privacy-policy'
+  | 'profile-licenses';
 
 export interface ChatMessage {
   id: string;

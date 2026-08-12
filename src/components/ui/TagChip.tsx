@@ -6,15 +6,18 @@ export default function TagChip({
   onClick,
 }: {
   children: React.ReactNode;
+  icon?: React.ReactNode;
   onClick?: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className="rounded-full bg-white px-4 py-2 text-sm font-semibold"
-      style={{ color: ink, border: '1px solid rgba(52,199,89,0.16)' }}
+      className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 shadow-sm border border-slate-100 dark:border-border"
     >
-      {children}
+      {icon}
+      <span className="text-sm font-medium text-foreground">
+        {children}
+      </span>
     </button>
   );
 }

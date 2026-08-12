@@ -22,11 +22,11 @@ export default function ProgressGoalsScreen({
       <div className="space-y-5 pb-8">
         {/* Calories Goal setting */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold" style={{ color: ink }}>
+            <span className="text-xs font-bold text-foreground" >
               Daily Calories Goal
             </span>
             <span className="text-sm font-black text-[#34c759]">
@@ -44,7 +44,7 @@ export default function ProgressGoalsScreen({
               onUpdateGoals({ ...goals, calories: Number(e.target.value) })
             }
           />
-          <div className="flex justify-between text-[9px] text-slate-400 mt-2 font-semibold">
+          <div className="flex justify-between text-[9px] text-muted-foreground mt-2 font-semibold">
             <span>1500 kcal</span>
             <span>3500 kcal</span>
           </div>
@@ -52,11 +52,11 @@ export default function ProgressGoalsScreen({
 
         {/* Protein Target setting */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold" style={{ color: ink }}>
+            <span className="text-xs font-bold text-foreground" >
               Protein Target
             </span>
             <span className="text-sm font-black text-[#0ea5e9]">
@@ -74,7 +74,7 @@ export default function ProgressGoalsScreen({
               onUpdateGoals({ ...goals, protein: Number(e.target.value) })
             }
           />
-          <div className="flex justify-between text-[9px] text-slate-400 mt-2 font-semibold">
+          <div className="flex justify-between text-[9px] text-muted-foreground mt-2 font-semibold">
             <span>60g</span>
             <span>200g</span>
           </div>
@@ -82,11 +82,11 @@ export default function ProgressGoalsScreen({
 
         {/* Hydration Goal setting */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold" style={{ color: ink }}>
+            <span className="text-xs font-bold text-foreground" >
               Water Intake Goal
             </span>
             <span className="text-sm font-black text-[#00C4B0]">
@@ -104,7 +104,7 @@ export default function ProgressGoalsScreen({
               onUpdateGoals({ ...goals, water: Number(e.target.value) })
             }
           />
-          <div className="flex justify-between text-[9px] text-slate-400 mt-2 font-semibold">
+          <div className="flex justify-between text-[9px] text-muted-foreground mt-2 font-semibold">
             <span>1.5 L</span>
             <span>4.5 L</span>
           </div>
@@ -112,11 +112,11 @@ export default function ProgressGoalsScreen({
 
         {/* Target Weight Goal setting */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold" style={{ color: ink }}>
+            <span className="text-xs font-bold text-foreground" >
               Target Weight
             </span>
             <span className="text-sm font-black text-[#a855f7]">
@@ -134,7 +134,7 @@ export default function ProgressGoalsScreen({
               onUpdateGoals({ ...goals, weight: Number(e.target.value) })
             }
           />
-          <div className="flex justify-between text-[9px] text-slate-400 mt-2 font-semibold">
+          <div className="flex justify-between text-[9px] text-muted-foreground mt-2 font-semibold">
             <span>55 kg</span>
             <span>95 kg</span>
           </div>

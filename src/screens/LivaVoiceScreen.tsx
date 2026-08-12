@@ -156,7 +156,7 @@ export default function LivaVoiceScreen({
         </h1>
 
         {transcript && (
-          <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-[#b0d4be] bg-white/5 rounded-2xl px-5 py-3 border border-white/10">
+          <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-[#b0d4be] bg-card/5 text-card-foreground rounded-2xl px-5 py-3 border border-white/10">
             "{transcript}"
           </p>
         )}

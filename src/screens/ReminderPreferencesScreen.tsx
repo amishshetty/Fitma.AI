@@ -80,7 +80,7 @@ export default function ReminderPreferencesScreen({
           </button>
           <button
             onClick={onBack}
-            className="w-full flex items-center justify-center rounded-[18px] bg-white text-[15px] font-semibold transition-all hover:bg-slate-50"
+            className="w-full flex items-center justify-center rounded-[18px] bg-card text-card-foreground text-[15px] font-semibold transition-all hover:bg-slate-50 dark:hover:bg-muted"
             style={{
               color: '#64748b',
               border: '1px solid #e2e8f0',
@@ -95,11 +95,11 @@ export default function ReminderPreferencesScreen({
       <div className="space-y-6 pb-8">
         {/* Master AI Toggle */}
         <div
-          className="rounded-[26px] bg-white p-5 border border-slate-100 flex items-center justify-between"
+          className="rounded-[26px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border flex items-center justify-between"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div>
-            <span className="text-sm font-bold block" style={{ color: ink }}>
+            <span className="text-sm font-bold block text-foreground" >
               Enable AI Reminders
             </span>
             <span
@@ -117,17 +117,17 @@ export default function ReminderPreferencesScreen({
               justifyContent: aiEnabled ? 'flex-end' : 'flex-start',
             }}
           >
-            <span className="w-6 h-6 rounded-full bg-white shadow inline-block" />
+            <span className="w-6 h-6 rounded-full bg-card text-card-foreground shadow inline-block" />
           </button>
         </div>
 
         {/* System Push Notifications */}
         <div
-          className="rounded-[26px] bg-white p-5 border border-slate-100 flex items-center justify-between"
+          className="rounded-[26px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border flex items-center justify-between"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex-1 pr-4">
-            <span className="text-sm font-bold block" style={{ color: ink }}>
+            <span className="text-sm font-bold block text-foreground" >
               System Notifications
             </span>
             <span
@@ -148,7 +148,7 @@ export default function ReminderPreferencesScreen({
 
         {/* Categories */}
         <div
-          className="rounded-[26px] bg-white p-5 border border-slate-100"
+          className="rounded-[26px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <h3
@@ -167,8 +167,8 @@ export default function ReminderPreferencesScreen({
                 >
                   <div>
                     <span
-                      className="text-sm font-bold block"
-                      style={{ color: ink }}
+                      className="text-sm font-bold block text-foreground"
+                      
                     >
                       {cat.label}
                     </span>
@@ -195,7 +195,7 @@ export default function ReminderPreferencesScreen({
                   </div>
                 </button>
                 {idx < categories.length - 1 && (
-                  <div className="h-px w-full bg-slate-50" />
+                  <div className="h-px w-full bg-slate-50 dark:bg-muted" />
                 )}
               </React.Fragment>
             ))}
@@ -204,7 +204,7 @@ export default function ReminderPreferencesScreen({
 
         {/* Frequency */}
         <div
-          className="rounded-[26px] bg-white p-5 border border-slate-100"
+          className="rounded-[26px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <h3

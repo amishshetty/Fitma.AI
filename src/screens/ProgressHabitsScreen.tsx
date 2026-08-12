@@ -52,11 +52,11 @@ export default function ProgressHabitsScreen({
       <div className="space-y-5 pb-8">
         {/* Calendar Heatmap card */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-slate-100"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
           <div className="flex justify-between items-center mb-3.5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
               Consistency Heatmap
             </h3>
             <span className="text-[10px] font-bold text-[#34C759] bg-[#f2faf5] px-2 py-0.5 rounded-full">
@@ -84,7 +84,7 @@ export default function ProgressHabitsScreen({
             })}
           </div>
 
-          <div className="flex justify-between text-[8px] text-slate-400 mt-3 font-semibold">
+          <div className="flex justify-between text-[8px] text-muted-foreground mt-3 font-semibold">
             <span>Streak: {currentStreak} days</span>
             <span>Record: {longestStreak} days</span>
           </div>
@@ -92,7 +92,7 @@ export default function ProgressHabitsScreen({
 
         {/* Habit Toggles checklist */}
         <div className="space-y-2.5">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Today's Habits
           </h3>
           {habitsList.map((hab) => {
@@ -101,7 +101,7 @@ export default function ProgressHabitsScreen({
               <button
                 key={hab.key}
                 onClick={() => onToggleHabit(hab.key)}
-                className="w-full flex items-center justify-between rounded-[22px] bg-white p-4 text-left border border-slate-100 hover:border-[#34c759]/30 transition-colors"
+                className="w-full flex items-center justify-between rounded-[22px] bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:border-[#34c759]/30 transition-colors"
                 style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
               >
                 <div>
@@ -111,7 +111,7 @@ export default function ProgressHabitsScreen({
                   >
                     {hab.label}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">
+                  <span className="text-[10px] text-muted-foreground font-semibold block mt-0.5">
                     {hab.desc}
                   </span>
                 </div>

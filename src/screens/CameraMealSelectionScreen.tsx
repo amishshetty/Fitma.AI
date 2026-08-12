@@ -27,7 +27,7 @@ export default function CameraMealSelectionScreen({
         <IconButton onClick={onBack} label="Back">
           <ArrowLeft size={19} />
         </IconButton>
-        <h1 className="text-xl font-bold" style={{ color: ink }}>
+        <h1 className="text-xl font-bold text-foreground" >
           Select Meal
         </h1>
       </div>
@@ -36,7 +36,7 @@ export default function CameraMealSelectionScreen({
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mb-8 mt-4 overflow-hidden rounded-[28px] w-52 h-52 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 relative"
+          className="mb-8 mt-4 overflow-hidden rounded-[28px] w-52 h-52 bg-card text-card-foreground shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 dark:border-border relative"
         >
           <img
             src={image}
@@ -49,7 +49,7 @@ export default function CameraMealSelectionScreen({
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="mb-2 text-2xl font-bold text-slate-800 tracking-tight"
+          className="mb-2 text-2xl font-bold text-foreground tracking-tight"
         >
           Which meal is this?
         </motion.h2>
@@ -57,7 +57,7 @@ export default function CameraMealSelectionScreen({
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.15 }}
-          className="mb-8 text-sm font-semibold text-slate-500"
+          className="mb-8 text-sm font-semibold text-muted-foreground"
         >
           Select a category for accurate tracking.
         </motion.p>
@@ -72,10 +72,10 @@ export default function CameraMealSelectionScreen({
             <button
               key={m.id}
               onClick={() => onSelect(m.id)}
-              className="flex flex-col items-center justify-center gap-2.5 rounded-2xl bg-white p-5 shadow-[0_2px_10px_rgb(0,0,0,0.04)] transition-all hover:scale-[0.98] active:scale-95 border border-slate-100"
+              className="flex flex-col items-center justify-center gap-2.5 rounded-2xl bg-card text-card-foreground p-5 shadow-[0_2px_10px_rgb(0,0,0,0.04)] transition-all hover:scale-[0.98] active:scale-95 border border-slate-100 dark:border-border"
             >
               <span className="text-3xl">{m.icon}</span>
-              <span className="font-bold text-slate-700 text-[15px]">
+              <span className="font-bold text-foreground text-[15px]">
                 {m.label}
               </span>
             </button>

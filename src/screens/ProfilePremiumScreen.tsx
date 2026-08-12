@@ -34,7 +34,7 @@ export default function ProfilePremiumScreen({
         </div>
 
         {/* Benefits lists */}
-        <div className="w-full space-y-2 text-left bg-white/06 border border-white/10 rounded-2xl p-4.5 text-xs text-white/80">
+        <div className="w-full space-y-2 text-left bg-card/06 text-card-foreground border border-white/10 rounded-2xl p-4.5 text-xs text-white/80">
           <div className="flex gap-2.5">
             <span className="text-[#34c759]">✓</span>
             <span>Unlimited AI Plate Scanning & Voice Log</span>

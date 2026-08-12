@@ -25,9 +25,8 @@ export default function ProfileHomeScreen({
 }) {
   return (
     <div
-      className="relative flex min-h-0 flex-1 flex-col"
+      className="relative flex min-h-0 flex-1 flex-col bg-background text-foreground transition-colors duration-200"
       style={{ 
-        background: '#f8fdfb',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
@@ -40,11 +39,11 @@ export default function ProfileHomeScreen({
           <div>
             <h1
               className="text-2xl font-black leading-tight"
-              style={{ color: ink }}
+             
             >
               {getGreeting()}, {userName || 'User'} 👋
             </h1>
-            <p className="text-xs font-semibold" style={{ color: muted }}>
+            <p className="text-xs font-semibold text-muted-foreground" >
               Your health journey is improving every day.
             </p>
           </div>
@@ -52,78 +51,54 @@ export default function ProfileHomeScreen({
 
         {/* Health Score Card */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-[#34C759]/12 flex items-center justify-between"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-[#34C759]/12 flex items-center justify-between"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block">
               Health Score
             </span>
-            <span className="text-3xl font-black block" style={{ color: ink }}>
+            <span className="text-3xl font-black block">
               {getHealthScore(
                 caloriesLogged,
                 waterLogged,
                 goals,
                 completedHabits
               )}
-              <span className="text-base text-slate-400 font-semibold">
+              <span className="text-base text-muted-foreground font-semibold">
                 {' '}
                 / 100
               </span>
             </span>
-            <span
-              className="text-[10px] font-bold px-2 py-0.5 rounded-full inline-block"
-              style={{
-                background:
-                  getHealthScore(
-                    caloriesLogged,
-                    waterLogged,
-                    goals,
-                    completedHabits
-                  ) >= 76
-                    ? '#f2faf5'
-                    : getHealthScore(
-                          caloriesLogged,
-                          waterLogged,
-                          goals,
-                          completedHabits
-                        ) >= 51
-                      ? '#e0f2fe'
-                      : '#fff7ed',
-                color:
-                  getHealthScore(
-                    caloriesLogged,
-                    waterLogged,
-                    goals,
-                    completedHabits
-                  ) >= 76
-                    ? '#197a38'
-                    : getHealthScore(
-                          caloriesLogged,
-                          waterLogged,
-                          goals,
-                          completedHabits
-                        ) >= 51
-                      ? '#0EA5E9'
-                      : '#ea580c',
-              }}
-            >
-              {getHealthScore(
+            {(() => {
+              const score = getHealthScore(
                 caloriesLogged,
                 waterLogged,
                 goals,
                 completedHabits
-              ) >= 76
-                ? 'Excellent Progress'
-                : getHealthScore(
-                      caloriesLogged,
-                      waterLogged,
-                      goals,
-                      completedHabits
-                    ) >= 51
-                  ? 'Good Progress'
-                  : 'Needs Attention'}
-            </span>
+              );
+              let bgClass = 'bg-[#e0f2fe] dark:bg-[#e0f2fe]/10';
+              let textClass = 'text-[#0EA5E9] dark:text-[#38bdf8]';
+              let label = 'Good Progress';
+
+              if (score >= 76) {
+                bgClass = 'bg-[#f2faf5] dark:bg-primary/10';
+                textClass = 'text-[#197a38] dark:text-primary';
+                label = 'Excellent Progress';
+              } else if (score < 51) {
+                bgClass = 'bg-[#fff7ed] dark:bg-[#ea580c]/10';
+                textClass = 'text-[#ea580c] dark:text-[#fb923c]';
+                label = 'Needs Attention';
+              }
+
+              return (
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block ${bgClass} ${textClass}`}
+                >
+                  {label}
+                </span>
+              );
+            })()}
           </div>
           <div className="text-right">
             <span className="text-xs font-extrabold text-[#34C759] block">
@@ -143,7 +118,7 @@ export default function ProfileHomeScreen({
                   ? '→ stable'
                   : '↓ lower'}
             </span>
-            <span className="text-[9px] text-slate-400 font-medium mt-0.5 block">
+            <span className="text-[9px] text-muted-foreground font-medium mt-0.5 block">
               Vs last 14 days
             </span>
           </div>
@@ -152,44 +127,44 @@ export default function ProfileHomeScreen({
         {/* Stats Passport Grid */}
         <div className="grid grid-cols-3 gap-2.5">
           <div
-            className="rounded-2xl bg-white p-3 border border-slate-100/60"
+            className="rounded-2xl bg-card text-card-foreground p-3 border border-slate-100 dark:border-border/60"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">
               Weight
             </span>
-            <span className="text-xs font-black block mt-2 text-slate-700">
+            <span className="text-xs font-black block mt-2 text-foreground">
               {userWeight} kg
             </span>
-            <span className="text-[8px] text-slate-400 block mt-0.5">
+            <span className="text-[8px] text-muted-foreground block mt-0.5">
               Target: {goals.weight}kg
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-3 border border-slate-100/60"
+            className="rounded-2xl bg-card text-card-foreground p-3 border border-slate-100 dark:border-border/60"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">
               Calories
             </span>
-            <span className="text-xs font-black block mt-2 text-slate-700">
+            <span className="text-xs font-black block mt-2 text-foreground">
               {goals.calories} kcal
             </span>
-            <span className="text-[8px] text-slate-400 block mt-0.5">
+            <span className="text-[8px] text-muted-foreground block mt-0.5">
               Active limit
             </span>
           </div>
           <div
-            className="rounded-2xl bg-white p-3 border border-slate-100/60"
+            className="rounded-2xl bg-card text-card-foreground p-3 border border-slate-100 dark:border-border/60"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
           >
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider block">
               Protein
             </span>
-            <span className="text-xs font-black block mt-2 text-slate-700">
+            <span className="text-xs font-black block mt-2 text-foreground">
               {goals.protein}g
             </span>
-            <span className="text-[8px] text-slate-400 block mt-0.5">
+            <span className="text-[8px] text-muted-foreground block mt-0.5">
               Macro target
             </span>
           </div>
@@ -197,14 +172,14 @@ export default function ProfileHomeScreen({
 
         {/* Achievements badging display */}
         <div>
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
             Recent Badges
           </h3>
           <div className="flex gap-2">
             {['🏆', '🥗', '💪', '⚡'].map((badge, idx) => (
               <span
                 key={idx}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-100 text-lg shadow-sm"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-card text-card-foreground border border-slate-100 dark:border-border text-lg shadow-sm"
               >
                 {badge}
               </span>
@@ -214,10 +189,10 @@ export default function ProfileHomeScreen({
 
         {/* Quick Menu Actions */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-slate-100/80 space-y-3"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border/80 space-y-3"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
             Passport Submenus
           </h3>
           {[
@@ -242,11 +217,6 @@ export default function ProfileHomeScreen({
               desc: 'What Liva knows & memory timeline',
             },
             {
-              label: 'Premium Upgrade',
-              screen: 'profile-premium' as Screen,
-              desc: 'View plan details and benefits',
-            },
-            {
               label: 'Privacy & Security',
               screen: 'profile-privacy' as Screen,
               desc: 'Biometrics and data memory control',
@@ -267,6 +237,12 @@ export default function ProfileHomeScreen({
               desc: 'Sync Apple Watch & Garmin logs',
               disabled: true,
             },
+            {
+              label: 'Premium Upgrade',
+              screen: 'profile-premium' as Screen,
+              desc: 'View plan details and benefits',
+              disabled: true,
+            },
           ].map((item) => (
             <button
               key={item.label}
@@ -274,18 +250,18 @@ export default function ProfileHomeScreen({
                 if (!item.disabled) onNavigate(item.screen);
               }}
               disabled={item.disabled}
-              className={`w-full flex items-center justify-between text-left pb-2 border-b border-slate-50 last:border-b-0 rounded-lg p-1 transition-all ${
-                item.disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50'
+              className={`w-full flex items-center justify-between text-left pb-2 border-b border-slate-100 dark:border-border/50 last:border-b-0 rounded-lg p-1 transition-all ${
+                item.disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50 dark:hover:bg-muted'
               }`}
             >
               <div>
                 <span
                   className="text-xs font-bold block"
-                  style={{ color: ink }}
+                 
                 >
                   {item.label}
                 </span>
-                <span className="text-[9px] text-slate-400 block mt-0.5">
+                <span className="text-[9px] text-muted-foreground block mt-0.5">
                   {item.desc}
                 </span>
               </div>

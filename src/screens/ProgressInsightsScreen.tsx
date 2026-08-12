@@ -50,20 +50,22 @@ export default function ProgressInsightsScreen({
           return (
             <div
               key={idx}
-              className="rounded-[24px] bg-white p-5 border border-slate-100 flex gap-4"
+              className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border flex gap-4"
               style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
             >
               <span
-                className="flex h-11 w-11 items-center justify-center rounded-2xl flex-shrink-0"
+                className="overflow-hidden relative flex h-11 w-11 items-center justify-center rounded-2xl flex-shrink-0"
                 style={{ background: `${ins.color}14`, color: ins.color }}
               >
-                <Icon size={20} />
-              </span>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Icon size={20} />
+  </div>
+</span>
               <div className="space-y-1.5 flex-1 min-w-0">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block">
                   {ins.title}
                 </span>
-                <p className="text-xs leading-relaxed" style={{ color: muted }}>
+                <p className="text-xs leading-relaxed text-muted-foreground" >
                   {ins.text}
                 </p>
                 <button

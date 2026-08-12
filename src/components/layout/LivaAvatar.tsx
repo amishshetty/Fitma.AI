@@ -12,13 +12,10 @@ export default function LivaAvatar({
     <motion.div
       animate={floating ? { y: [0, -6, 0] } : undefined}
       transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      className="flex items-center justify-center rounded-full"
+      className="flex items-center justify-center rounded-full bg-gradient-to-br from-white to-[#e9faef] dark:from-[#162d22] dark:to-[#0d1a14] shadow-[0_8px_26px_rgba(52,199,89,0.24),inset_0_0_0_2px_rgba(52,199,89,0.14)] dark:shadow-[0_8px_26px_rgba(52,199,89,0.15),inset_0_0_0_2px_rgba(52,199,89,0.25)]"
       style={{
         width: size,
         height: size,
-        background: 'linear-gradient(135deg, #ffffff 0%, #e9faef 100%)',
-        boxShadow:
-          '0 8px 26px rgba(52,199,89,0.24), inset 0 0 0 2px rgba(52,199,89,0.14)',
       }}
     >
       <svg

@@ -45,7 +45,7 @@ export default function ProfileDevicesScreen({
         )}
 
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 space-y-4.5"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border space-y-4.5"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           {[
@@ -69,16 +69,16 @@ export default function ProfileDevicesScreen({
             return (
               <div
                 key={device.key}
-                className="flex items-center justify-between pb-2 border-b border-slate-50 last:border-b-0"
+                className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-border/50 last:border-b-0"
               >
                 <div>
                   <span
-                    className="text-xs font-bold block"
-                    style={{ color: ink }}
+                    className="text-xs font-bold block text-foreground"
+                    
                   >
                     {device.label}
                   </span>
-                  <span className="text-[9px] text-slate-400 block mt-0.5">
+                  <span className="text-[9px] text-muted-foreground block mt-0.5">
                     {device.desc}
                   </span>
                 </div>

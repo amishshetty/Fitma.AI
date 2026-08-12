@@ -46,6 +46,8 @@ export default function LivaChatScreen({
     name: string;
     goal: string;
     diet: string;
+    activity?: string;
+    allergies?: string[];
     dailyCalories: number;
     motivationStyle: string;
     language: string;
@@ -56,9 +58,14 @@ export default function LivaChatScreen({
     items: string[];
     mealType: string;
   }) => void;
-  onWaterLogged?: (data: { amountML: number }) => void;
-  onMealDeleted?: (data: { mealType: string }) => void;
+  onWaterLogged?: (data: { amount: number; time: string }) => void;
+  onMealDeleted?: (data: {
+    id?: string;
+    date?: string;
+    mealType: string;
+  }) => void;
   loggedMeals?: any[];
+  memories?: any[];
 }) {
   const chatStorageKey = `liva_chat_history_${userId || 'guest'}`;
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
@@ -158,6 +165,7 @@ export default function LivaChatScreen({
             motivationStyle: 'Friendly',
             language: 'English',
           },
+          memories: memories || [],
           previousMessages: messages
             .slice(-2)
             .map((m) => ({ sender: m.sender, text: m.text })),
@@ -454,12 +462,11 @@ export default function LivaChatScreen({
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col"
-      style={{ background: '#f8faf8' }}
+      className="flex min-h-0 flex-1 flex-col bg-background"
     >
       {/* Header (Mockup 1) */}
       <div
-        className="flex items-center justify-between px-6 pb-4 bg-white shrink-0 z-10 relative"
+        className="flex items-center justify-between px-6 pb-4 bg-card text-card-foreground shrink-0 z-10 relative"
         style={{ 
           borderBottom: '1px solid rgba(52,199,89,0.08)',
           paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
@@ -470,12 +477,12 @@ export default function LivaChatScreen({
             <ArrowLeft size={19} />
           </IconButton>
           <div>
-            <h1 className="text-[17px] font-bold text-slate-800">
+            <h1 className="text-[17px] font-bold text-foreground">
               {getGreetingTime()}, {userName || 'Amish'}! 👋
             </h1>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#34C759]"></span>
-              <p className="text-[11px] font-semibold text-slate-500">
+              <p className="text-[11px] font-semibold text-muted-foreground">
                 Liva Coach Mode is active
               </p>
             </div>
@@ -487,15 +494,15 @@ export default function LivaChatScreen({
       {/* Chat Messages */}
       <div className="min-h-0 flex-1 overflow-y-auto pb-4">
         {/* Coach Insight (Mockup 1) - Always visible at top */}
-        <div className="bg-white mx-5 mt-5 mb-5 rounded-[20px] p-4 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-start gap-4">
-          <div className="w-10 h-10 rounded-full bg-[#f2faf5] flex items-center justify-center flex-shrink-0">
+        <div className="bg-card text-card-foreground mx-5 mt-5 mb-5 rounded-[20px] p-4 border border-slate-100 dark:border-border shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex items-start gap-4">
+          <div className="w-10 h-10 rounded-full bg-[#f2faf5] dark:bg-primary/10 flex items-center justify-center flex-shrink-0">
             <TrendingUp size={20} className="text-[#34C759]" />
           </div>
           <div className="flex-1">
-            <h3 className="text-[11px] font-extrabold text-[#2a9d48] tracking-wider mb-1">
+            <h3 className="text-[11px] font-extrabold text-[#2a9d48] dark:text-primary tracking-wider mb-1">
               COACH INSIGHT
             </h3>
-            <p className="text-[14px] font-semibold text-slate-700 leading-snug pr-4">
+            <p className="text-[14px] font-semibold text-foreground leading-snug pr-4">
               You have <span className="text-[#34C759] font-bold">480</span>{' '}
               calories remaining today. Would you like dinner suggestions?
             </p>
@@ -521,21 +528,21 @@ export default function LivaChatScreen({
                   </div>
                 ) : (
                   /* Liva Bubble (Mockup 2) */
-                  <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
+                  <div className="bg-card text-card-foreground rounded-3xl p-5 border border-slate-100 dark:border-border shadow-[0_2px_12px_rgba(0,0,0,0.03)] w-full">
                     {msg.greeting && (
-                      <h3 className="text-[17px] font-bold text-slate-800 mb-2">
+                      <h3 className="text-[17px] font-bold text-foreground mb-2">
                         {msg.greeting}
                       </h3>
                     )}
 
                     {msg.text && (
-                      <p className="text-[15px] leading-relaxed text-slate-700 mb-3">
+                      <p className="text-[15px] leading-relaxed text-foreground mb-3">
                         {msg.text}
                       </p>
                     )}
 
                     {msg.motivation && (
-                      <p className="text-[15px] leading-relaxed text-slate-700 font-medium">
+                      <p className="text-[15px] leading-relaxed text-foreground font-medium">
                         {msg.motivation}
                       </p>
                     )}
@@ -570,7 +577,7 @@ export default function LivaChatScreen({
                 )}
 
                 <span
-                  className={`text-[9px] font-semibold text-slate-400 px-1 mt-1 flex items-center gap-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
+                  className={`text-[9px] font-semibold text-muted-foreground px-1 mt-1 flex items-center gap-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
                 >
                   {msg.timestamp}{' '}
                   {msg.sender === 'user' && (
@@ -584,7 +591,7 @@ export default function LivaChatScreen({
           {isTyping && (
             <div className="flex items-end gap-2.5 justify-start animate-pulse">
               <LivaAvatar size={32} />
-              <div className="rounded-[22px] px-4.5 py-3.5 bg-white border border-[#34C759]/10 shadow-sm">
+              <div className="rounded-[22px] px-4.5 py-3.5 bg-card text-card-foreground border border-[#34C759]/10 shadow-sm">
                 <div className="flex items-center gap-1">
                   <span
                     className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-bounce"
@@ -614,7 +621,7 @@ export default function LivaChatScreen({
             key={promptText}
             type="button"
             onClick={() => handleSendText(promptText)}
-            className="whitespace-nowrap px-4 py-2.5 rounded-full bg-white border border-slate-200 text-[13px] font-bold text-slate-700 hover:border-[#34C759] hover:text-[#34C759] transition-colors shadow-sm cursor-pointer"
+            className="whitespace-nowrap px-4 py-2.5 rounded-full bg-card text-card-foreground border border-slate-100 dark:border-border text-[13px] font-bold text-foreground hover:border-[#34C759] hover:text-[#34C759] transition-colors shadow-sm cursor-pointer"
           >
             {promptText}
           </button>
@@ -623,14 +630,14 @@ export default function LivaChatScreen({
 
       {/* Chat Input Bar (Mockup 1) */}
       <div
-        className="px-5 pb-8 pt-2 bg-white"
+        className="px-5 pb-8 pt-2 bg-card text-card-foreground"
         style={{ borderTop: '1px solid rgba(52,199,89,0.06)' }}
       >
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 bg-[#f8faf8] rounded-full px-4 py-2.5 border border-slate-100">
+          <div className="flex items-center gap-2 bg-[#f8faf8] dark:bg-black/30 rounded-full px-4 py-2.5 border border-slate-100 dark:border-border">
             <input
-              className="min-w-0 flex-1 bg-transparent text-[15px] font-medium outline-none placeholder:text-slate-400"
-              style={{ color: ink }}
+              className="min-w-0 flex-1 bg-transparent text-[15px] font-medium outline-none placeholder:text-muted-foreground text-foreground"
+              
               placeholder={
                 isListening ? 'Listening...' : 'Ask Liva anything...'
               }
@@ -652,14 +659,14 @@ export default function LivaChatScreen({
           <div className="flex items-center gap-6 px-4">
             <button
               onClick={toggleVoiceInput}
-              className={`flex items-center justify-center transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-400 hover:text-[#34C759]'}`}
+              className={`flex items-center justify-center transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-muted-foreground hover:text-[#34C759]'}`}
             >
               {isListening ? <MicOff size={22} /> : <Mic size={22} />}
             </button>
-            <button className="flex items-center justify-center text-slate-400 hover:text-[#34C759] transition-colors">
+            <button className="flex items-center justify-center text-muted-foreground hover:text-[#34C759] transition-colors">
               <Camera size={22} />
             </button>
-            <button className="flex items-center justify-center text-slate-400 hover:text-[#34C759] transition-colors">
+            <button className="flex items-center justify-center text-muted-foreground hover:text-[#34C759] transition-colors">
               <Keyboard size={22} />
             </button>
           </div>

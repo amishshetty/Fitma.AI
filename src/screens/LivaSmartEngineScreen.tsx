@@ -61,7 +61,7 @@ export default function LivaSmartEngineScreen({
       <div className="space-y-6 pb-12 mt-4 relative">
         {/* Main Switch Card */}
         <div
-          className="relative overflow-hidden rounded-[24px] bg-white p-5 border border-slate-100 flex justify-between items-center"
+          className="relative overflow-hidden rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border flex justify-between items-center"
           style={{ boxShadow: '0 8px 24px rgba(16, 32, 26, 0.03)' }}
         >
           <div
@@ -69,19 +69,19 @@ export default function LivaSmartEngineScreen({
             style={{ background: enabled ? green : muted }}
           />
           <div>
-            <h3 className="font-bold text-[15px]" style={{ color: ink }}>
+            <h3 className="font-bold text-[15px] text-foreground" >
               Liva Smart Reminders
             </h3>
-            <p className="text-[12px] text-slate-500 mt-0.5">
+            <p className="text-[12px] text-muted-foreground mt-0.5">
               Let AI manage your notification schedule.
             </p>
           </div>
           <button
             onClick={() => setEnabled(!enabled)}
-            className={`w-12 h-6 rounded-full flex items-center transition-all duration-300 ${enabled ? 'justify-end bg-[#34C759]' : 'justify-start bg-slate-200'}`}
+            className={`w-12 h-6 rounded-full flex items-center transition-all duration-300 ${enabled ? 'justify-end bg-[#34C759]' : 'justify-start bg-border'}`}
             style={{ padding: '0 2px' }}
           >
-            <div className="w-5 h-5 bg-white rounded-full shadow-sm" />
+            <div className="w-5 h-5 bg-card text-card-foreground rounded-full shadow-sm" />
           </button>
         </div>
 
@@ -95,7 +95,7 @@ export default function LivaSmartEngineScreen({
         >
           <div className="flex items-center gap-2 mb-4 px-1">
             <BrainCircuit size={16} color={green} />
-            <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-400">
+            <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-muted-foreground">
               Intelligence Modules
             </h4>
           </div>
@@ -104,14 +104,14 @@ export default function LivaSmartEngineScreen({
             {aiCategories.map((cat, idx) => (
               <div
                 key={idx}
-                className="relative bg-white rounded-[20px] p-5 border border-slate-100"
+                className="relative bg-card text-card-foreground rounded-[20px] p-5 border border-slate-100 dark:border-border"
                 style={{
                   boxShadow: '0 4px 16px rgba(16,32,26,0.02)',
                   animation: `fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.15}s backwards`,
                 }}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-[14px]" style={{ color: ink }}>
+                  <h3 className="font-bold text-[14px] text-foreground" >
                     {cat.name}
                   </h3>
                   <div
@@ -136,28 +136,28 @@ export default function LivaSmartEngineScreen({
                   </div>
                 </div>
 
-                <p className="text-[12px] text-slate-500 leading-relaxed mb-4">
+                <p className="text-[12px] text-muted-foreground leading-relaxed mb-4">
                   {cat.description}
                 </p>
 
-                <div className="bg-slate-50 rounded-xl p-3 flex flex-col gap-2 border border-slate-100/50">
+                <div className="bg-slate-50 dark:bg-muted rounded-xl p-3 flex flex-col gap-2 border border-slate-100 dark:border-border/50">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
                       <Clock size={12} /> Next Prediction
                     </span>
                     <span
-                      className="text-[11px] font-bold"
-                      style={{ color: ink }}
+                      className="text-[11px] font-bold text-foreground"
+                      
                     >
                       {cat.nextPrediction}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
                       <Zap size={12} /> AI Confidence
                     </span>
                     <div className="flex items-center gap-2">
-                      <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full"
                           style={{
@@ -167,8 +167,8 @@ export default function LivaSmartEngineScreen({
                         />
                       </div>
                       <span
-                        className="text-[11px] font-bold"
-                        style={{ color: ink }}
+                        className="text-[11px] font-bold text-foreground"
+                        
                       >
                         {cat.confidence}%
                       </span>
@@ -184,8 +184,8 @@ export default function LivaSmartEngineScreen({
         <div className="bg-[#f0f9f4] rounded-2xl p-4 border border-[#e2f5e9] flex gap-3 items-start mt-6">
           <Info size={16} color={green} className="shrink-0 mt-0.5" />
           <p
-            className="text-[12px] font-medium leading-relaxed"
-            style={{ color: ink }}
+            className="text-[12px] font-medium leading-relaxed text-foreground"
+            
           >
             Liva's Brain evaluates your patterns every 15 minutes. It actively
             prevents notification fatigue and only sends what matters.

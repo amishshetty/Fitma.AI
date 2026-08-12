@@ -52,11 +52,11 @@ export default function SaveMealScreen({
     >
       <div className="space-y-5">
         <div
-          className="rounded-[28px] bg-white p-5"
+          className="rounded-[28px] bg-card text-card-foreground p-5"
           style={{ boxShadow: '0 8px 26px rgba(16,32,26,0.07)' }}
         >
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-lg font-bold" style={{ color: ink }}>
+            <p className="text-lg font-bold text-foreground" >
               Roti, Dal and Rice
             </p>
             <p className="text-lg font-bold" style={{ color: green }}>
@@ -67,8 +67,8 @@ export default function SaveMealScreen({
             {['22g Protein', '115g Carbs', '8g Fat'].map((item) => (
               <div
                 key={item}
-                className="rounded-2xl bg-[#f2faf5] px-2 py-3 text-xs font-bold"
-                style={{ color: ink }}
+                className="rounded-2xl bg-[#f2faf5] px-2 py-3 text-xs font-bold text-foreground"
+                
               >
                 {item}
               </div>
@@ -76,7 +76,7 @@ export default function SaveMealScreen({
           </div>
         </div>
         <section>
-          <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
+          <h2 className="mb-3 text-sm font-bold text-foreground" >
             Meal Type
           </h2>
           <div className="grid grid-cols-4 gap-2">
@@ -96,23 +96,23 @@ export default function SaveMealScreen({
           </div>
         </section>
         <section className="space-y-3">
-          <label className="block text-sm font-bold" style={{ color: ink }}>
+          <label className="block text-sm font-bold text-foreground" >
             Time
           </label>
           <button
-            className="flex w-full items-center gap-3 rounded-2xl bg-white px-4 py-4 text-left text-sm font-semibold"
-            style={{ color: ink }}
+            className="flex w-full items-center gap-3 rounded-2xl bg-card text-card-foreground px-4 py-4 text-left text-sm font-semibold text-foreground"
+            
           >
             <Clock3 size={19} color={green} />
             Today, 1:20 PM
           </button>
         </section>
         <section className="space-y-3">
-          <label className="block text-sm font-bold" style={{ color: ink }}>
+          <label className="block text-sm font-bold text-foreground" >
             Notes
           </label>
           <textarea
-            className="min-h-24 w-full resize-none rounded-2xl bg-white p-4 text-sm outline-none"
+            className="min-h-24 w-full resize-none rounded-2xl bg-card text-card-foreground p-4 text-sm outline-none"
             placeholder="Add notes..."
           />
         </section>

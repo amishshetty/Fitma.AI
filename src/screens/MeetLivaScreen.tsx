@@ -19,20 +19,20 @@ export default function MeetLivaScreen({ onNext }: { onNext: () => void }) {
       <div className="flex h-full flex-col items-center justify-center gap-8">
         <LivaAvatar size={144} floating />
         <div
-          className="relative w-full rounded-[28px] bg-white p-6 text-center"
+          className="relative w-full rounded-[28px] bg-card text-card-foreground p-6 text-center"
           style={{ boxShadow: '0 8px 28px rgba(16,32,26,0.08)' }}
         >
-          <p className="text-lg font-bold" style={{ color: ink }}>
+          <p className="text-lg font-bold text-foreground" >
             Hi, I'm Liva.
           </p>
-          <p className="mt-2 text-sm leading-relaxed" style={{ color: muted }}>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground" >
             I help you log meals quickly, estimate nutrition, and make small
             choices that add up.
           </p>
         </div>
         <div
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide"
-          style={{ color: muted }}
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground"
+          
         >
           <span
             className="h-2 w-2 rounded-full"

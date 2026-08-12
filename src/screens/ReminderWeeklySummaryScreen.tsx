@@ -38,10 +38,10 @@ export default function ReminderWeeklySummaryScreen({
           {weeklyData.map((data, idx) => (
             <div
               key={idx}
-              className="rounded-2xl bg-white p-4 border border-slate-100"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide block">
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide block">
                 {data.label}
               </span>
               <span
@@ -56,7 +56,7 @@ export default function ReminderWeeklySummaryScreen({
 
         {/* Liva summary coach panel */}
         <div
-          className="rounded-[24px] p-4.5 bg-white border border-[#34C759]/16 flex gap-3"
+          className="rounded-[24px] p-4.5 bg-card text-card-foreground border border-[#34C759]/16 flex gap-3"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <LivaAvatar size={38} floating />
@@ -65,8 +65,8 @@ export default function ReminderWeeklySummaryScreen({
               Coach Weekly Review
             </p>
             <p
-              className="mt-1 text-xs leading-relaxed"
-              style={{ color: muted }}
+              className="mt-1 text-xs leading-relaxed text-muted-foreground"
+              
             >
               You stayed within your calorie goal on 6 of 7 days. Fantastic
               consistency! Try adding one more serving of vegetables during

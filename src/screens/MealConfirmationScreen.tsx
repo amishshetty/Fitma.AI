@@ -24,23 +24,25 @@ export default function MealConfirmationScreen({
         {mealItems.map((item) => (
           <div
             key={item.name}
-            className="rounded-[24px] bg-white p-4"
+            className="rounded-[24px] bg-card text-card-foreground p-4"
             style={{ boxShadow: '0 5px 18px rgba(16,32,26,0.06)' }}
           >
             <div className="flex items-start gap-3">
               <span
-                className="mt-1 flex h-7 w-7 items-center justify-center rounded-full text-white"
+                className="overflow-hidden relative mt-1 flex h-7 w-7 items-center justify-center rounded-full text-white"
                 style={{ background: green }}
               >
-                <Check size={16} />
-              </span>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Check size={16} />
+  </div>
+</span>
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-base font-bold" style={{ color: ink }}>
+                    <p className="text-base font-bold text-foreground" >
                       {item.name}
                     </p>
-                    <p className="text-xs" style={{ color: muted }}>
+                    <p className="text-xs text-muted-foreground" >
                       {item.serving} - {item.calories} kcal
                     </p>
                   </div>
@@ -48,8 +50,8 @@ export default function MealConfirmationScreen({
                 </div>
                 <div className="mt-4 flex gap-2">
                   <button
-                    className="rounded-full bg-[#f2faf5] px-4 py-2 text-xs font-bold"
-                    style={{ color: ink }}
+                    className="rounded-full bg-[#f2faf5] px-4 py-2 text-xs font-bold text-foreground"
+                    
                   >
                     Edit
                   </button>
@@ -63,7 +65,7 @@ export default function MealConfirmationScreen({
           </div>
         ))}
         <button
-          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-white text-sm font-bold"
+          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-card text-card-foreground text-sm font-bold"
           style={{ color: green, border: '1.5px dashed rgba(52,199,89,0.35)' }}
         >
           <Plus size={18} />

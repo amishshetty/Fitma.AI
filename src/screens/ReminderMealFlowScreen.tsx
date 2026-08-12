@@ -45,10 +45,10 @@ export default function ReminderMealFlowScreen({
         <LivaAvatar size={120} floating />
 
         <div>
-          <h2 className="text-2xl font-black" style={{ color: ink }}>
+          <h2 className="text-2xl font-black text-foreground" >
             Have you had lunch?
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-slate-400 font-semibold">
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground font-semibold">
             Hi {userName || 'User'} 👋 You usually have lunch around 1 PM, but I
             haven't seen a meal today.
           </p>
@@ -72,7 +72,7 @@ export default function ReminderMealFlowScreen({
             </SecondaryButton>
             <button
               onClick={() => handleSelection('skip')}
-              className="text-xs font-bold text-slate-400 uppercase tracking-wider block mx-auto py-2"
+              className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mx-auto py-2"
             >
               Skip Today's Lunch
             </button>

@@ -37,7 +37,7 @@ export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
           <LivaAvatar size={132} floating />
         </div>
 
-        <h1 className="text-3xl font-extrabold" style={{ color: ink }}>
+        <h1 className="text-3xl font-extrabold text-foreground" >
           Thinking...
         </h1>
 
@@ -47,8 +47,8 @@ export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -8, opacity: 0 }}
-            className="mt-4.5 text-base font-bold text-slate-500"
-            style={{ color: muted }}
+            className="mt-4.5 text-base font-bold text-muted-foreground"
+            
           >
             {rotatingHelper[factIndex]}
           </motion.p>

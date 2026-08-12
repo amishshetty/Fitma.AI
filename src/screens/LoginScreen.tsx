@@ -9,6 +9,7 @@ import { ref, update, get, set } from 'firebase/database';
 import { Check, Mail, EyeOff, Eye, Loader2, User, Lock } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import CustomDropdown from '../components/ui/CustomDropdown';
 import { auth, db } from '../app/firebase';
 import LivaAvatar from '../components/layout/LivaAvatar';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
@@ -761,14 +762,14 @@ export default function LoginScreen({
                 </svg>
               </div>
             </div>
-            <h1 className="text-xl font-extrabold" style={{ color: ink }}>
+            <h1 className="text-xl font-extrabold text-foreground" >
               {view === 'signin' && 'Welcome back'}
               {view === 'signup' && 'Create Account'}
               {view === 'forgot' && 'Forgot Password'}
               {view === 'reset' && 'Reset Password'}
               {view === 'verify' && 'Verify Email Address'}
             </h1>
-            <p className="text-[11px]" style={{ color: muted }}>
+            <p className="text-[11px] text-muted-foreground" >
               {view === 'signin' &&
                 'Connect with Liva and let your health path align.'}
               {view === 'signup' && 'Set up a new secure profile in seconds.'}
@@ -798,46 +799,46 @@ export default function LoginScreen({
         {view === 'signin' && (
           <form onSubmit={handleSignIn} className="flex flex-col gap-3">
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Email Address
               </label>
               <div className="relative">
                 <input
                   type="email"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300 transition-all focus:bg-white focus:border-[#34c759]/30"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300 transition-all focus:bg-card text-card-foreground focus:border-[#34c759]/30"
                   placeholder="name@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Mail
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="w-full bg-slate-50 pl-9 pr-9 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300 transition-all focus:bg-white focus:border-[#34c759]/30"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-9 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300 transition-all focus:bg-card text-card-foreground focus:border-[#34c759]/30"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <Lock
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
                 </button>
@@ -857,13 +858,13 @@ export default function LoginScreen({
               <input
                 type="checkbox"
                 id="rememberMe"
-                className="accent-[#34c759] h-3.5 w-3.5 rounded border-slate-300"
+                className="accent-[#34c759] h-3.5 w-3.5 rounded border-slate-100 dark:border-border/50"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
               <label
                 htmlFor="rememberMe"
-                className="text-[10px] font-bold text-slate-500 cursor-pointer select-none"
+                className="text-[10px] font-bold text-muted-foreground cursor-pointer select-none"
               >
                 Remember Me
               </label>
@@ -888,26 +889,26 @@ export default function LoginScreen({
           <form onSubmit={handleSignUp} className="flex flex-col gap-2.5">
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+                <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                   First Name
                 </label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className="w-full bg-slate-50 dark:bg-muted px-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                   placeholder="John"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+                <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                   Last Name
                 </label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className="w-full bg-slate-50 dark:bg-muted px-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                   placeholder="Doe"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
@@ -916,46 +917,46 @@ export default function LoginScreen({
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Email Address
               </label>
               <div className="relative">
                 <input
                   type="email"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                   placeholder="name@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Mail
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="w-full bg-slate-50 pl-9 pr-9 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-9 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <Lock
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
                 </button>
@@ -964,7 +965,7 @@ export default function LoginScreen({
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Confirm Password
               </label>
               <div className="relative">
@@ -974,7 +975,7 @@ export default function LoginScreen({
                   className={`w-full pl-9 pr-3 py-2.5 rounded-xl border outline-none font-semibold text-xs transition-all ${
                     confirmPassword.length > 0 && password !== confirmPassword
                       ? 'bg-rose-50 border-rose-200 text-rose-700'
-                      : 'bg-slate-50 border-slate-100 text-slate-700 placeholder-slate-300'
+                      : 'bg-slate-50 dark:bg-muted border-slate-100 dark:border-border text-foreground placeholder-slate-300'
                   }`}
                   placeholder="••••••••"
                   value={confirmPassword}
@@ -985,7 +986,7 @@ export default function LoginScreen({
                   className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
                     confirmPassword.length > 0 && password !== confirmPassword
                       ? 'text-rose-400'
-                      : 'text-slate-400'
+                      : 'text-muted-foreground'
                   }`}
                 />
               </div>
@@ -1000,13 +1001,13 @@ export default function LoginScreen({
               <input
                 type="checkbox"
                 id="acceptTerms"
-                className="accent-[#34c759] h-3.5 w-3.5 rounded border-slate-300 mt-0.5"
+                className="accent-[#34c759] h-3.5 w-3.5 rounded border-slate-100 dark:border-border/50 mt-0.5"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
               />
               <label
                 htmlFor="acceptTerms"
-                className="text-[9px] font-bold text-slate-500 cursor-pointer select-none"
+                className="text-[9px] font-bold text-muted-foreground cursor-pointer select-none"
               >
                 I accept the{' '}
                 <span className="text-[#34c759] underline">
@@ -1023,7 +1024,7 @@ export default function LoginScreen({
               disabled={isSignupDisabled || loading}
               className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow ${
                 isSignupDisabled
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  ? 'bg-border text-muted-foreground cursor-not-allowed'
                   : 'bg-[#34c759] text-white hover:bg-[#25ad48]'
               }`}
             >
@@ -1040,21 +1041,21 @@ export default function LoginScreen({
         {view === 'forgot' && (
           <form onSubmit={handleForgotPassword} className="flex flex-col gap-3">
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Email Address
               </label>
               <div className="relative">
                 <input
                   type="email"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                   placeholder="name@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Mail
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
             </div>
@@ -1077,13 +1078,13 @@ export default function LoginScreen({
         {view === 'reset' && (
           <form onSubmit={handleResetPassword} className="flex flex-col gap-3">
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Reset Token
               </label>
               <input
                 type="text"
                 required
-                className="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700"
+                className="w-full bg-slate-50 dark:bg-muted px-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground"
                 placeholder="Reset code"
                 value={resetToken}
                 onChange={(e) => setResetToken(e.target.value)}
@@ -1091,28 +1092,28 @@ export default function LoginScreen({
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 New Password
               </label>
               <div className="relative">
                 <input
                   type="password"
                   required
-                  className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700"
+                  className="w-full bg-slate-50 dark:bg-muted pl-9 pr-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <Lock
                   size={12}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
               <PasswordStrengthMeter password={password} />
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -1122,7 +1123,7 @@ export default function LoginScreen({
                   className={`w-full pl-9 pr-3 py-2.5 rounded-xl border outline-none font-semibold text-xs transition-all ${
                     confirmPassword.length > 0 && password !== confirmPassword
                       ? 'bg-rose-50 border-rose-200 text-rose-700'
-                      : 'bg-slate-50 border-slate-100 text-slate-700'
+                      : 'bg-slate-50 dark:bg-muted border-slate-100 dark:border-border text-foreground'
                   }`}
                   placeholder="••••••••"
                   value={confirmPassword}
@@ -1133,7 +1134,7 @@ export default function LoginScreen({
                   className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${
                     confirmPassword.length > 0 && password !== confirmPassword
                       ? 'text-rose-400'
-                      : 'text-slate-400'
+                      : 'text-muted-foreground'
                   }`}
                 />
               </div>
@@ -1162,13 +1163,13 @@ export default function LoginScreen({
         {view === 'verify' && (
           <form onSubmit={handleVerifyEmail} className="flex flex-col gap-3">
             <div className="space-y-1">
-              <label className="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider">
+              <label className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-wider">
                 Verification Token
               </label>
               <input
                 type="text"
                 required
-                className="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-100 outline-none font-semibold text-xs text-slate-700 placeholder-slate-300"
+                className="w-full bg-slate-50 dark:bg-muted px-3 py-2.5 rounded-xl border border-slate-100 dark:border-border outline-none font-semibold text-xs text-foreground placeholder-slate-300"
                 placeholder="Verification token"
                 value={verificationToken}
                 onChange={(e) => setVerificationToken(e.target.value)}
@@ -1191,7 +1192,7 @@ export default function LoginScreen({
               type="button"
               onClick={handleResendVerification}
               disabled={loading}
-              className="w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-700 hover:underline mt-1"
+              className="w-full text-center text-[10px] font-bold text-muted-foreground hover:text-foreground hover:underline mt-1"
             >
               Resend verification code
             </button>
@@ -1205,31 +1206,31 @@ export default function LoginScreen({
           >
             <div className="flex flex-col items-center mb-1">
               <LivaAvatar size={38} floating />
-              <h2 className="text-base font-extrabold text-slate-800 tracking-tight leading-snug mt-1.5 text-center">
+              <h2 className="text-base font-extrabold text-foreground tracking-tight leading-snug mt-1.5 text-center">
                 Let's Personalize Liva
               </h2>
-              <p className="text-[10px] text-slate-400 mt-0.5 text-center font-semibold leading-relaxed">
+              <p className="text-[10px] text-muted-foreground mt-0.5 text-center font-semibold leading-relaxed">
                 Just a few quick details so I can guide you better.
               </p>
             </div>
 
             {/* What should Liva call you? */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                 Preferred Name
               </label>
               <div className="relative">
                 <input
                   type="text"
                   required
-                  className="w-full bg-white/60 backdrop-blur-md pl-10 pr-4 py-2.5 rounded-2xl border border-white outline-none font-bold text-sm text-slate-800 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all focus:border-[#34c759]/50 focus:shadow-[0_4px_16px_rgba(52,199,89,0.1)]"
+                  className="w-full bg-card/60 text-card-foreground backdrop-blur-md pl-10 pr-4 py-2.5 rounded-2xl border border-white outline-none font-bold text-sm text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all focus:border-[#34c759]/50 focus:shadow-[0_4px_16px_rgba(52,199,89,0.1)]"
                   placeholder="What should I call you?"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
                 <User
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
             </div>
@@ -1237,55 +1238,40 @@ export default function LoginScreen({
             <div className="grid grid-cols-2 gap-3 mt-1">
               {/* Gender */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                   Gender
                 </label>
                 <div className="relative">
-                  <select
-                    className="w-full bg-white/60 backdrop-blur-md pl-4 pr-8 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)] appearance-none cursor-pointer"
+                  <CustomDropdown
                     value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Prefer not to say">Other</option>
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-                    ▼
-                  </div>
+                    options={['Male', 'Female', 'Prefer not to say']}
+                    onChange={(val) => setGender(val)}
+                    placeholder="Select gender"
+                    className="w-full bg-card/60 text-card-foreground backdrop-blur-md pl-4 pr-4 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-between"
+                  />
                 </div>
               </div>
 
               {/* Date of Birth - Simplified for modern look */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                   Birth Year
                 </label>
                 <div className="relative">
-                  <select
-                    className="w-full bg-white/60 backdrop-blur-md pl-4 pr-8 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)] appearance-none cursor-pointer"
+                  <CustomDropdown
                     value={dobYear}
-                    onChange={(e) => setDobYear(e.target.value)}
-                  >
-                    {Array.from({ length: 60 }, (_, i) => {
-                      const y = 2015 - i;
-                      return (
-                        <option key={y} value={String(y)}>
-                          {y}
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-                    ▼
-                  </div>
+                    options={Array.from({ length: 60 }, (_, i) => String(2015 - i))}
+                    onChange={(val) => setDobYear(val)}
+                    placeholder="Select year"
+                    className="w-full bg-card/60 text-card-foreground backdrop-blur-md pl-4 pr-4 py-2.5 rounded-2xl border border-white outline-none font-bold text-xs text-foreground shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center justify-between"
+                  />
                 </div>
               </div>
             </div>
 
             {/* Language */}
             <div className="space-y-1.5 mt-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                 Language
               </label>
               <div className="flex flex-wrap gap-2 pb-1">
@@ -1297,7 +1283,7 @@ export default function LoginScreen({
                     className={`shrink-0 px-4 py-2 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
                       language === item
                         ? 'bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]'
-                        : 'bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white'
+                        : 'bg-card/60 text-card-foreground backdrop-blur-md border border-white text-muted-foreground hover:bg-card text-card-foreground'
                     }`}
                   >
                     {item}
@@ -1308,7 +1294,7 @@ export default function LoginScreen({
 
             {/* Motivation */}
             <div className="space-y-1.5 mt-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                 Coaching Style
               </label>
               <div className="flex flex-wrap gap-2 pb-1">
@@ -1320,7 +1306,7 @@ export default function LoginScreen({
                     className={`shrink-0 px-4 py-2 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
                       motivationStyle === item
                         ? 'bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]'
-                        : 'bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white'
+                        : 'bg-card/60 text-card-foreground backdrop-blur-md border border-white text-muted-foreground hover:bg-card text-card-foreground'
                     }`}
                   >
                     {item}
@@ -1331,7 +1317,7 @@ export default function LoginScreen({
 
             {/* Workout */}
             <div className="space-y-1.5 mt-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pl-1">
                 Activity Level
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -1347,7 +1333,7 @@ export default function LoginScreen({
                     className={`py-2.5 rounded-2xl text-[11px] font-bold transition-all duration-300 ${
                       workoutStatus === item.value
                         ? 'bg-[#34c759] text-white shadow-[0_4px_12px_rgba(52,199,89,0.25)] border border-[#34c759]'
-                        : 'bg-white/60 backdrop-blur-md border border-white text-slate-500 hover:bg-white'
+                        : 'bg-card/60 text-card-foreground backdrop-blur-md border border-white text-muted-foreground hover:bg-card text-card-foreground'
                     }`}
                   >
                     {item.label}
@@ -1370,7 +1356,7 @@ export default function LoginScreen({
                 )}
               </button>
 
-              <p className="text-center text-[8px] font-bold text-slate-500 mt-2 leading-none">
+              <p className="text-center text-[8px] font-bold text-muted-foreground mt-2 leading-none">
                 🔒 Used only to personalize your experience.
               </p>
             </div>
@@ -1381,8 +1367,8 @@ export default function LoginScreen({
         {view !== 'profile-complete' && view !== 'verify' && (
           <>
             <div className="relative my-4 flex items-center justify-center">
-              <div className="w-full border-t border-slate-100" />
-              <span className="absolute bg-[#f8fdfb] px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="w-full border-t border-slate-100 dark:border-border" />
+              <span className="absolute bg-background px-3 text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
                 Or
               </span>
             </div>
@@ -1391,7 +1377,7 @@ export default function LoginScreen({
               <button
                 type="button"
                 onClick={handleGoogleOAuth}
-                className="w-full bg-white hover:bg-slate-50 text-[#0f1f1a] py-2.5 rounded-xl text-xs font-bold transition-all border border-slate-200 flex items-center justify-center gap-2 shadow-sm"
+                className="w-full bg-card text-card-foreground hover:bg-slate-50 dark:hover:bg-muted py-2.5 rounded-xl text-xs font-bold transition-all border border-slate-100 dark:border-border flex items-center justify-center gap-2 shadow-sm"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
                   <path

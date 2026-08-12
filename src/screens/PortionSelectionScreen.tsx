@@ -25,8 +25,8 @@ export default function PortionSelectionScreen({
       onBack={onBack}
       footer={
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-2xl bg-white px-5 py-4">
-            <span className="text-sm font-semibold" style={{ color: muted }}>
+          <div className="flex items-center justify-between rounded-2xl bg-card text-card-foreground px-5 py-4">
+            <span className="text-sm font-semibold text-muted-foreground" >
               Live calories
             </span>
             <span className="text-xl font-bold" style={{ color: green }}>
@@ -41,15 +41,15 @@ export default function PortionSelectionScreen({
         {mealItems.map((item, index) => (
           <div
             key={item.name}
-            className="rounded-[24px] bg-white p-4"
+            className="rounded-[24px] bg-card text-card-foreground p-4"
             style={{ boxShadow: '0 5px 18px rgba(16,32,26,0.06)' }}
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-base font-bold" style={{ color: ink }}>
+                <p className="text-base font-bold text-foreground" >
                   {item.name}
                 </p>
-                <p className="text-xs" style={{ color: muted }}>
+                <p className="text-xs text-muted-foreground" >
                   {item.calories * quantities[index]} kcal
                 </p>
               </div>
@@ -66,25 +66,25 @@ export default function PortionSelectionScreen({
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
-                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold"
-                style={{ color: ink }}
+                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold text-foreground"
+                
               >
                 Portion size
                 <span
-                  className="mt-1 block font-semibold"
-                  style={{ color: muted }}
+                  className="mt-1 block font-semibold text-muted-foreground"
+                  
                 >
                   Medium
                 </span>
               </button>
               <button
-                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold"
-                style={{ color: ink }}
+                className="rounded-2xl bg-[#f2faf5] px-3 py-3 text-left text-xs font-bold text-foreground"
+                
               >
                 Weight
                 <span
-                  className="mt-1 block font-semibold"
-                  style={{ color: muted }}
+                  className="mt-1 block font-semibold text-muted-foreground"
+                  
                 >
                   120 g
                 </span>

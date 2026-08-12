@@ -49,7 +49,7 @@ export default function GoalsScreen({
             <button
               key={goal.label}
               onClick={() => setSelected(index)}
-              className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-[24px] bg-white p-4 text-center"
+              className="flex min-h-32 flex-col items-center justify-center gap-3 rounded-[24px] bg-card text-card-foreground p-4 text-center"
               style={{
                 border: active
                   ? `2px solid ${goal.color}`
@@ -60,11 +60,13 @@ export default function GoalsScreen({
               }}
             >
               <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                className="overflow-hidden relative flex h-12 w-12 items-center justify-center rounded-2xl"
                 style={{ background: `${goal.color}18`, color: goal.color }}
               >
-                <Icon size={23} />
-              </span>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Icon size={23} />
+  </div>
+</span>
               <span
                 className="text-sm font-bold"
                 style={{ color: active ? goal.color : ink }}

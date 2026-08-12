@@ -51,7 +51,7 @@ export default function LivaWeeklyCoachScreen({
       <div className="space-y-4">
         {/* Progress chart illustration */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-[#34C759]/10 text-center"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-[#34C759]/10 text-center"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.04)' }}
         >
           <div className="flex h-36 items-end justify-between px-4 pb-2">
@@ -63,7 +63,7 @@ export default function LivaWeeklyCoachScreen({
                     style={{ height: `${h}%`, background: green }}
                   />
                 </div>
-                <span className="text-[10px] font-bold text-slate-400">
+                <span className="text-[10px] font-bold text-muted-foreground">
                   {['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}
                 </span>
               </div>
@@ -73,18 +73,18 @@ export default function LivaWeeklyCoachScreen({
 
         {/* Coach Voice Text Card */}
         <div
-          className="rounded-[24px] p-4.5 bg-white border border-[#34C759]/10"
+          className="rounded-[24px] p-4.5 bg-card text-card-foreground border border-[#34C759]/10"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.04)' }}
         >
           <div className="flex gap-3">
             <LivaAvatar size={42} floating />
             <div>
-              <p className="text-sm font-bold" style={{ color: ink }}>
+              <p className="text-sm font-bold text-foreground" >
                 Liva Coach Insights
               </p>
               <p
-                className="mt-1 text-xs leading-relaxed"
-                style={{ color: muted }}
+                className="mt-1 text-xs leading-relaxed text-muted-foreground"
+                
               >
                 {userName || 'User'}, you stayed within your calorie goal on{' '}
                 <span className="text-[#34C759] font-bold">
@@ -98,24 +98,24 @@ export default function LivaWeeklyCoachScreen({
 
         {/* Ask Liva Coach Interactive Section */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-[#34C759]/06 space-y-3"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-[#34C759]/06 space-y-3"
           style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.03)' }}
         >
-          <span className="text-xs font-bold block" style={{ color: ink }}>
+          <span className="text-xs font-bold block text-foreground" >
             Analyze Week Anomalies
           </span>
           <div className="flex flex-col gap-2">
             <button
               onClick={() => handleAskCoach('wednesday')}
-              className="text-left bg-[#f2faf5] hover:bg-[#e4f4ea] p-2.5 rounded-xl text-xs font-semibold"
-              style={{ color: ink }}
+              className="text-left bg-[#f2faf5] hover:bg-[#e4f4ea] p-2.5 rounded-xl text-xs font-semibold text-foreground"
+              
             >
               ❓ Why did I peak calorie-wise on Wednesday?
             </button>
             <button
               onClick={() => handleAskCoach('protein')}
-              className="text-left bg-[#f2faf5] hover:bg-[#e4f4ea] p-2.5 rounded-xl text-xs font-semibold"
-              style={{ color: ink }}
+              className="text-left bg-[#f2faf5] hover:bg-[#e4f4ea] p-2.5 rounded-xl text-xs font-semibold text-foreground"
+              
             >
               ❓ How can I hit protein targets next week?
             </button>
@@ -125,8 +125,8 @@ export default function LivaWeeklyCoachScreen({
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-3 p-3 bg-white border border-[#34C759]/16 rounded-2xl text-xs leading-relaxed"
-              style={{ color: muted }}
+              className="mt-3 p-3 bg-card text-card-foreground border border-[#34C759]/16 rounded-2xl text-xs leading-relaxed text-muted-foreground"
+              
             >
               {coachResponse}
             </motion.div>
@@ -138,15 +138,15 @@ export default function LivaWeeklyCoachScreen({
           {metrics.map((m, idx) => (
             <div
               key={idx}
-              className="rounded-2xl bg-white p-4 border border-[#34C759]/06"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-[#34C759]/06"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.03)' }}
             >
-              <span className="text-[10px] font-bold text-slate-400 block">
+              <span className="text-[10px] font-bold text-muted-foreground block">
                 {m.label}
               </span>
               <span
-                className="text-base font-extrabold block mt-1.5"
-                style={{ color: ink }}
+                className="text-base font-extrabold block mt-1.5 text-foreground"
+                
               >
                 {m.value}
               </span>

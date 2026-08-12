@@ -36,20 +36,22 @@ export default function MealSuccessScreen({
             className="absolute inset-0 flex items-center justify-center"
           >
             <div
-              className="flex h-20 w-20 items-center justify-center rounded-full text-white"
+              className="overflow-hidden relative flex h-20 w-20 items-center justify-center rounded-full text-white"
               style={{ background: green }}
             >
-              <Check size={42} />
-            </div>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Check size={42} />
+  </div>
+</div>
           </motion.div>
         </div>
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: ink }}>
+          <h1 className="text-3xl font-bold text-foreground" >
             Meal Logged
           </h1>
           <p
-            className="mt-3 text-base leading-relaxed"
-            style={{ color: muted }}
+            className="mt-3 text-base leading-relaxed text-muted-foreground"
+            
           >
             Great job! You're 40% closer to today's nutrition goal.
           </p>

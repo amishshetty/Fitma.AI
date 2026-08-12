@@ -14,8 +14,7 @@ export default function NutritionCard({
 }) {
   return (
     <div
-      className="rounded-2xl bg-white p-4"
-      style={{ boxShadow: '0 4px 16px rgba(16,32,26,0.06)' }}
+      className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border shadow-sm"
     >
       <div
         className="mb-3 flex h-9 w-9 items-center justify-center rounded-2xl"
@@ -23,10 +22,10 @@ export default function NutritionCard({
       >
         {icon}
       </div>
-      <p className="text-lg font-bold" style={{ color: ink }}>
+      <p className="text-lg font-bold text-foreground" >
         {value}
       </p>
-      <p className="text-xs font-medium" style={{ color: muted }}>
+      <p className="text-xs font-medium text-muted-foreground" >
         {label}
       </p>
     </div>

@@ -36,7 +36,7 @@ export default function ReminderHydrationScreen({
     >
       <div className="space-y-6 flex flex-col justify-center items-center text-center">
         {/* Animated Water Cylinder */}
-        <div className="relative h-48 w-32 border-4 border-slate-200 rounded-[32px] overflow-hidden flex flex-col justify-end bg-slate-50">
+        <div className="relative h-48 w-32 border-4 border-slate-100 dark:border-border rounded-[32px] overflow-hidden flex flex-col justify-end bg-slate-50 dark:bg-muted">
           <motion.div
             animate={{ height: `${cylinderPercent}%` }}
             transition={{ duration: 0.6 }}
@@ -56,20 +56,20 @@ export default function ReminderHydrationScreen({
         </div>
 
         <div className="space-y-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
             Logged Today
           </span>
-          <span className="text-2xl font-black block" style={{ color: ink }}>
+          <span className="text-2xl font-black block text-foreground" >
             {(waterLogged / 1000).toFixed(2)} L
           </span>
-          <span className="text-xs text-slate-400 font-semibold block">
+          <span className="text-xs text-muted-foreground font-semibold block">
             Goal Target: {(waterGoal / 1000).toFixed(2)} L
           </span>
         </div>
 
         <button
           onClick={onBack}
-          className="text-xs font-bold text-slate-400 uppercase tracking-wider py-2"
+          className="text-xs font-bold text-muted-foreground uppercase tracking-wider py-2"
         >
           Remind Me Later
         </button>

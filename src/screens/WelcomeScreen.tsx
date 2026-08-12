@@ -38,15 +38,17 @@ export default function WelcomeScreen({
             className="relative"
           >
             <div
-              className="flex h-52 w-52 items-center justify-center rounded-full bg-white"
+              className="flex h-52 w-52 items-center justify-center rounded-full bg-card text-card-foreground"
               style={{ boxShadow: '0 18px 50px rgba(16,32,26,0.08)' }}
             >
               <div
-                className="flex h-28 w-28 items-center justify-center rounded-full"
+                className="overflow-hidden relative flex h-28 w-28 items-center justify-center rounded-full"
                 style={{ background: softGreen }}
               >
-                <Apple size={64} color={green} />
-              </div>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Apple size={64} color={green} />
+  </div>
+</div>
             </div>
             <div className="absolute -right-2 top-8">
               <LivaAvatar floating />
@@ -55,14 +57,14 @@ export default function WelcomeScreen({
         </div>
         <div>
           <h1
-            className="text-3xl font-bold leading-tight"
-            style={{ color: ink }}
+            className="text-3xl font-bold leading-tight text-foreground"
+            
           >
             Healthy eating should be effortless.
           </h1>
           <p
-            className="mt-4 text-base leading-relaxed"
-            style={{ color: muted }}
+            className="mt-4 text-base leading-relaxed text-muted-foreground"
+            
           >
             Meet Liva, your AI companion that helps you log meals in seconds and
             understand your nutrition calmly.

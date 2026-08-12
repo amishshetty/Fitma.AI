@@ -32,9 +32,9 @@ const ModernSlider = ({
 }: any) => {
   const percentage = ((value - min) / (max - min)) * 100;
   return (
-    <div className="space-y-3 p-4 bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm">
+    <div className="space-y-3 p-4 bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-white shadow-sm">
       <div className="flex justify-between items-center text-sm font-bold">
-        <div className="flex items-center gap-2" style={{ color: ink }}>
+        <div className="flex items-center gap-2 text-foreground" >
           <div
             className="p-1.5 rounded-lg"
             style={{ backgroundColor: `${color}15`, color: color }}
@@ -43,12 +43,29 @@ const ModernSlider = ({
           </div>
           {label}
         </div>
-        <span className="font-extrabold text-lg" style={{ color: color }}>
-          {value}{' '}
-          <span className="text-xs text-slate-400 font-semibold">{unit}</span>
-        </span>
+        <div className="flex items-center gap-1 bg-card/50 text-card-foreground backdrop-blur-md px-3 py-1.5 rounded-xl shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] border border-white focus-within:ring-2 focus-within:ring-opacity-50 transition-all duration-200" style={{ '--tw-ring-color': color } as any}>
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '') onChange(min);
+              else onChange(Number(val));
+            }}
+            className="w-14 text-right bg-transparent border-none outline-none font-black text-lg tabular-nums p-0 m-0"
+            style={{ color: color }}
+          />
+          <style>{`
+            input[type='number']::-webkit-inner-spin-button,
+            input[type='number']::-webkit-outer-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+          `}</style>
+          <span className="text-xs text-muted-foreground font-bold">{unit}</span>
+        </div>
       </div>
-      <div className="relative h-2 w-full bg-slate-100 rounded-full flex items-center">
+      <div className="relative h-2 w-full bg-slate-50 dark:bg-muted rounded-full flex items-center">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
@@ -57,7 +74,7 @@ const ModernSlider = ({
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         />
         <motion.div
-          className="absolute w-5 h-5 rounded-full bg-white border-2 shadow-sm pointer-events-none"
+          className="absolute w-5 h-5 rounded-full bg-card text-card-foreground border-2 shadow-sm pointer-events-none"
           initial={{ left: 0 }}
           animate={{ left: `calc(${percentage}% - 10px)` }}
           style={{ borderColor: color }}
@@ -87,10 +104,10 @@ const ModernDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="space-y-3 p-4 bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm relative z-50">
+    <div className="space-y-3 p-4 bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-white shadow-sm relative z-50">
       <div
-        className="flex items-center gap-2 text-sm font-bold"
-        style={{ color: ink }}
+        className="flex items-center gap-2 text-sm font-bold text-foreground"
+        
       >
         <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-500">
           <Icon size={16} />
@@ -100,12 +117,12 @@ const ModernDropdown = ({
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full p-3.5 rounded-xl bg-white border border-slate-100 text-sm font-bold text-left flex justify-between items-center outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm"
-          style={{ color: ink }}
+          className="w-full p-3.5 rounded-xl bg-card text-card-foreground border border-slate-100 dark:border-border text-sm font-bold text-left flex justify-between items-center outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-sm text-foreground"
+          
         >
           {value}
           <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
-            <ChevronDown size={18} className="text-slate-400" />
+            <ChevronDown size={18} className="text-muted-foreground" />
           </motion.div>
         </button>
 
@@ -118,7 +135,7 @@ const ModernDropdown = ({
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-xl z-50 overflow-hidden"
+              className="absolute left-0 right-0 mt-2 bg-card text-card-foreground border border-slate-100 dark:border-border rounded-xl shadow-xl z-50 overflow-hidden"
             >
               {options.map((option: string) => (
                 <button
@@ -130,7 +147,7 @@ const ModernDropdown = ({
                   className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${
                     value === option
                       ? 'bg-indigo-50 text-indigo-600'
-                      : 'hover:bg-slate-50 text-slate-700'
+                      : 'hover:bg-slate-50 dark:hover:bg-muted text-foreground'
                   }`}
                 >
                   {option}
@@ -267,7 +284,7 @@ export default function ProfileGoalsScreen({
 
         {onUpdatePrimaryGoal && (
           <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-bold ml-1" style={{ color: ink }}>
+            <h3 className="text-sm font-bold ml-1 text-foreground" >
               Primary Journey
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -275,46 +292,48 @@ export default function ProfileGoalsScreen({
                 const Icon = g.icon;
                 const active = primaryGoal === g.label;
                 return (
-                  <button
-                    key={g.label}
-                    onClick={() => {
-                      onUpdatePrimaryGoal(g.label);
-                      const targets = calculateTargets(weight, height, g.label);
-                      onUpdateGoals({
-                        ...goals,
-                        ...targets,
-                      });
-                    }}
-                    className="flex min-h-[100px] flex-col items-center justify-center gap-2 rounded-2xl bg-white p-3 text-center transition-all"
-                    style={{
-                      border: active
-                        ? `2px solid ${g.color}`
-                        : '2px solid rgba(16,32,26,0.04)',
-                      boxShadow: active
-                        ? `0 6px 16px ${g.color}20`
-                        : '0 4px 12px rgba(16,32,26,0.03)',
-                    }}
-                  >
-                    <span
-                      className="flex h-10 w-10 items-center justify-center rounded-[14px]"
-                      style={{ background: `${g.color}15`, color: g.color }}
+                    <button
+                      key={g.label}
+                      onClick={() => {
+                        onUpdatePrimaryGoal(g.label);
+                        const targets = calculateTargets(weight, height, g.label);
+                        onUpdateGoals({
+                          ...goals,
+                          ...targets,
+                        });
+                      }}
+                      className={`flex min-h-[100px] flex-col items-center justify-center gap-2 rounded-2xl bg-card p-3 text-center transition-all border-2 ${
+                        active ? '' : 'border-slate-100 dark:border-border'
+                      }`}
+                      style={{
+                        borderColor: active ? g.color : undefined,
+                        boxShadow: active
+                          ? `0 6px 16px ${g.color}20`
+                          : '0 4px 12px rgba(16,32,26,0.03)',
+                      }}
                     >
-                      <Icon size={20} />
-                    </span>
-                    <span
-                      className="text-[11px] font-bold"
-                      style={{ color: active ? g.color : ink }}
-                    >
-                      {g.label}
-                    </span>
-                  </button>
+                      <span
+                        className="overflow-hidden relative flex h-10 w-10 items-center justify-center rounded-[14px]"
+                        style={{ background: `${g.color}15`, color: g.color }}
+                      >
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Icon size={20} />
+  </div>
+</span>
+                      <span
+                        className={`text-[11px] font-bold ${!active ? 'text-foreground' : ''}`}
+                        style={{ color: active ? g.color : undefined }}
+                      >
+                        {g.label}
+                      </span>
+                    </button>
                 );
               })}
             </div>
           </div>
         )}
 
-        <h3 className="text-sm font-bold ml-1 mt-8 mb-2" style={{ color: ink }}>
+        <h3 className="text-sm font-bold ml-1 mt-8 mb-2 text-foreground" >
           Body Metrics (BMI Calculator)
         </h3>
 
@@ -343,13 +362,13 @@ export default function ProfileGoalsScreen({
         />
 
         {/* BMI Card */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm p-5 mt-2">
+        <div className="bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-border shadow-sm p-5 mt-2">
           <div className="flex justify-between items-center mb-4">
             <h4
-              className="text-sm font-bold flex items-center gap-2"
-              style={{ color: ink }}
+              className="text-sm font-bold flex items-center gap-2 text-foreground"
+              
             >
-              <div className="p-1.5 rounded-lg bg-slate-50 text-slate-500">
+              <div className="p-1.5 rounded-lg bg-slate-50 dark:bg-muted text-muted-foreground">
                 <Info size={16} />
               </div>
               Your BMI
@@ -358,14 +377,14 @@ export default function ProfileGoalsScreen({
               <span className="text-2xl font-black" style={{ color: bmiColor }}>
                 {bmi}
               </span>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 {bmiCategory}
               </p>
             </div>
           </div>
 
           {/* Visual BMI Bar */}
-          <div className="h-2.5 w-full bg-slate-100 rounded-full flex overflow-hidden mb-3">
+          <div className="h-2.5 w-full bg-slate-50 dark:bg-muted rounded-full flex overflow-hidden mb-3">
             <div className="h-full bg-[#3b82f6]" style={{ width: '20%' }} />{' '}
             {/* Underweight */}
             <div
@@ -386,7 +405,7 @@ export default function ProfileGoalsScreen({
           </div>
           <div className="relative w-full mb-4">
             <motion.div
-              className="absolute top-0 w-3 h-3 rounded-full bg-white border-2 shadow-sm"
+              className="absolute top-0 w-3 h-3 rounded-full bg-card text-card-foreground border-2 shadow-sm"
               style={{
                 borderColor: bmiColor,
                 left: `${Math.min(Math.max(((bmi - 15) / 25) * 100, 0), 98)}%`,
@@ -409,16 +428,16 @@ export default function ProfileGoalsScreen({
           </p>
         </div>
 
-        <h3 className="text-sm font-bold ml-1 mt-8 mb-2" style={{ color: ink }}>
+        <h3 className="text-sm font-bold ml-1 mt-8 mb-2 text-foreground" >
           Daily Targets (Calculated)
         </h3>
         <div className="grid grid-cols-1 gap-3">
-          <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm p-4 flex justify-between items-center">
+          <div className="bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-border shadow-sm p-4 flex justify-between items-center">
             <div
-              className="flex items-center gap-3 font-bold text-sm"
-              style={{ color: ink }}
+              className="flex items-center gap-3 font-bold text-sm text-foreground"
+              
             >
-              <div className="p-2 rounded-xl bg-orange-50 text-orange-500">
+              <div className="p-2 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-500">
                 <Flame size={18} />
               </div>
               Calorie Budget
@@ -427,16 +446,16 @@ export default function ProfileGoalsScreen({
               <span className="text-lg font-black text-orange-500">
                 {goals.calories}
               </span>{' '}
-              <span className="text-xs text-slate-400 font-semibold">kcal</span>
+              <span className="text-xs text-muted-foreground font-semibold">kcal</span>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm p-4 flex justify-between items-center">
+          <div className="bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-border shadow-sm p-4 flex justify-between items-center">
             <div
-              className="flex items-center gap-3 font-bold text-sm"
-              style={{ color: ink }}
+              className="flex items-center gap-3 font-bold text-sm text-foreground"
+              
             >
-              <div className="p-2 rounded-xl bg-sky-50 text-sky-500">
+              <div className="p-2 rounded-xl bg-sky-50 dark:bg-sky-500/10 text-sky-500">
                 <Activity size={18} />
               </div>
               Protein Intake
@@ -445,16 +464,16 @@ export default function ProfileGoalsScreen({
               <span className="text-lg font-black text-sky-500">
                 {goals.protein}
               </span>{' '}
-              <span className="text-xs text-slate-400 font-semibold">g</span>
+              <span className="text-xs text-muted-foreground font-semibold">g</span>
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white shadow-sm p-4 flex justify-between items-center">
+          <div className="bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-slate-100 dark:border-border shadow-sm p-4 flex justify-between items-center">
             <div
-              className="flex items-center gap-3 font-bold text-sm"
-              style={{ color: ink }}
+              className="flex items-center gap-3 font-bold text-sm text-foreground"
+              
             >
-              <div className="p-2 rounded-xl bg-teal-50 text-teal-500">
+              <div className="p-2 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-500">
                 <Droplet size={18} />
               </div>
               Water Target
@@ -463,26 +482,26 @@ export default function ProfileGoalsScreen({
               <span className="text-lg font-black text-teal-500">
                 {goals.water}
               </span>{' '}
-              <span className="text-xs text-slate-400 font-semibold">ml</span>
+              <span className="text-xs text-muted-foreground font-semibold">ml</span>
             </div>
           </div>
         </div>
 
         {/* Liva Coach Recommendation */}
-        <div className="rounded-3xl p-5 bg-gradient-to-br from-green-50 to-emerald-50/30 border border-green-100/50 space-y-4 shadow-sm mt-6">
+        <div className="rounded-3xl p-5 bg-gradient-to-br from-green-50 to-emerald-50/30 dark:from-primary/20 dark:to-primary/5 border border-green-100/50 dark:border-primary/20 space-y-4 shadow-sm mt-6">
           <div className="flex gap-4 items-start">
             <LivaAvatar size={42} floating />
             <div>
-              <p className="text-[11px] font-extrabold text-emerald-600 uppercase tracking-widest">
+              <p className="text-[11px] font-extrabold text-emerald-600 dark:text-primary uppercase tracking-widest">
                 Liva Goal Audit
               </p>
               <p
-                className="mt-1.5 text-[13px] font-medium leading-relaxed"
-                style={{ color: ink }}
+                className="mt-1.5 text-[13px] font-medium leading-relaxed text-foreground"
+                
               >
                 Based on your daily activity levels and moderate workouts, I
                 recommend increasing protein to{' '}
-                <span className="font-bold text-emerald-700">
+                <span className="font-bold text-emerald-700 dark:text-primary">
                   {goals.protein + 10}g
                 </span>{' '}
                 to recover muscle fibers faster.
@@ -491,7 +510,7 @@ export default function ProfileGoalsScreen({
           </div>
           <button
             onClick={applyRecommendation}
-            className="w-full bg-white hover:bg-emerald-50 text-[13px] font-bold text-emerald-700 py-3 rounded-2xl transition-all shadow-sm border border-emerald-100"
+            className="w-full bg-card text-card-foreground hover:bg-emerald-50 text-[13px] font-bold text-emerald-700 dark:text-primary py-3 rounded-2xl transition-all shadow-sm border border-emerald-100 dark:border-primary/20 dark:hover:bg-primary/10"
           >
             Apply Goal Recommendation
           </button>

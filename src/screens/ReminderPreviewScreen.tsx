@@ -68,15 +68,15 @@ export default function ReminderPreviewScreen({
       <div className="space-y-4 pb-8 mt-2 relative z-10">
         {/* Intro text */}
         <div
-          className="bg-white/60 backdrop-blur-xl p-4 rounded-[20px] flex items-center gap-3 mb-6 border border-white/60"
+          className="bg-card/60 text-card-foreground backdrop-blur-xl p-4 rounded-[20px] flex items-center gap-3 mb-6 border border-white/60"
           style={{ boxShadow: '0 8px 32px rgba(16,32,26,0.05)' }}
         >
           <div className="shrink-0">
             <LivaAvatar size={32} />
           </div>
           <p
-            className="text-[13px] font-medium leading-snug"
-            style={{ color: muted }}
+            className="text-[13px] font-medium leading-snug text-muted-foreground"
+            
           >
             Liva sends{' '}
             <span style={{ color: green, fontWeight: 'bold' }}>
@@ -89,7 +89,7 @@ export default function ReminderPreviewScreen({
         {previews.map((pre, idx) => (
           <div
             key={idx}
-            className="bg-white/60 backdrop-blur-xl border border-white/60 rounded-[20px] p-4 flex flex-col gap-3 relative cursor-pointer transition-transform active:scale-[0.98]"
+            className="bg-card/60 text-card-foreground backdrop-blur-xl border border-white/60 rounded-[20px] p-4 flex flex-col gap-3 relative cursor-pointer transition-transform active:scale-[0.98]"
             style={{
               boxShadow: '0 8px 32px rgba(16, 32, 26, 0.05)',
               animation: `fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.1}s backwards`,
@@ -116,8 +116,8 @@ export default function ReminderPreviewScreen({
                   {pre.reason}
                 </div>
                 <span
-                  className="text-[11px] font-semibold"
-                  style={{ color: muted }}
+                  className="text-[11px] font-semibold text-muted-foreground"
+                  
                 >
                   {pre.time}
                 </span>
@@ -126,8 +126,8 @@ export default function ReminderPreviewScreen({
 
             {/* Body text */}
             <p
-              className="text-[13px] font-medium leading-relaxed pl-1 whitespace-pre-line"
-              style={{ color: ink }}
+              className="text-[13px] font-medium leading-relaxed pl-1 whitespace-pre-line text-foreground"
+              
             >
               {pre.text}
             </p>
@@ -135,7 +135,7 @@ export default function ReminderPreviewScreen({
             {/* Footer Buttons */}
             <div className="flex justify-between items-center mt-1">
               <button
-                className="px-5 py-2.5 rounded-full text-[12px] font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors"
+                className="px-5 py-2.5 rounded-full text-[12px] font-bold text-muted-foreground bg-slate-50 dark:bg-muted hover:bg-slate-50 dark:hover:bg-muted transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 Dismiss

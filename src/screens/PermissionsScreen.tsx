@@ -95,7 +95,7 @@ export default function PermissionsScreen({ onNext }: { onNext: () => void }) {
             <button
               key={permission.title}
               onClick={() => handleToggle(index)}
-              className="flex w-full items-start gap-4 rounded-[24px] bg-white p-4 text-left"
+              className="flex w-full items-start gap-4 rounded-[24px] bg-card text-card-foreground p-4 text-left"
               style={{
                 border: active
                   ? `1.5px solid ${permission.color}`
@@ -103,24 +103,26 @@ export default function PermissionsScreen({ onNext }: { onNext: () => void }) {
               }}
             >
               <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                className="overflow-hidden relative flex h-12 w-12 items-center justify-center rounded-2xl"
                 style={{
                   background: `${permission.color}16`,
                   color: permission.color,
                 }}
               >
-                <Icon size={22} />
-              </span>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Icon size={22} />
+  </div>
+</span>
               <span className="min-w-0 flex-1">
                 <span
-                  className="block text-sm font-bold"
-                  style={{ color: ink }}
+                  className="block text-sm font-bold text-foreground"
+                  
                 >
                   {permission.title}
                 </span>
                 <span
-                  className="mt-1 block text-xs leading-relaxed"
-                  style={{ color: muted }}
+                  className="mt-1 block text-xs leading-relaxed text-muted-foreground"
+                  
                 >
                   {permission.description}
                 </span>

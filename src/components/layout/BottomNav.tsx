@@ -40,8 +40,7 @@ export default function BottomNav({
 
   return (
     <div
-      className="flex items-center justify-around bg-white px-3 pb-5 pt-3"
-      style={{ borderTop: '1px solid rgba(52,199,89,0.12)' }}
+      className="flex items-center justify-around bg-card/90 backdrop-blur-lg border-t border-slate-100 dark:border-border px-3 pb-5 pt-3"
     >
       {items.map((item) => {
         const Icon = item.icon;
@@ -50,12 +49,10 @@ export default function BottomNav({
           <button
             key={item.key}
             onClick={() => onNavigate(item.screen)}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 py-1"
-            style={{ color: isActive ? green : '#94aa9d' }}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 py-1 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <span
-              className="flex h-8 w-8 items-center justify-center rounded-full"
-              style={{ background: isActive ? softGreen : 'transparent' }}
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${isActive ? 'bg-secondary' : 'bg-transparent'}`}
             >
               <Icon size={18} />
             </span>

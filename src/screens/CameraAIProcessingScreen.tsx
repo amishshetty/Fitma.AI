@@ -76,7 +76,7 @@ export default function CameraAIProcessingScreen({
             className="absolute left-0 right-0 h-1 bg-[#34C759] shadow-[0_0_10px_#34C759]"
           />
         </div>
-        <h1 className="text-3xl font-bold" style={{ color: ink }}>
+        <h1 className="text-3xl font-bold text-foreground" >
           Analyzing your plate...
         </h1>
         <AnimatePresence mode="wait">
@@ -85,8 +85,8 @@ export default function CameraAIProcessingScreen({
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -8, opacity: 0 }}
-            className="mt-4 text-base font-semibold"
-            style={{ color: muted }}
+            className="mt-4 text-base font-semibold text-muted-foreground"
+            
           >
             {rotatingFacts[factIndex]}
           </motion.p>

@@ -35,12 +35,12 @@ export default function VoiceLoggingScreen({
         >
           <Mic size={62} />
         </motion.div>
-        <h1 className="text-3xl font-bold" style={{ color: ink }}>
+        <h1 className="text-3xl font-bold text-foreground" >
           Listening...
         </h1>
         <p
-          className="mt-4 max-w-[260px] text-base leading-relaxed"
-          style={{ color: muted }}
+          className="mt-4 max-w-[260px] text-base leading-relaxed text-muted-foreground"
+          
         >
           Try saying: "I had two rotis, dal and rice."
         </p>

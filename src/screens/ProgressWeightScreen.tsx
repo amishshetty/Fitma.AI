@@ -35,12 +35,12 @@ export default function ProgressWeightScreen({
       <div className="space-y-5 pb-8">
         {/* Weight timeline progress card */}
         <div
-          className="rounded-[28px] bg-white p-5 border border-slate-100 text-center"
+          className="rounded-[28px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border text-center"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
           <div className="grid grid-cols-3 gap-2 mb-4">
             <div>
-              <span className="text-[10px] font-bold text-slate-400 block">
+              <span className="text-[10px] font-bold text-muted-foreground block">
                 Current Weight
               </span>
               <span className="text-xl font-black text-[#a855f7] block mt-1">
@@ -48,7 +48,7 @@ export default function ProgressWeightScreen({
               </span>
             </div>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 block">
+              <span className="text-[10px] font-bold text-muted-foreground block">
                 Goal Weight
               </span>
               <span className="text-xl font-black text-[#34c759] block mt-1">
@@ -56,7 +56,7 @@ export default function ProgressWeightScreen({
               </span>
             </div>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 block">
+              <span className="text-[10px] font-bold text-muted-foreground block">
                 Total Loss
               </span>
               <span className="text-xl font-black text-[#0ea5e9] block mt-1">
@@ -65,24 +65,24 @@ export default function ProgressWeightScreen({
             </div>
           </div>
 
-          <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden mb-2">
+          <div className="h-2 w-full rounded-full bg-slate-50 dark:bg-muted overflow-hidden mb-2">
             <div
               className="h-full bg-gradient-to-r from-[#a855f7] to-[#34c759] rounded-full"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="text-[10px] text-slate-400 font-semibold">
+          <span className="text-[10px] text-muted-foreground font-semibold">
             {progressPercent}% of goal completed
           </span>
         </div>
 
         {/* Interactive Update Slider */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold" style={{ color: ink }}>
+            <span className="text-xs font-bold text-foreground" >
               Log New Weight
             </span>
             <span className="text-sm font-black text-[#a855f7]">
@@ -98,7 +98,7 @@ export default function ProgressWeightScreen({
             value={userWeight}
             onChange={(e) => onLogWeight(Number(e.target.value))}
           />
-          <div className="flex justify-between text-[9px] text-slate-400 mt-2 font-semibold">
+          <div className="flex justify-between text-[9px] text-muted-foreground mt-2 font-semibold">
             <span>68 kg</span>
             <span>78 kg</span>
           </div>
@@ -106,10 +106,10 @@ export default function ProgressWeightScreen({
 
         {/* Weight Milestones Timeline */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 space-y-4.5"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border space-y-4.5"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Milestones reached
           </h3>
           <div className="space-y-4 pl-4 border-l-2 border-[#a855f7]/20 relative">
@@ -146,7 +146,7 @@ export default function ProgressWeightScreen({
                   >
                     {milestone.title}
                   </h4>
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-semibold">
+                  <p className="text-[10px] text-muted-foreground mt-0.5 font-semibold">
                     {milestone.detail}
                   </p>
                 </div>

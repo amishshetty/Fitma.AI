@@ -43,11 +43,11 @@ export default function LivaRecipeDetailScreen({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white">
+    <div className="flex min-h-0 flex-1 flex-col bg-card text-card-foreground">
       {!companionActive ? (
         <>
           {/* Hero Image Header */}
-          <div className="relative h-60 w-full bg-slate-200">
+          <div className="relative h-60 w-full bg-border">
             <img
               src={recipeHeroImg}
               alt="Gourmet Quinoa Bowl"
@@ -79,32 +79,32 @@ export default function LivaRecipeDetailScreen({
             {/* Quick Nutrition Badges */}
             <div className="grid grid-cols-4 gap-2 bg-[#f2faf5] p-3 rounded-2xl">
               <div className="text-center">
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-muted-foreground block">
                   Calories
                 </span>
-                <span className="text-sm font-bold" style={{ color: ink }}>
+                <span className="text-sm font-bold text-foreground" >
                   460
                 </span>
               </div>
               <div className="text-center">
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-muted-foreground block">
                   Protein
                 </span>
                 <span className="text-sm font-bold text-[#34C759]">32g</span>
               </div>
               <div className="text-center">
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-muted-foreground block">
                   Carbs
                 </span>
-                <span className="text-sm font-bold" style={{ color: ink }}>
+                <span className="text-sm font-bold text-foreground" >
                   45g
                 </span>
               </div>
               <div className="text-center">
-                <span className="text-[10px] font-bold text-slate-400 block">
+                <span className="text-[10px] font-bold text-muted-foreground block">
                   Prep Time
                 </span>
-                <span className="text-sm font-bold" style={{ color: ink }}>
+                <span className="text-sm font-bold text-foreground" >
                   20m
                 </span>
               </div>
@@ -112,14 +112,14 @@ export default function LivaRecipeDetailScreen({
 
             {/* Ingredients section */}
             <div>
-              <h2 className="mb-3 text-sm font-bold" style={{ color: ink }}>
+              <h2 className="mb-3 text-sm font-bold text-foreground" >
                 Ingredients Needed
               </h2>
               <div className="space-y-2">
                 {ingredients.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2.5 text-xs text-slate-600"
+                    className="flex items-center gap-2.5 text-xs text-muted-foreground"
                   >
                     <span className="h-4 w-4 rounded-full border border-[#34C759]/30 flex items-center justify-center text-[8px] text-[#34C759]">
                       ✓
@@ -135,7 +135,7 @@ export default function LivaRecipeDetailScreen({
               <h3 className="text-xs font-bold text-[#197a38] uppercase tracking-wider mb-1">
                 Liva's Chef Tip
               </h3>
-              <p className="text-xs leading-relaxed" style={{ color: muted }}>
+              <p className="text-xs leading-relaxed text-muted-foreground" >
                 Rinse quinoa in cold water before boiling to remove saponin
                 coating. Grill the chicken with a pinch of black pepper and
                 lemon zest.
@@ -180,7 +180,7 @@ export default function LivaRecipeDetailScreen({
             </h2>
 
             {/* Voice Guide Simulation */}
-            <div className="mt-11 rounded-2xl bg-white/06 p-4 border border-white/10 flex items-center justify-between gap-3 text-left">
+            <div className="mt-11 rounded-2xl bg-card/06 text-card-foreground p-4 border border-white/10 flex items-center justify-between gap-3 text-left">
               <div>
                 <span className="text-[9px] uppercase text-white/50 block font-bold tracking-wider">
                   Voice Control

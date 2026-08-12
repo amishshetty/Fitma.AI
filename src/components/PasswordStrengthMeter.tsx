@@ -37,10 +37,10 @@ export default function PasswordStrengthMeter({
   return (
     <div className="mt-1 space-y-1">
       <div className="flex justify-between items-center text-[9px] font-bold">
-        <span className="text-slate-400">Strength:</span>
+        <span className="text-muted-foreground">Strength:</span>
         <span className={textColor}>{ratings[score]}</span>
       </div>
-      <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-1 w-full bg-slate-50 dark:bg-muted rounded-full overflow-hidden">
         <div
           className={`h-full transition-all duration-300 ${color}`}
           style={{ width: `${(score / 5) * 100}%` }}

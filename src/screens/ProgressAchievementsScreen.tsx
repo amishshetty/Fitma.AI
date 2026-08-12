@@ -55,7 +55,7 @@ export default function ProgressAchievementsScreen({
       count: 100,
       unlocked: true,
       icon: '🥗',
-      color: 'bg-slate-100 text-[#10201a]',
+      color: 'bg-slate-50 dark:bg-muted text-[#10201a]',
     },
   ];
 
@@ -69,7 +69,7 @@ export default function ProgressAchievementsScreen({
         {achievements.map((ach, idx) => (
           <div
             key={idx}
-            className={`rounded-[24px] bg-white p-4.5 border flex flex-col justify-between text-left ${ach.unlocked ? 'border-[#34C759]/24' : 'border-slate-100'}`}
+            className={`rounded-[24px] bg-card text-card-foreground p-4.5 border flex flex-col justify-between text-left ${ach.unlocked ? 'border-[#34C759]/24' : 'border-slate-100 dark:border-border'}`}
             style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
           >
             <div>
@@ -84,13 +84,13 @@ export default function ProgressAchievementsScreen({
               >
                 {ach.title}
               </h4>
-              <p className="text-[9px] text-slate-400 leading-relaxed mt-1">
+              <p className="text-[9px] text-muted-foreground leading-relaxed mt-1">
                 {ach.criteria}
               </p>
             </div>
 
             <div className="mt-4.5">
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden mb-1.5">
+              <div className="h-1.5 w-full bg-slate-50 dark:bg-muted rounded-full overflow-hidden mb-1.5">
                 <div
                   className="h-full rounded-full"
                   style={{
@@ -99,7 +99,7 @@ export default function ProgressAchievementsScreen({
                   }}
                 />
               </div>
-              <span className="text-[8px] font-bold text-slate-400">
+              <span className="text-[8px] font-bold text-muted-foreground">
                 {ach.unlocked ? 'Unlocked 🎉' : `${ach.count}% unlocked`}
               </span>
             </div>

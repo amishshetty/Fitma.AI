@@ -107,6 +107,10 @@ import ProfilePersonalScreen from '../screens/ProfilePersonalScreen';
 import ProfilePremiumScreen from '../screens/ProfilePremiumScreen';
 import ProfilePrivacyScreen from '../screens/ProfilePrivacyScreen';
 import ProfileSettingsScreen from '../screens/ProfileSettingsScreen';
+import ProfileThemeScreen from '../screens/ProfileThemeScreen';
+import ProfileLegalScreen from '../screens/ProfileLegalScreen';
+import ProfilePrivacyPolicyScreen from '../screens/ProfilePrivacyPolicyScreen';
+import ProfileLicensesScreen from '../screens/ProfileLicensesScreen';
 import ProgressAchievementsScreen from '../screens/ProgressAchievementsScreen';
 import ProgressDashboardScreen from '../screens/ProgressDashboardScreen';
 import ProgressGoalsScreen from '../screens/ProgressGoalsScreen';
@@ -237,12 +241,32 @@ export default function App() {
     vegan: false,
     jain: false,
   });
-  const [userAllergies, setUserAllergies] = useState({
+  const [userAllergies, setUserAllergies] = useState<{
+    peanuts: boolean;
+    gluten: boolean;
+    dairy: boolean;
+    shellfish: boolean;
+    custom: string[];
+  }>({
     peanuts: false,
     gluten: false,
     dairy: false,
     shellfish: false,
+    custom: [],
   });
+
+  const getActiveAllergies = () => {
+    const active = [];
+    if (userAllergies.peanuts) active.push('Peanuts');
+    if (userAllergies.gluten) active.push('Gluten');
+    if (userAllergies.dairy) active.push('Dairy Lactose');
+    if (userAllergies.shellfish) active.push('Shellfish');
+    if (userAllergies.custom && userAllergies.custom.length > 0) {
+      active.push(...userAllergies.custom);
+    }
+    return active;
+  };
+
   const [memories, setMemories] = useState<MemoryItem[]>([]);
   const [userPhone, setUserPhone] = useState('');
   const [userGender, setUserGender] = useState('Male');
@@ -716,14 +740,14 @@ export default function App() {
                 jain: false,
               }
             );
-            setUserAllergies(
-              u.allergies || {
-                peanuts: false,
-                gluten: false,
-                dairy: false,
-                shellfish: false,
-              }
-            );
+            const defaultAllergies = {
+              peanuts: false,
+              gluten: false,
+              dairy: false,
+              shellfish: false,
+              custom: [],
+            };
+            setUserAllergies(u.allergies ? { ...defaultAllergies, ...u.allergies } : defaultAllergies);
             setMemories(u.memories || []);
             setUserPhone(u.phone || '');
             setUserGender(u.gender || 'Male');
@@ -934,6 +958,7 @@ export default function App() {
               language: language,
             },
             previousMessages: [],
+            memories: memories,
             loggedMeals: (loggedMeals || []).map((m) => {
               let dateStr = '';
               try {
@@ -1156,14 +1181,14 @@ export default function App() {
         jain: false,
       }
     );
-    setUserAllergies(
-      user.allergies || {
-        peanuts: false,
-        gluten: false,
-        dairy: false,
-        shellfish: false,
-      }
-    );
+    const defaultAllergies = {
+      peanuts: false,
+      gluten: false,
+      dairy: false,
+      shellfish: false,
+      custom: [],
+    };
+    setUserAllergies(user.allergies ? { ...defaultAllergies, ...user.allergies } : defaultAllergies);
     setMemories(user.memories || []);
     setUserPhone(user.phone || '');
     setUserGender(user.gender || 'Male');
@@ -1212,6 +1237,7 @@ export default function App() {
       gluten: false,
       dairy: false,
       shellfish: false,
+      custom: [],
     });
     setMemories([]);
     setUserPhone('');
@@ -1521,6 +1547,17 @@ export default function App() {
               logLivaMeal(meal);
               go('meal-success');
             }}
+            userProfile={{
+              name: userName || 'Amish',
+              goal: primaryGoal,
+              diet: getDietString(),
+              activity: userActivity,
+              allergies: getActiveAllergies(),
+              dailyCalories: goals.calories || 1800,
+              motivationStyle: motivationStyle,
+              language: language,
+            }}
+            memories={memories}
           />
         );
       case 'search-food':
@@ -1597,10 +1634,13 @@ export default function App() {
               name: userName || 'Amish',
               goal: primaryGoal,
               diet: getDietString(),
+              activity: userActivity,
+              allergies: getActiveAllergies(),
               dailyCalories: goals.calories || 1800,
               motivationStyle: motivationStyle,
               language: language,
             }}
+            memories={memories}
             onMealLogged={(mealData) => {
               logLivaMeal(mealData);
             }}
@@ -1641,10 +1681,13 @@ export default function App() {
               name: userName || 'Amish',
               goal: primaryGoal,
               diet: getDietString(),
+              activity: userActivity,
+              allergies: getActiveAllergies(),
               dailyCalories: goals.calories || 1800,
               motivationStyle: motivationStyle,
               language: language,
             }}
+            memories={memories}
             onMealLogged={(mealData) => {
               logLivaMeal(mealData);
             }}
@@ -1982,6 +2025,11 @@ export default function App() {
               setMemories(updated);
               syncProfile({ memories: updated });
             }}
+            personality={motivationStyle}
+            setPersonality={(style) => {
+              setMotivationStyle(style);
+              syncProfile({ motivationStyle: style });
+            }}
           />
         );
       case 'profile-devices':
@@ -2001,9 +2049,18 @@ export default function App() {
         return (
           <ProfileSettingsScreen
             onBack={() => go('profile-home')}
+            onNavigate={go}
             onLogout={handleLogout}
           />
         );
+      case 'profile-theme':
+        return <ProfileThemeScreen onBack={() => go('profile-settings')} />;
+      case 'profile-legal':
+        return <ProfileLegalScreen onBack={() => go('profile-settings')} />;
+      case 'profile-privacy-policy':
+        return <ProfilePrivacyPolicyScreen onBack={() => go('profile-settings')} />;
+      case 'profile-licenses':
+        return <ProfileLicensesScreen onBack={() => go('profile-settings')} />;
       default:
         return <HomeScreen onNavigate={go} onStartLog={startProcessing} />;
     }
@@ -2046,17 +2103,16 @@ export default function App() {
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={{ opacity: 0, x: 4, scale: 0.95 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute bottom-[104px] right-[72px] z-20 bg-white/40 text-[#10201a] text-[9px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                  className="absolute bottom-[104px] right-[72px] z-20 bg-card/40 text-foreground text-[9px] font-extrabold px-3.5 py-1.5 rounded-full shadow-lg whitespace-nowrap border border-primary/30"
                   style={{
                     boxShadow: '0 4px 12px rgba(16,32,26,0.06)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255, 255, 255, 0.4)',
                   }}
                 >
                   Say "Hey Liva"
                   {/* Arrow pointing right to the floating Liva bubble */}
-                  <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[4px] border-b-[4px] border-l-[4px] border-t-transparent border-b-transparent border-l-white/40" />
+                  <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[4px] border-b-[4px] border-l-[4px] border-t-transparent border-b-transparent border-l-primary opacity-30" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -2080,8 +2136,8 @@ export default function App() {
                   className="flex flex-col items-start w-full space-y-2 pointer-events-auto"
                 >
                   {/* Chat Bubble Style Prompt */}
-                  <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 max-w-[85%] backdrop-blur-sm">
-                    <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">
+                  <div className="bg-card px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 dark:border-border/50 max-w-[85%] backdrop-blur-sm">
+                    <p className="text-card-foreground font-extrabold text-[13px] tracking-tight">
                       Which meal is this?
                     </p>
                   </div>
@@ -2135,9 +2191,9 @@ export default function App() {
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[60] bg-slate-800/95 backdrop-blur-md text-white px-3.5 py-1.5 rounded-full text-[11px] font-medium shadow-2xl pointer-events-none whitespace-nowrap flex items-center gap-1.5 border border-slate-600/50"
+              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[60] bg-foreground/95 backdrop-blur-md text-background px-3.5 py-1.5 rounded-full text-[11px] font-medium shadow-2xl pointer-events-none whitespace-nowrap flex items-center gap-1.5 border border-slate-100 dark:border-border/50"
             >
-              <Check size={12} className="text-emerald-400" />
+              <Check size={12} className="text-primary" />
               {toastMessage}
             </motion.div>
           )}
@@ -2146,7 +2202,7 @@ export default function App() {
         {/* Missing Meal Section Que Card (Standalone fallback) */}
         <AnimatePresence>
           {pendingMealData && !livaSiriActive && (
-            <div className="absolute inset-0 z-[110] flex items-center justify-center p-6 bg-black/30 backdrop-blur-sm pointer-events-auto">
+            <div className="absolute inset-0 z-[110] flex items-center justify-center p-6 bg-background/60 backdrop-blur-sm pointer-events-auto">
               <motion.div
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -2154,8 +2210,8 @@ export default function App() {
                 className="flex flex-col items-start w-full space-y-2 pointer-events-auto absolute bottom-[260px] px-6"
               >
                 {/* Chat Bubble Style Prompt */}
-                <div className="bg-white px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/50 max-w-[85%] backdrop-blur-sm">
-                  <p className="text-slate-800 font-extrabold text-[13px] tracking-tight">
+                <div className="bg-card px-4 py-2.5 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-sm shadow-md border border-slate-100 dark:border-border/50 max-w-[85%] backdrop-blur-sm">
+                  <p className="text-foreground font-extrabold text-[13px] tracking-tight">
                     Which meal is this?
                   </p>
                 </div>
@@ -2175,7 +2231,7 @@ export default function App() {
                         setToastMessage(`Meal saved in ${section}!`);
                         setTimeout(() => setToastMessage(null), 3000);
                       }}
-                      className="bg-white/95 hover:bg-emerald-50 text-emerald-600 font-bold py-2 px-4 rounded-lg shadow-sm border border-emerald-100 text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
+                      className="bg-card/95 hover:bg-secondary text-primary font-bold py-2 px-4 rounded-lg shadow-sm border border-slate-100 dark:border-border text-[12px] whitespace-nowrap transition-all backdrop-blur-md"
                     >
                       {section}
                     </button>
@@ -2188,19 +2244,19 @@ export default function App() {
 
         {/* Inactivity Warning Modal */}
         {inactivityWarning && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm p-6">
             <div
-              className="bg-white rounded-[28px] p-6 text-center space-y-4 max-w-[280px]"
+              className="bg-card rounded-[28px] p-6 text-center space-y-4 max-w-[280px]"
               style={{ boxShadow: '0 20px 48px rgba(16,32,26,0.16)' }}
             >
               <span className="text-4xl block">⏱️</span>
               <div>
-                <h3 className="text-base font-bold text-slate-700">
+                <h3 className="text-base font-bold text-foreground">
                   Are you still there?
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   You will be logged out automatically due to inactivity in{' '}
-                  <span className="font-extrabold text-rose-500">
+                  <span className="font-extrabold text-destructive">
                     {inactivityCountdown} seconds
                   </span>
                   .
@@ -2212,7 +2268,7 @@ export default function App() {
                   setInactivityCountdown(30);
                   window.dispatchEvent(new Event('click'));
                 }}
-                className="w-full bg-[#34c759] hover:bg-[#25ad48] text-white py-2.5 rounded-xl text-xs font-bold transition-all shadow-md"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-xs font-bold transition-all shadow-md"
               >
                 Keep Me Logged In
               </button>

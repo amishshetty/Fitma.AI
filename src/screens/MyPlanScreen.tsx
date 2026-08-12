@@ -141,15 +141,14 @@ export default function MyPlanScreen({
 
   return (
     <div
-      className="relative flex min-h-0 flex-1 flex-col"
+      className="relative flex min-h-0 flex-1 flex-col bg-background"
       style={{ 
-        background: '#f8f9fa',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 pb-4">
-        <h1 className="text-[28px] font-bold" style={{ color: ink }}>
+        <h1 className="text-[28px] font-bold text-foreground" >
           My Plan
         </h1>
       </div>
@@ -158,8 +157,8 @@ export default function MyPlanScreen({
       <div className="flex items-center justify-center gap-2 pb-6">
         <button
           onClick={() => changeDate(-1)}
-          className="p-2 active:scale-90 transition-transform"
-          style={{ color: muted }}
+          className="p-2 active:scale-90 transition-transform text-muted-foreground"
+          
         >
           <ChevronLeft size={18} />
         </button>
@@ -167,7 +166,7 @@ export default function MyPlanScreen({
           onClick={() => setIsCalendarOpen(true)}
           className="flex items-center gap-1 active:opacity-70 transition-opacity"
         >
-          <span className="text-base font-bold" style={{ color: ink }}>
+          <span className="text-base font-bold text-foreground" >
             {isToday
               ? 'Today'
               : new Date(selectedDate).toLocaleDateString(undefined, {
@@ -181,7 +180,7 @@ export default function MyPlanScreen({
           onClick={() => changeDate(1)}
           disabled={isToday}
           className={`p-2 transition-transform ${isToday ? 'opacity-30 cursor-not-allowed' : 'active:scale-90'}`}
-          style={{ color: muted }}
+          
         >
           <ChevronRight size={18} />
         </button>
@@ -191,7 +190,7 @@ export default function MyPlanScreen({
       <div className="flex-1 overflow-y-auto px-5 pb-5">
         {/* Futuristic Daily Summary (Light Theme) */}
         <div
-          className="relative overflow-hidden rounded-[32px] p-6 mb-8 bg-white"
+          className="relative overflow-hidden rounded-[32px] p-6 mb-8 bg-card text-card-foreground"
           style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
         >
           <div className="relative z-10 grid grid-cols-2 gap-3 mb-6">
@@ -223,18 +222,18 @@ export default function MyPlanScreen({
             ].map((meal, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 rounded-[20px] bg-slate-50/50 p-3 border border-slate-100 shadow-sm backdrop-blur-sm"
+                className="flex items-center gap-3 rounded-[20px] bg-slate-50 dark:bg-muted/50 p-3 border border-slate-100 dark:border-border shadow-sm backdrop-blur-sm"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-50">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-card text-card-foreground shadow-sm border border-slate-100 dark:border-border/50">
                   {meal.icon}
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate">
                     {meal.label}
                   </p>
-                  <p className="text-sm font-black text-slate-800 truncate">
+                  <p className="text-sm font-black text-foreground truncate">
                     {meal.cal}{' '}
-                    <span className="text-[10px] font-medium text-slate-400">
+                    <span className="text-[10px] font-medium text-muted-foreground">
                       kcal
                     </span>
                   </p>
@@ -245,14 +244,14 @@ export default function MyPlanScreen({
 
           <div className="relative z-10 flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Total Intake
               </h2>
               <div className="mt-1 flex items-end gap-2">
-                <span className="text-3xl font-black leading-none text-slate-800">
+                <span className="text-3xl font-black leading-none text-foreground">
                   {displayCalories}
                 </span>
-                <span className="text-sm font-medium text-slate-400 mb-0.5">
+                <span className="text-sm font-medium text-muted-foreground mb-0.5">
                   / {dailyGoalCal} kcal
                 </span>
               </div>
@@ -294,8 +293,8 @@ export default function MyPlanScreen({
 
           <div className="relative z-10 space-y-3">
             {selectedDateMeals.length === 0 ? (
-              <div className="rounded-2xl border border-slate-100 p-4 text-center bg-slate-50/50">
-                <p className="text-sm font-medium text-slate-400">
+              <div className="rounded-2xl border border-slate-100 dark:border-border p-4 text-center bg-slate-50 dark:bg-muted/50">
+                <p className="text-sm font-medium text-muted-foreground">
                   No meals logged yet.
                 </p>
               </div>
@@ -303,7 +302,7 @@ export default function MyPlanScreen({
               selectedDateMeals.map((meal) => (
                 <div
                   key={meal.id}
-                  className="rounded-2xl border border-slate-100 p-4 flex items-center justify-between bg-white transition-all shadow-sm cursor-pointer select-none active:scale-[0.98]"
+                  className="rounded-2xl border border-slate-100 dark:border-border p-4 flex items-center justify-between bg-card text-card-foreground transition-all shadow-sm cursor-pointer select-none active:scale-[0.98]"
                   onClick={() => setActiveActionMeal(meal)}
                   onTouchStart={() => handlePressStart(meal)}
                   onTouchEnd={handlePressEnd}
@@ -313,7 +312,7 @@ export default function MyPlanScreen({
                   onMouseLeave={handlePressEnd}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-muted border border-slate-100 dark:border-border">
                       {meal.mealType === 'breakfast' ? (
                         <Sunrise size={18} className="text-[#FF8B6B]" />
                       ) : meal.mealType === 'lunch' ? (
@@ -325,19 +324,19 @@ export default function MyPlanScreen({
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-700 capitalize text-sm">
+                      <h3 className="font-bold text-foreground capitalize text-sm">
                         {meal.mealType}
                       </h3>
-                      <p className="text-xs text-slate-400 mt-0.5 line-clamp-1 max-w-[120px]">
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1 max-w-[120px]">
                         {meal.name}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-slate-700 text-sm">
+                    <p className="font-bold text-foreground text-sm">
                       {meal.calories} kcal
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
+                    <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
                       {meal.protein}g protein
                     </p>
                   </div>
@@ -348,10 +347,10 @@ export default function MyPlanScreen({
         </div>
 
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-[17px] font-bold" style={{ color: ink }}>
+          <h2 className="text-[17px] font-bold text-foreground" >
             Daily Goals
           </h2>
-          <span className="text-xs font-bold" style={{ color: muted }}>
+          <span className="text-xs font-bold text-muted-foreground" >
             0 / 5 <Check size={12} className="inline ml-0.5" />
           </span>
         </div>
@@ -360,17 +359,17 @@ export default function MyPlanScreen({
           {/* Log Food Card */}
           <button
             onClick={() => setIsMealDrawerOpen(true)}
-            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-white text-left transition-transform active:scale-95"
+            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-card text-card-foreground text-left transition-transform active:scale-95"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
           >
             <div className="flex-1 p-5 pr-0">
-              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100" />
-              <h3 className="text-base font-bold text-slate-800">
+              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100 dark:border-border" />
+              <h3 className="text-base font-bold text-foreground">
                 Log Your Food
               </h3>
-              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
+              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
                 <Flame size={12} />{' '}
-                <span className="text-slate-800">{displayCalories}</span> /
+                <span className="text-foreground">{displayCalories}</span> /
                 {dailyGoalCal} cal
               </p>
             </div>
@@ -387,15 +386,15 @@ export default function MyPlanScreen({
           {/* Log Water Card */}
           <button
             onClick={() => setIsWaterDrawerOpen(true)}
-            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-white text-left transition-transform active:scale-95"
+            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-card text-card-foreground text-left transition-transform active:scale-95"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
           >
             <div className="flex-1 p-5 pr-0">
-              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100" />
-              <h3 className="text-base font-bold text-slate-800">Log Water</h3>
-              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
+              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100 dark:border-border" />
+              <h3 className="text-base font-bold text-foreground">Log Water</h3>
+              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
                 <Droplets size={12} />{' '}
-                <span className="text-slate-800">{displayWater}</span> /
+                <span className="text-foreground">{displayWater}</span> /
                 {dailyGoalWater}ml
               </p>
             </div>
@@ -411,14 +410,14 @@ export default function MyPlanScreen({
 
           {/* Log Weight Card */}
           <button
-            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-white text-left transition-transform active:scale-95"
+            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-card text-card-foreground text-left transition-transform active:scale-95"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
           >
             <div className="flex-1 p-5 pr-0">
-              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100" />
-              <h3 className="text-base font-bold text-slate-800">Log Weight</h3>
-              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
-                <Target size={12} /> <span className="text-slate-800">0</span>{' '}
+              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100 dark:border-border" />
+              <h3 className="text-base font-bold text-foreground">Log Weight</h3>
+              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                <Target size={12} /> <span className="text-foreground">0</span>{' '}
                 kg
               </p>
             </div>
@@ -434,22 +433,22 @@ export default function MyPlanScreen({
 
           {/* Log Activities Card */}
           <div
-            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-slate-50 text-left opacity-90"
+            className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-slate-50 dark:bg-muted text-left opacity-90"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}
           >
             <div className="flex-1 p-5 pr-0">
-              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-200 bg-slate-100" />
+              <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100 dark:border-border bg-slate-50 dark:bg-muted" />
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-slate-700">
+                <h3 className="text-base font-bold text-foreground">
                   Log Activities
                 </h3>
-                <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                <span className="rounded-full bg-border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                   Coming Soon
                 </span>
               </div>
-              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-400">
+              <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
                 <Zap size={12} />{' '}
-                <span className="text-slate-500">Future Scope</span>
+                <span className="text-muted-foreground">Future Scope</span>
               </p>
             </div>
             <div className="relative h-28 w-[140px]">
@@ -473,12 +472,12 @@ export default function MyPlanScreen({
             if (e.target === e.currentTarget) setIsMealDrawerOpen(false);
           }}
         >
-          <div className="animate-in slide-in-from-bottom-full flex w-full flex-col rounded-t-[32px] bg-white p-6 shadow-2xl pb-10">
-            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-200" />
-            <h3 className="mb-2 text-center text-xl font-bold text-slate-900">
+          <div className="animate-in slide-in-from-bottom-full flex w-full flex-col rounded-t-[32px] bg-card text-card-foreground p-6 shadow-2xl pb-10">
+            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border" />
+            <h3 className="mb-2 text-center text-xl font-bold text-foreground">
               Log Your Meal
             </h3>
-            <p className="mb-6 text-center text-sm font-semibold text-slate-500">
+            <p className="mb-6 text-center text-sm font-semibold text-muted-foreground">
               Choose how you want to track your food
             </p>
 
@@ -502,22 +501,24 @@ export default function MyPlanScreen({
                         onNavigate('camera-log');
                       }
                     }}
-                    className="flex w-full items-center gap-4 rounded-[20px] border-[1.5px] border-slate-100 bg-white p-4 transition-transform active:scale-95 active:bg-slate-50"
+                    className="flex w-full items-center gap-4 rounded-[20px] border-[1.5px] border-slate-100 dark:border-border bg-card text-card-foreground p-4 transition-transform active:scale-95 active:bg-slate-50 dark:active:bg-muted"
                   >
                     <div
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+                      className="overflow-hidden relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
                       style={{
                         backgroundColor: `${option.color}15`,
                         color: option.color,
                       }}
                     >
-                      <Icon size={24} />
-                    </div>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Icon size={24} />
+  </div>
+</div>
                     <div className="text-left">
-                      <h4 className="text-base font-bold text-slate-800">
+                      <h4 className="text-base font-bold text-foreground">
                         {option.title}
                       </h4>
-                      <p className="text-xs font-semibold text-slate-500">
+                      <p className="text-xs font-semibold text-muted-foreground">
                         {option.subtitle}
                       </p>
                     </div>
@@ -528,7 +529,7 @@ export default function MyPlanScreen({
 
             <button
               onClick={() => setIsMealDrawerOpen(false)}
-              className="mt-6 w-full rounded-[16px] bg-slate-100 py-4 font-bold text-slate-600 active:scale-95 transition-transform"
+              className="mt-6 w-full rounded-[16px] bg-slate-50 dark:bg-muted py-4 font-bold text-muted-foreground active:scale-95 transition-transform"
             >
               Cancel
             </button>
@@ -544,12 +545,12 @@ export default function MyPlanScreen({
             if (e.target === e.currentTarget) setIsWaterDrawerOpen(false);
           }}
         >
-          <div className="animate-in slide-in-from-bottom-full flex w-full flex-col rounded-t-[32px] bg-white p-6 shadow-2xl pb-10">
-            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-200" />
-            <h3 className="mb-2 text-center text-xl font-bold text-slate-900">
+          <div className="animate-in slide-in-from-bottom-full flex w-full flex-col rounded-t-[32px] bg-card text-card-foreground p-6 shadow-2xl pb-10">
+            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border" />
+            <h3 className="mb-2 text-center text-xl font-bold text-foreground">
               Log Water
             </h3>
-            <p className="mb-6 text-center text-sm font-semibold text-slate-500">
+            <p className="mb-6 text-center text-sm font-semibold text-muted-foreground">
               Quickly add water to your daily goal
             </p>
 
@@ -575,7 +576,7 @@ export default function MyPlanScreen({
 
             <button
               onClick={() => setIsWaterDrawerOpen(false)}
-              className="mt-6 w-full rounded-[16px] bg-slate-100 py-4 font-bold text-slate-600 active:scale-95 transition-transform"
+              className="mt-6 w-full rounded-[16px] bg-slate-50 dark:bg-muted py-4 font-bold text-muted-foreground active:scale-95 transition-transform"
             >
               Cancel
             </button>
@@ -592,18 +593,18 @@ export default function MyPlanScreen({
           }}
         >
           <style>{`.hide-scroll::-webkit-scrollbar { display: none; }`}</style>
-          <div className="animate-in slide-in-from-bottom-full flex h-[85%] w-full flex-col rounded-t-[32px] bg-white p-6 shadow-2xl">
-            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-200" />
-            <h3 className="mb-6 text-center text-lg font-bold text-slate-900">
+          <div className="animate-in slide-in-from-bottom-full flex h-[85%] w-full flex-col rounded-t-[32px] bg-card text-card-foreground p-6 shadow-2xl">
+            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border" />
+            <h3 className="mb-6 text-center text-lg font-bold text-foreground">
               Pick a Date
             </h3>
 
             {/* Days of week header */}
-            <div className="grid grid-cols-7 mb-4 border-b border-slate-100 pb-3">
+            <div className="grid grid-cols-7 mb-4 border-b border-slate-100 dark:border-border pb-3">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                 <div
                   key={day}
-                  className="text-center text-xs font-semibold text-slate-600"
+                  className="text-center text-xs font-semibold text-muted-foreground"
                 >
                   {day}
                 </div>
@@ -674,7 +675,7 @@ export default function MyPlanScreen({
                             className="flex justify-center items-center h-8"
                           >
                             <div
-                              className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${isSelected ? 'border-[1.5px] border-slate-900 text-slate-900 font-bold' : isTodayDate ? 'bg-[#34C759] text-white font-bold' : 'text-slate-500'}`}
+                              className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${isSelected ? 'border-[1.5px] border-slate-100 dark:border-border/50 text-foreground font-bold' : isTodayDate ? 'bg-[#34C759] text-white font-bold' : 'text-muted-foreground'}`}
                             >
                               {d.getDate()}
                             </div>
@@ -706,15 +707,15 @@ export default function MyPlanScreen({
         }}
       >
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-[40px] p-8 pb-12 shadow-[0_-20px_40px_rgba(0,0,0,0.06)] border-t border-white transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] transform ${activeActionMeal ? 'translate-y-0' : 'translate-y-full'}`}
+          className={`absolute bottom-0 left-0 right-0 bg-card text-card-foreground rounded-t-[40px] p-8 pb-12 shadow-[0_-20px_40px_rgba(0,0,0,0.06)] border-t border-white transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] transform ${activeActionMeal ? 'translate-y-0' : 'translate-y-full'}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="w-16 h-1.5 bg-slate-300/50 rounded-full mx-auto mb-8" />
+          <div className="w-16 h-1.5 bg-border rounded-full mx-auto mb-8" />
 
           {activeActionMeal && !isEditingMeal && (
             <>
               <div className="flex items-center gap-4 mb-8">
-                <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[24px] bg-white shadow-[0_12px_36px_rgba(52,199,89,0.12)]">
+                <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[24px] bg-card text-card-foreground shadow-[0_12px_36px_rgba(52,199,89,0.12)]">
                   {activeActionMeal.mealType === 'breakfast' ? (
                     <Sunrise
                       size={32}
@@ -741,7 +742,7 @@ export default function MyPlanScreen({
                   <h3 className="font-extrabold text-[#1c1c1e] text-[22px] capitalize tracking-tight leading-tight">
                     {activeActionMeal.mealType}
                   </h3>
-                  <p className="text-[14px] font-semibold text-slate-400 mt-1 line-clamp-1 leading-snug">
+                  <p className="text-[14px] font-semibold text-muted-foreground mt-1 line-clamp-1 leading-snug">
                     {activeActionMeal.name}
                   </p>
                 </div>
@@ -765,7 +766,7 @@ export default function MyPlanScreen({
                       strokeWidth={2.5}
                       className="text-[#34C759]"
                     />
-                    <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest">
+                    <span className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest">
                       Calories
                     </span>
                   </div>
@@ -773,7 +774,7 @@ export default function MyPlanScreen({
                     <span className="text-[32px] font-black text-[#34C759] leading-none tracking-tighter">
                       {activeActionMeal.calories || 0}
                     </span>
-                    <span className="text-[13px] font-bold text-slate-400">
+                    <span className="text-[13px] font-bold text-muted-foreground">
                       kcal
                     </span>
                   </div>
@@ -821,15 +822,15 @@ export default function MyPlanScreen({
                   ].map((stat, i) => (
                     <div
                       key={i}
-                      className="relative rounded-[20px] p-3.5 bg-white border border-slate-50 flex flex-col items-start shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
+                      className="relative rounded-[20px] p-3.5 bg-card text-card-foreground border border-slate-100 dark:border-border/50 flex flex-col items-start shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
                     >
                       <div className="mb-1.5">{stat.icon}</div>
-                      <p className="text-[9px] font-bold text-slate-400 mb-0.5 uppercase tracking-wider">
+                      <p className="text-[9px] font-bold text-muted-foreground mb-0.5 uppercase tracking-wider">
                         {stat.label}
                       </p>
-                      <p className="text-[18px] font-black text-slate-800 leading-none flex items-baseline gap-0.5">
+                      <p className="text-[18px] font-black text-foreground leading-none flex items-baseline gap-0.5">
                         {stat.value || 0}
-                        <span className="text-[11px] font-bold text-slate-400 lowercase ml-0.5">
+                        <span className="text-[11px] font-bold text-muted-foreground lowercase ml-0.5">
                           {stat.unit}
                         </span>
                       </p>
@@ -840,7 +841,7 @@ export default function MyPlanScreen({
 
               <div className="flex items-center gap-3">
                 <button
-                  className="flex-1 flex justify-center items-center py-4 rounded-[20px] bg-white border border-rose-100 active:scale-[0.98] transition-transform"
+                  className="flex-1 flex justify-center items-center py-4 rounded-[20px] bg-card text-card-foreground border border-rose-100 active:scale-[0.98] transition-transform"
                   onClick={() => {
                     if (onDeleteMeal) {
                       let dateText = 'today';
@@ -877,17 +878,17 @@ export default function MyPlanScreen({
           {activeActionMeal && isEditingMeal && (
             <div className="space-y-4 relative">
               {isSaving && (
-                <div className="absolute inset-0 z-10 bg-white/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                <div className="absolute inset-0 z-10 bg-card/50 text-card-foreground backdrop-blur-sm rounded-2xl flex items-center justify-center">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#34C759] border-t-transparent" />
                 </div>
               )}
 
-              <h3 className="font-extrabold text-slate-800 text-xl tracking-tight mb-6">
+              <h3 className="font-extrabold text-foreground text-xl tracking-tight mb-6">
                 Edit {activeActionMeal.mealType}
               </h3>
 
               <div>
-                <label className="text-[12px] font-extrabold text-slate-700 uppercase tracking-wider ml-1 mb-2 block">
+                <label className="text-[12px] font-extrabold text-foreground uppercase tracking-wider ml-1 mb-2 block">
                   What did you eat?
                 </label>
                 <input
@@ -897,9 +898,9 @@ export default function MyPlanScreen({
                     setEditFormData({ ...editFormData, name: e.target.value })
                   }
                   placeholder="e.g. 2 slices of avocado toast"
-                  className="w-full bg-white border border-slate-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] rounded-2xl p-5 font-black text-slate-900 text-lg focus:outline-none focus:ring-2 focus:ring-[#34C759]/40 focus:border-[#34C759] transition-all placeholder:text-slate-400 placeholder:font-medium"
+                  className="w-full bg-card text-card-foreground border border-slate-100 dark:border-border shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] rounded-2xl p-5 font-black text-foreground text-lg focus:outline-none focus:ring-2 focus:ring-[#34C759]/40 focus:border-[#34C759] transition-all placeholder:text-muted-foreground placeholder:font-medium"
                 />
-                <p className="text-[12px] font-medium text-slate-500 ml-1 mt-3 leading-relaxed">
+                <p className="text-[12px] font-medium text-muted-foreground ml-1 mt-3 leading-relaxed">
                   Liva AI will automatically calculate the calories, protein,
                   carbs, and fats based on the food you enter.
                 </p>
@@ -960,7 +961,7 @@ export default function MyPlanScreen({
                     }
                   }}
                 >
-                  <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-card/20 text-card-foreground opacity-0 active:opacity-100 transition-opacity duration-300" />
                   {isSaving ? (
                     <div className="flex items-center gap-3">
                       <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -972,7 +973,7 @@ export default function MyPlanScreen({
                 </button>
                 <button
                   disabled={isSaving}
-                  className="w-full flex items-center justify-center p-4 rounded-2xl bg-white/60 backdrop-blur-lg border border-slate-200/50 text-slate-700 shadow-[0_8px_24px_rgba(0,0,0,0.03)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
+                  className="w-full flex items-center justify-center p-4 rounded-2xl bg-card/60 text-card-foreground backdrop-blur-lg border border-slate-100 dark:border-border/50 text-foreground shadow-[0_8px_24px_rgba(0,0,0,0.03)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
                   onClick={() => setIsEditingMeal(false)}
                 >
                   Cancel

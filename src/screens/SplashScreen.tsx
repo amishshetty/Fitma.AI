@@ -23,16 +23,18 @@ export default function SplashScreen({ onNext }: { onNext: () => void }) {
         className="flex flex-col items-center gap-5"
       >
         <div
-          className="flex h-24 w-24 items-center justify-center rounded-[28px] text-white"
+          className="overflow-hidden relative flex h-24 w-24 items-center justify-center rounded-[28px] text-white"
           style={{ background: 'linear-gradient(135deg, #34C759, #00C4B0)' }}
         >
-          <Leaf size={48} />
-        </div>
+  <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+    <Leaf size={48} />
+  </div>
+</div>
         <div className="text-center">
-          <h1 className="text-3xl font-bold" style={{ color: ink }}>
+          <h1 className="text-3xl font-bold text-foreground" >
             Fitma<span style={{ color: green }}>.ai</span>
           </h1>
-          <p className="mt-2 text-sm font-semibold" style={{ color: muted }}>
+          <p className="mt-2 text-sm font-semibold text-muted-foreground" >
             Your AI nutrition companion
           </p>
         </div>

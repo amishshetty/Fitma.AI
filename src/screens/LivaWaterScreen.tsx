@@ -34,11 +34,11 @@ export default function LivaWaterScreen({
       <div className="space-y-6 flex flex-col justify-center">
         {/* Fill Glass Card */}
         <div
-          className="rounded-[28px] bg-white p-6 border border-[#34C759]/12 flex justify-around items-center"
+          className="rounded-[28px] bg-card text-card-foreground p-6 border border-[#34C759]/12 flex justify-around items-center"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.05)' }}
         >
           {/* Visual Glass Container */}
-          <div className="relative h-44 w-24 border-4 border-slate-200 rounded-b-3xl rounded-t-lg overflow-hidden flex flex-col justify-end bg-slate-50">
+          <div className="relative h-44 w-24 border-4 border-slate-100 dark:border-border rounded-b-3xl rounded-t-lg overflow-hidden flex flex-col justify-end bg-slate-50 dark:bg-muted">
             {/* Water levels inside */}
             <motion.div
               animate={{ height: `${glassPercent}%` }}
@@ -60,16 +60,16 @@ export default function LivaWaterScreen({
           </div>
 
           <div className="text-left space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
               Logged Today
             </span>
             <span
-              className="text-2xl font-extrabold block"
-              style={{ color: ink }}
+              className="text-2xl font-extrabold block text-foreground"
+              
             >
               {(waterLogged / 1000).toFixed(2)} L
             </span>
-            <span className="text-xs text-slate-400 font-semibold block">
+            <span className="text-xs text-muted-foreground font-semibold block">
               Target: {(waterGoal / 1000).toFixed(2)} L
             </span>
             <button
@@ -85,45 +85,45 @@ export default function LivaWaterScreen({
         <div className="grid grid-cols-3 gap-2.5">
           <button
             onClick={() => onLogWater(250)}
-            className="rounded-2xl bg-white p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
+            className="rounded-2xl bg-card text-card-foreground p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.03)' }}
           >
             <Droplets className="mx-auto text-[#00c4b0]" size={20} />
             <span
-              className="block text-xs font-bold mt-2"
-              style={{ color: ink }}
+              className="block text-xs font-bold mt-2 text-foreground"
+              
             >
               +250ml
             </span>
-            <span className="text-[9px] text-slate-400">Cup</span>
+            <span className="text-[9px] text-muted-foreground">Cup</span>
           </button>
           <button
             onClick={() => onLogWater(500)}
-            className="rounded-2xl bg-white p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
+            className="rounded-2xl bg-card text-card-foreground p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.03)' }}
           >
             <Droplets className="mx-auto text-[#00c4b0]" size={20} />
             <span
-              className="block text-xs font-bold mt-2"
-              style={{ color: ink }}
+              className="block text-xs font-bold mt-2 text-foreground"
+              
             >
               +500ml
             </span>
-            <span className="text-[9px] text-slate-400">Bottle</span>
+            <span className="text-[9px] text-muted-foreground">Bottle</span>
           </button>
           <button
             onClick={() => onLogWater(1000)}
-            className="rounded-2xl bg-white p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
+            className="rounded-2xl bg-card text-card-foreground p-4.5 text-center border border-[#00c4b0]/16 hover:bg-[#e9fbf7] transition-all"
             style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.03)' }}
           >
             <Droplets className="mx-auto text-[#00c4b0]" size={20} />
             <span
-              className="block text-xs font-bold mt-2"
-              style={{ color: ink }}
+              className="block text-xs font-bold mt-2 text-foreground"
+              
             >
               +1000ml
             </span>
-            <span className="text-[9px] text-slate-400">Flask</span>
+            <span className="text-[9px] text-muted-foreground">Flask</span>
           </button>
         </div>
       </div>

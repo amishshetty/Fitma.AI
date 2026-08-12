@@ -20,36 +20,31 @@ export default function ScreenShell({
   compact?: boolean;
 }) {
   return (
-    <div
-      className="flex min-h-0 flex-1 flex-col"
-      style={{ background: '#f7fffe' }}
-    >
+    <div className="flex min-h-0 flex-1 flex-col bg-background text-foreground transition-colors duration-200">
       <div 
-        className="flex items-center gap-3 px-6"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 16px)' }}
+        className="flex flex-col px-6"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)' }}
       >
-        {onBack && (
-          <IconButton onClick={onBack} label="Back">
-            <ArrowLeft size={19} />
-          </IconButton>
-        )}
-        <div className="min-w-0 flex-1">
-          {title && (
-            <h1
-              className="text-2xl font-bold leading-tight"
-              style={{ color: ink }}
-            >
-              {title}
-            </h1>
+        <div className="flex items-start gap-3">
+          {onBack && (
+            <div className="flex-shrink-0 pt-[2px]">
+              <IconButton onClick={onBack} label="Back">
+                <ArrowLeft size={19} />
+              </IconButton>
+            </div>
           )}
-          {subtitle && (
-            <p
-              className="mt-1 text-sm leading-relaxed"
-              style={{ color: muted }}
-            >
-              {subtitle}
-            </p>
-          )}
+          <div className="min-w-0 flex-1">
+            {title && (
+              <h1 className="text-2xl font-bold leading-tight pt-1">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
       </div>
       <div

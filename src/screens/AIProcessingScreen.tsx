@@ -31,7 +31,7 @@ export default function AIProcessingScreen({ onDone }: { onDone: () => void }) {
           />
           <LivaAvatar size={132} floating />
         </div>
-        <h1 className="text-3xl font-bold" style={{ color: ink }}>
+        <h1 className="text-3xl font-bold text-foreground" >
           Analyzing your meal...
         </h1>
         <AnimatePresence mode="wait">
@@ -40,8 +40,8 @@ export default function AIProcessingScreen({ onDone }: { onDone: () => void }) {
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -8, opacity: 0 }}
-            className="mt-4 text-base font-semibold"
-            style={{ color: muted }}
+            className="mt-4 text-base font-semibold text-muted-foreground"
+            
           >
             {rotatingFacts[factIndex]}
           </motion.p>

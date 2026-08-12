@@ -239,22 +239,22 @@ export default function HomeScreen({
       label: 'Voice',
       icon: Mic,
       mode: 'voice' as EntryMode,
-      color: green,
-      bg: '#ecfbf1',
+      color: '#86efac',
+      bg: 'rgba(0,0,0,0.28)',
     },
     {
       label: 'Camera',
       icon: Camera,
       mode: 'camera' as EntryMode,
-      color: '#0EA5E9',
-      bg: '#e9f7ff',
+      color: '#7dd3fc',
+      bg: 'rgba(0,0,0,0.28)',
     },
     {
       label: 'Text',
       icon: Keyboard,
       mode: 'text' as EntryMode,
-      color: '#7C3AED',
-      bg: '#f3edff',
+      color: '#d8b4fe',
+      bg: 'rgba(0,0,0,0.28)',
     },
   ];
 
@@ -310,9 +310,8 @@ export default function HomeScreen({
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col"
+      className="flex min-h-0 flex-1 flex-col bg-background transition-colors duration-200"
       style={{
-        background: 'linear-gradient(180deg, #e5fbf2 0%, #f7fffe 100%)',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
       }}
     >
@@ -321,14 +320,14 @@ export default function HomeScreen({
           <div className="flex items-start justify-between gap-4">
             <div>
               <h1
-                className="text-2xl font-bold leading-tight"
-                style={{ color: ink }}
+                className="text-2xl font-bold leading-tight text-foreground"
+                
               >
                 {getGreeting()}, {userName}
               </h1>
               <p
-                className="mt-2 max-w-[250px] text-sm leading-relaxed"
-                style={{ color: muted }}
+                className="mt-2 max-w-[250px] text-sm leading-relaxed text-muted-foreground"
+                
               >
                 Small wins today. Log meals quickly and let Liva keep the
                 numbers tidy.
@@ -337,7 +336,7 @@ export default function HomeScreen({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onNavigate('reminder-center')}
-                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-100/80"
+                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-card text-card-foreground border border-slate-100 dark:border-border/80"
                 style={{
                   color: green,
                   boxShadow: '0 4px 14px rgba(16,32,26,0.06)',
@@ -352,13 +351,7 @@ export default function HomeScreen({
         </section>
 
         <section
-          className="mb-4 rounded-[24px] bg-white/40 p-3.5 cursor-pointer hover:bg-white/60 transition-colors"
-          style={{
-            boxShadow: '0 6px 20px rgba(16,32,26,0.04)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
-          }}
+          className="mb-4 rounded-[24px] bg-card/40 text-card-foreground p-3.5 cursor-pointer hover:bg-card/60 transition-colors border border-slate-100 dark:border-border/50 shadow-sm backdrop-blur-xl"
           onClick={(e) => {
             if ((e.target as HTMLElement).tagName !== 'INPUT') {
               if (askLivaText.trim()) {
@@ -371,18 +364,18 @@ export default function HomeScreen({
           <div className="flex items-center gap-3">
             <LivaAvatar size={38} floating />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold" style={{ color: ink }}>
+              <p className="text-sm font-bold text-foreground" >
                 Ask Liva
               </p>
               <div
-                className="mt-2 flex items-center gap-2 rounded-2xl bg-[#f2faf5]/50 px-3 py-2.5"
+                className="mt-2 flex items-center gap-2 rounded-2xl bg-[#f2faf5]/80 dark:bg-black/30 px-3 py-2.5"
                 style={{
-                  border: '1px solid rgba(52,199,89,0.1)',
+                  border: '1px solid rgba(52,199,89,0.15)',
                 }}
               >
                 <MessageCircle size={16} color={green} />
                 <input
-                  className="min-w-0 flex-1 bg-transparent text-xs outline-none"
+                  className="min-w-0 flex-1 bg-transparent text-xs outline-none text-foreground placeholder:text-muted-foreground"
                   placeholder="What did you eat today?"
                   value={askLivaText}
                   onChange={(e) => setAskLivaText(e.target.value)}
@@ -429,7 +422,8 @@ export default function HomeScreen({
             </div>
             <button
               onClick={() => onNavigate('quick-log')}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-white"
+              style={{ background: 'rgba(0,0,0,0.20)' }}
               aria-label="Open quick log"
             >
               <Plus size={20} />
@@ -443,16 +437,20 @@ export default function HomeScreen({
                   key={action.label}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onStartLog(action.mode)}
-                  className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-[20px] bg-white text-sm font-bold"
-                  style={{ color: ink }}
+                  className="flex min-h-[90px] flex-col items-center justify-center gap-2 p-3 rounded-[20px] text-white text-sm font-bold backdrop-blur-sm transition-colors shadow-sm text-center"
+                  style={{ background: 'rgba(0,0,0,0.20)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.30)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(0,0,0,0.20)')}
                 >
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-2xl"
+                    className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl overflow-hidden"
                     style={{ background: action.bg, color: action.color }}
                   >
-                    <Icon size={23} />
+                    <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                      <Icon size={23} />
+                    </div>
                   </span>
-                  {action.label}
+                  <span className="w-full text-center leading-none">{action.label}</span>
                 </motion.button>
               );
             })}
@@ -460,20 +458,19 @@ export default function HomeScreen({
         </section>
 
         <section
-          className="mb-6 rounded-[32px] bg-white p-6"
-          style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
+          className="mb-6 rounded-[32px] bg-card text-card-foreground p-6 border border-slate-100 dark:border-border"
         >
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <p className="text-lg font-black tracking-tight text-slate-800">
+              <p className="text-lg font-black tracking-tight text-foreground">
                 Daily Nutrition
               </p>
-              <p className="text-xs font-semibold text-slate-400">
+              <p className="text-xs font-semibold text-muted-foreground">
                 Compact overview
               </p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 border border-slate-100/60 shadow-sm">
-              <Sparkles size={20} className="text-[#00C4B0]" />
+            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+              <Sparkles size={20} className="text-primary" />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -485,10 +482,8 @@ export default function HomeScreen({
               return (
                 <div
                   key={item.label}
-                  className="rounded-[24px] bg-slate-50/70 p-4 flex flex-col items-center justify-center border border-slate-100 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.03)] relative overflow-hidden"
+                  className="rounded-[24px] bg-slate-50 dark:bg-muted p-4 flex flex-col items-center justify-center border border-slate-100 dark:border-border relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-white/60 blur-xl rounded-full translate-x-1/2 -translate-y-1/2" />
-
                   <div className="flex justify-center mb-4 relative z-10">
                     <ProgressRing
                       value={item.value}
@@ -498,14 +493,14 @@ export default function HomeScreen({
                   </div>
 
                   <div className="text-center relative z-10 flex flex-col items-center w-full">
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5">
                       {item.label}
                     </p>
-                    <p className="text-xs font-black text-slate-800">
+                    <p className="text-xs font-black text-foreground">
                       {current}
                     </p>
                     {total && (
-                      <p className="text-[10px] font-semibold text-slate-400 mt-0.5">
+                      <p className="text-[10px] font-semibold text-muted-foreground mt-0.5">
                         / {total}
                       </p>
                     )}
@@ -517,19 +512,18 @@ export default function HomeScreen({
         </section>
 
         <section
-          className="mb-8 rounded-[32px] bg-white p-6"
-          style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
+          className="mb-8 rounded-[32px] bg-card text-card-foreground p-6 border border-slate-100 dark:border-border"
         >
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <p className="text-lg font-bold text-slate-800">Water Intake</p>
-              <p className="text-xs font-medium text-slate-400">
+              <p className="text-lg font-bold text-foreground">Water Intake</p>
+              <p className="text-xs font-medium text-muted-foreground">
                 {Math.round(waterGlasses * 250)} ml logged today
               </p>
             </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-[#f2faf5] px-3 py-1.5 border border-[#e9fbf7]">
-              <Droplets size={16} className="text-[#00C4B0]" />
-              <span className="text-sm font-bold text-[#00C4B0]">
+            <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 border border-primary/20">
+              <Droplets size={16} className="text-primary" />
+              <span className="text-sm font-bold text-primary">
                 {waterGlasses}/12
               </span>
             </div>
@@ -544,13 +538,10 @@ export default function HomeScreen({
                   onLogWater(targetVal - waterLogged);
                 }}
                 aria-label={`Set water intake to ${(index + 1) * 250} ml`}
-                className="flex-1 rounded-sm transition-all duration-300"
+                className={`flex-1 rounded-md transition-all duration-300 ${index < waterGlasses ? '' : 'bg-slate-50 dark:bg-muted'}`}
                 style={{
-                  background:
-                    index < waterGlasses
-                      ? 'linear-gradient(180deg, #34C759, #00C4B0)'
-                      : '#f1f5f9',
                   opacity: index < waterGlasses ? 1 : 0.6,
+                  background: index < waterGlasses ? 'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)' : undefined
                 }}
               />
             ))}
@@ -559,27 +550,23 @@ export default function HomeScreen({
           <div className="flex items-center gap-3">
             <button
               onClick={() => onLogWater(-250)}
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 transition-colors active:bg-slate-100"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 dark:bg-muted border border-slate-100 dark:border-border text-muted-foreground transition-colors active:bg-slate-50 dark:active:bg-muted"
               aria-label="Decrease water"
             >
               <Minus size={20} />
             </button>
             <button
               onClick={() => onLogWater(250)}
-              className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl text-sm font-bold text-white shadow-lg active:scale-[0.98] transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #00C4B0, #34C759)',
-                boxShadow: '0 8px 16px rgba(0, 196, 176, 0.2)',
-              }}
+              className="flex h-14 flex-1 items-center justify-center gap-2 rounded-2xl text-sm font-bold text-white shadow-sm"
+              style={{ background: 'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)' }}
             >
               <Droplets size={18} />
               Add 250 ml
             </button>
             <button
               onClick={() => onLogWater(250)}
-              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9fbf7]"
+              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"
               aria-label="Increase water"
-              style={{ color: '#009c8b' }}
             >
               <Plus size={18} />
             </button>
@@ -588,13 +575,12 @@ export default function HomeScreen({
 
         <section className="mb-5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-bold" style={{ color: ink }}>
+            <h2 className="text-sm font-bold text-foreground" >
               Today's Meals Timeline
             </h2>
             <button
               onClick={() => onNavigate('quick-log')}
-              className="text-xs font-bold"
-              style={{ color: green }}
+              className="text-xs font-bold text-primary"
             >
               Add
             </button>
@@ -609,16 +595,10 @@ export default function HomeScreen({
                     setIsMealDrawerOpen(true);
                   }
                 }}
-                className={`flex items-center gap-4 rounded-[24px] p-4 border transition-all ${meal.active ? 'bg-white border-transparent cursor-pointer active:scale-95' : 'bg-slate-50/50 border-slate-100'}`}
-                style={{
-                  boxShadow: meal.active
-                    ? '0 8px 24px rgba(0,0,0,0.04)'
-                    : 'none',
-                }}
+                className={`flex items-center gap-4 rounded-[24px] p-4 border transition-all ${meal.active ? 'bg-card text-card-foreground border-slate-100 dark:border-border cursor-pointer active:scale-95' : 'bg-slate-50 dark:bg-muted border-slate-100 dark:border-border'}`}
               >
                 <div
-                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 shadow-sm"
-                  style={{ color: meal.active ? green : muted }}
+                  className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-background border border-slate-100 dark:border-border ${meal.active ? 'text-primary' : 'text-muted-foreground'}`}
                 >
                   {meal.label === 'Breakfast' ? (
                     <Sunrise size={20} />
@@ -632,28 +612,25 @@ export default function HomeScreen({
                 </div>
                 <div className="min-w-0 flex-1">
                   <p
-                    className="text-sm font-bold"
-                    style={{ color: meal.active ? ink : '#64748b' }}
+                    className={`text-sm font-bold ${meal.active ? 'text-foreground' : 'text-muted-foreground'}`}
                   >
                     {meal.label}
                   </p>
                   <p
-                    className="mt-0.5 text-xs font-medium line-clamp-1"
-                    style={{ color: meal.active ? '#64748b' : '#94a3b8' }}
+                    className={`mt-0.5 text-xs font-medium line-clamp-1 ${meal.active ? 'text-muted-foreground' : 'text-muted-foreground/50'}`}
                   >
                     {meal.status}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p
-                    className="text-sm font-bold"
-                    style={{ color: meal.active ? ink : '#64748b' }}
+                    className={`text-sm font-bold ${meal.active ? 'text-foreground' : 'text-muted-foreground'}`}
                   >
                     {meal.calories}
                   </p>
                   <p
-                    className="mt-0.5 text-[10px] font-bold uppercase tracking-wider"
-                    style={{ color: muted }}
+                    className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                    
                   >
                     {meal.time}
                   </p>
@@ -665,10 +642,10 @@ export default function HomeScreen({
 
         <section className="mb-8 relative">
           <div className="flex items-center gap-2 mb-4 relative z-10">
-            <div className="bg-white/80 backdrop-blur-md rounded-full p-1.5 flex items-center justify-center border border-slate-100 shadow-sm">
-              <Sparkles size={14} className="text-[#00C4B0]" />
+            <div className="bg-card text-card-foreground rounded-full p-1.5 flex items-center justify-center border border-slate-100 dark:border-border">
+              <Sparkles size={14} className="text-primary" />
             </div>
-            <h2 className="text-[15px] font-bold text-slate-800">
+            <h2 className="text-[15px] font-bold text-foreground">
               Liva's Active Analysis
             </h2>
           </div>
@@ -677,21 +654,12 @@ export default function HomeScreen({
             {insights.map((insight) => (
               <div
                 key={insight.id}
-                className="relative overflow-hidden rounded-[24px] p-4 border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_-8px_rgba(0,0,0,0.06)] transition-all active:scale-[0.98]"
+                className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-emerald-500/10 to-transparent dark:from-emerald-500/5 p-4 shadow-sm"
               >
-                <div
-                  className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl opacity-20"
-                  style={{
-                    background: insight.color,
-                    transform: 'translate(30%, -30%)',
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/30 to-transparent pointer-events-none" />
-
                 <div className="relative z-10 flex flex-col gap-2.5">
                   <div className="flex gap-3">
                     <span
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/90 backdrop-blur-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-white/80"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white dark:bg-card shadow-sm"
                       style={{ color: insight.color }}
                     >
                       {insight.icon}
@@ -703,7 +671,7 @@ export default function HomeScreen({
                       >
                         {insight.title}
                       </p>
-                      <p className="text-[13px] leading-snug text-slate-600 pr-2">
+                      <p className="text-[13px] leading-snug text-muted-foreground pr-2">
                         {insight.text}
                       </p>
                     </div>
@@ -711,7 +679,7 @@ export default function HomeScreen({
                   {insight.actionText && insight.onClick && (
                     <button
                       onClick={insight.onClick}
-                      className="self-start ml-[52px] flex items-center gap-1.5 text-[12px] font-bold transition-all px-3 py-1.5 rounded-xl bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm hover:bg-white"
+                      className="self-start ml-[52px] flex items-center gap-1.5 text-[12px] font-bold transition-all px-4 py-1.5 rounded-full bg-white dark:bg-card shadow-sm hover:scale-95"
                       style={{ color: insight.color }}
                     >
                       {insight.actionText}
@@ -741,12 +709,12 @@ export default function HomeScreen({
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute bottom-0 left-0 right-0 z-50 rounded-t-[32px] bg-white p-6 pb-12 shadow-2xl"
+              className="absolute bottom-0 left-0 right-0 z-50 rounded-t-[32px] bg-card text-card-foreground p-6 pb-12 shadow-2xl"
             >
-              <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-slate-200" />
+              <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border" />
               <h2
-                className="mb-6 text-2xl font-bold capitalize"
-                style={{ color: ink }}
+                className="mb-6 text-2xl font-bold capitalize text-foreground"
+                
               >
                 {selectedMealCategory} Details
               </h2>
@@ -754,7 +722,7 @@ export default function HomeScreen({
               <div className="space-y-4">
                 {loggedMeals.filter((m) => m.mealType === selectedMealCategory)
                   .length === 0 ? (
-                  <p className="text-center text-sm text-slate-500 py-4">
+                  <p className="text-center text-sm text-muted-foreground py-4">
                     No meals logged for this category.
                   </p>
                 ) : (
@@ -763,19 +731,19 @@ export default function HomeScreen({
                     .map((m) => (
                       <div
                         key={m.id}
-                        className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50"
+                        className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 dark:border-border bg-slate-50 dark:bg-muted"
                       >
                         <div>
                           <p
-                            className="font-bold text-sm"
-                            style={{ color: ink }}
+                            className="font-bold text-sm text-foreground"
+                            
                           >
                             {m.name}
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {m.calories} kcal • {m.protein}g protein
                           </p>
-                          <p className="text-[10px] text-slate-400 mt-0.5">
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
                             {m.timestamp}
                           </p>
                         </div>

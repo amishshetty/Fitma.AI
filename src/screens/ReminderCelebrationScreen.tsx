@@ -59,7 +59,7 @@ export default function ReminderCelebrationScreen({
           </p>
         </div>
 
-        <div className="w-full bg-white/06 border border-white/10 rounded-2xl p-4 text-left">
+        <div className="w-full bg-card/06 text-card-foreground border border-white/10 rounded-2xl p-4 text-left">
           <span className="text-[9px] uppercase text-white/50 block font-bold tracking-wider">
             Achievement Metrics
           </span>

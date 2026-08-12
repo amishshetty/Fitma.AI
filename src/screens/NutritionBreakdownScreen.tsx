@@ -24,14 +24,14 @@ export default function NutritionBreakdownScreen({
     >
       <div className="space-y-5">
         <div
-          className="rounded-[28px] bg-white p-5 text-center"
+          className="rounded-[28px] bg-card text-card-foreground p-5 text-center"
           style={{ boxShadow: '0 8px 26px rgba(16,32,26,0.07)' }}
         >
           <ProgressRing value={40} size={132} label="today" />
-          <p className="mt-4 text-4xl font-bold" style={{ color: ink }}>
+          <p className="mt-4 text-4xl font-bold text-foreground" >
             610
           </p>
-          <p className="text-sm font-semibold" style={{ color: muted }}>
+          <p className="text-sm font-semibold text-muted-foreground" >
             calories in this meal
           </p>
         </div>
@@ -62,15 +62,15 @@ export default function NutritionBreakdownScreen({
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-white p-4 text-center">
+          <div className="rounded-2xl bg-card text-card-foreground p-4 text-center">
             <ProgressRing value={76} size={86} color="#0EA5E9" label="water" />
-            <p className="mt-2 text-xs font-semibold" style={{ color: muted }}>
+            <p className="mt-2 text-xs font-semibold text-muted-foreground" >
               Water balance
             </p>
           </div>
-          <div className="rounded-2xl bg-white p-4 text-center">
+          <div className="rounded-2xl bg-card text-card-foreground p-4 text-center">
             <ProgressRing value={84} size={86} color={green} label="score" />
-            <p className="mt-2 text-xs font-semibold" style={{ color: muted }}>
+            <p className="mt-2 text-xs font-semibold text-muted-foreground" >
               Healthy score
             </p>
           </div>
@@ -85,12 +85,12 @@ export default function NutritionBreakdownScreen({
           <div className="flex gap-3">
             <LivaAvatar size={42} />
             <div>
-              <p className="text-sm font-bold" style={{ color: ink }}>
+              <p className="text-sm font-bold text-foreground" >
                 AI Insight
               </p>
               <p
-                className="mt-1 text-sm leading-relaxed"
-                style={{ color: muted }}
+                className="mt-1 text-sm leading-relaxed text-muted-foreground"
+                
               >
                 Great protein intake. You may need more vegetables to balance
                 this meal.

@@ -175,26 +175,25 @@ export default function ProgressDashboardScreen({
 
   return (
     <div
-      className="relative flex min-h-0 flex-1 flex-col"
+      className="relative flex min-h-0 flex-1 flex-col bg-background"
       style={{ 
-        background: '#f7fffe',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
       <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-24 space-y-6">
         {/* Header Section */}
         <div>
-          <h1 className="text-3xl font-extrabold" style={{ color: ink }}>
+          <h1 className="text-3xl font-extrabold text-foreground" >
             Your Progress
           </h1>
-          <p className="mt-1 text-sm font-semibold" style={{ color: muted }}>
+          <p className="mt-1 text-sm font-semibold text-muted-foreground" >
             Great work! You're building healthy habits.
           </p>
         </div>
 
         {/* Health Score Circular Indicator Card */}
         <div
-          className="rounded-[28px] bg-white p-4 sm:p-5 border border-slate-100 flex items-center justify-between gap-2 overflow-hidden"
+          className="rounded-[28px] bg-card text-card-foreground p-4 sm:p-5 border border-slate-100 dark:border-border flex items-center justify-between gap-2 overflow-hidden"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
           <div className="flex-1 space-y-2 min-w-[90px]">
@@ -205,7 +204,7 @@ export default function ProgressDashboardScreen({
               Health Score
             </span>
             <div className="flex items-baseline gap-0.5">
-              <span className="text-[38px] leading-none font-black text-slate-900 tracking-tight">
+              <span className="text-[38px] leading-none font-black text-foreground tracking-tight">
                 {getHealthScore(
                   caloriesLogged,
                   waterLogged,
@@ -228,20 +227,20 @@ export default function ProgressDashboardScreen({
                 goals,
                 completedHabits
               );
-              let bg = '#e6f4fe';
-              let text = '#2563eb';
+              let bgClass = 'bg-[#e6f4fe] dark:bg-[#e6f4fe]/10';
+              let textClass = 'text-[#2563eb] dark:text-[#60a5fa]';
               let dot = '#3b82f6';
               let label1 = 'Good';
               let label2 = 'Progress';
 
               if (score >= 76) {
-                bg = '#f2faf5';
-                text = '#197a38';
+                bgClass = 'bg-[#f2faf5] dark:bg-primary/10';
+                textClass = 'text-[#197a38] dark:text-primary';
                 dot = '#22c55e';
                 label1 = 'Excellent';
               } else if (score < 51) {
-                bg = '#fff7ed';
-                text = '#ea580c';
+                bgClass = 'bg-[#fff7ed] dark:bg-[#ea580c]/10';
+                textClass = 'text-[#ea580c] dark:text-[#fb923c]';
                 dot = '#f97316';
                 label1 = 'Needs';
                 label2 = 'Attention';
@@ -249,16 +248,14 @@ export default function ProgressDashboardScreen({
 
               return (
                 <div
-                  className="inline-flex items-center gap-1.5 rounded-2xl px-2.5 py-1"
-                  style={{ background: bg }}
+                  className={`inline-flex items-center gap-1.5 rounded-2xl px-2.5 py-1 ${bgClass}`}
                 >
                   <div
                     className="w-1.5 h-1.5 rounded-full shrink-0"
                     style={{ background: dot, boxShadow: `0 1px 3px ${dot}80` }}
                   />
                   <span
-                    className="text-[10px] font-bold leading-tight"
-                    style={{ color: text }}
+                    className={`text-[10px] font-bold leading-tight ${textClass}`}
                   >
                     {label1}
                     <br />
@@ -301,26 +298,21 @@ export default function ProgressDashboardScreen({
 
         {/* AI Insight Card from Liva */}
         <div
-          className="rounded-[24px] p-4 bg-white border border-[#e4f4ea] flex gap-3.5"
+          className="rounded-[24px] p-4 bg-card text-card-foreground border border-[#e4f4ea] dark:border-primary/20 flex gap-3.5"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.02)' }}
         >
           <div
-            className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center"
-            style={{
-              background:
-                'radial-gradient(circle at top left, #f2faf5, #e4f4ea)',
-            }}
+            className="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center bg-[#f2faf5] dark:bg-primary/10"
           >
             <LivaAvatar size={26} floating />
           </div>
           <div className="pt-0.5">
             <p
-              className="text-[11px] font-bold uppercase tracking-wider"
-              style={{ color: '#059669' }}
+              className="text-[11px] font-bold uppercase tracking-wider text-[#059669] dark:text-primary"
             >
               Liva Insight
             </p>
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500">
+            <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
               You usually skip breakfast on Tuesdays. Eating a protein-rich
               breakfast may help maintain your energy levels throughout the day.
             </p>
@@ -329,20 +321,20 @@ export default function ProgressDashboardScreen({
 
         {/* Nutrition Analytics Chart Card */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border"
           style={{ boxShadow: '0 8px 24px rgba(16,32,26,0.04)' }}
         >
-          <h2 className="font-extrabold text-[18px] text-slate-800 mb-4 tracking-tight">
+          <h2 className="font-extrabold text-[18px] text-foreground mb-4 tracking-tight">
             Nutrition Analytics
           </h2>
 
           {/* Segment Control */}
-          <div className="flex bg-[#f8fafc] p-1 rounded-[14px] mb-6">
+          <div className="flex bg-slate-50 dark:bg-muted p-1 rounded-[14px] mb-6">
             {['Today', 'Week', 'Month'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveChartTab(tab)}
-                className={`flex-1 py-2 text-[10px] font-extrabold rounded-[10px] transition-all ${activeChartTab === tab ? 'bg-white text-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.04)]' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`flex-1 py-2 text-[10px] font-extrabold rounded-[10px] transition-all ${activeChartTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 {tab}
               </button>
@@ -352,7 +344,7 @@ export default function ProgressDashboardScreen({
           {/* Metric */}
           <div className="flex items-center gap-2 mb-8">
             <Flame size={20} strokeWidth={2.5} className="text-[#059669]" />
-            <span className="font-extrabold text-[22px] text-slate-800 tracking-tight">
+            <span className="font-extrabold text-[22px] text-foreground tracking-tight">
               {chartData.displayMetric} kcal
             </span>
           </div>
@@ -363,10 +355,10 @@ export default function ProgressDashboardScreen({
             <div className="absolute inset-0 flex flex-col justify-between pb-6">
               {chartData.yAxisLabels.map((val) => (
                 <div key={val} className="flex items-center w-full">
-                  <span className="text-[9px] font-bold text-slate-400 w-7 text-left">
+                  <span className="text-[9px] font-bold text-muted-foreground w-7 text-left">
                     {val}
                   </span>
-                  <div className="flex-1 border-t border-dashed border-slate-200/80 ml-2" />
+                  <div className="flex-1 border-t border-dashed border-slate-100 dark:border-border/80 ml-2" />
                 </div>
               ))}
             </div>
@@ -413,44 +405,44 @@ export default function ProgressDashboardScreen({
                     {/* Hover Tooltip */}
                     {data.kcal > 0 && (
                       <div
-                        className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xl border border-slate-100 text-slate-800 p-3 rounded-[16px] transition-all duration-200 pointer-events-none z-50 w-[110px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] origin-bottom ${activeTooltipIndex === i ? 'opacity-100 scale-100' : 'opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100'}`}
+                        className={`absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-card/95 text-card-foreground backdrop-blur-xl border border-slate-100 dark:border-border text-foreground p-3 rounded-[16px] transition-all duration-200 pointer-events-none z-50 w-[110px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] origin-bottom ${activeTooltipIndex === i ? 'opacity-100 scale-100' : 'opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100'}`}
                       >
-                        <div className="font-extrabold text-[13px] mb-2 text-center text-slate-800 border-b border-slate-100 pb-2">
+                        <div className="font-extrabold text-[13px] mb-2 text-center text-foreground border-b border-slate-100 dark:border-border pb-2">
                           {data.kcal}{' '}
-                          <span className="text-[10px] font-bold text-slate-400">
+                          <span className="text-[10px] font-bold text-muted-foreground">
                             kcal
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-[11px] mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-[#0ea5e9]"></div>
-                            <span className="text-slate-500 font-bold">
+                            <span className="text-muted-foreground font-bold">
                               Protein
                             </span>
                           </div>
-                          <span className="font-extrabold text-slate-700">
+                          <span className="font-extrabold text-foreground">
                             {data.p}g
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-[11px] mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-[#f59e0b]"></div>
-                            <span className="text-slate-500 font-bold">
+                            <span className="text-muted-foreground font-bold">
                               Carbs
                             </span>
                           </div>
-                          <span className="font-extrabold text-slate-700">
+                          <span className="font-extrabold text-foreground">
                             {data.c}g
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-[11px]">
                           <div className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-[#10b981]"></div>
-                            <span className="text-slate-500 font-bold">
+                            <span className="text-muted-foreground font-bold">
                               Fat
                             </span>
                           </div>
-                          <span className="font-extrabold text-slate-700">
+                          <span className="font-extrabold text-foreground">
                             {data.f}g
                           </span>
                         </div>
@@ -468,7 +460,7 @@ export default function ProgressDashboardScreen({
               {chartData.data.map((data, i) => (
                 <span
                   key={i}
-                  className="text-[9px] font-bold text-slate-400 w-4 text-center"
+                  className="text-[9px] font-bold text-muted-foreground w-4 text-center"
                 >
                   {data.day}
                 </span>
@@ -480,17 +472,17 @@ export default function ProgressDashboardScreen({
           <div className="flex items-center gap-5 pt-3">
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded-[3px] bg-[#10b981]" />
-              <span className="text-[10px] font-bold text-slate-500">Fat</span>
+              <span className="text-[10px] font-bold text-muted-foreground">Fat</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded-[3px] bg-[#f59e0b]" />
-              <span className="text-[10px] font-bold text-slate-500">
+              <span className="text-[10px] font-bold text-muted-foreground">
                 Carbs
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded-[3px] bg-[#0ea5e9]" />
-              <span className="text-[10px] font-bold text-slate-500">
+              <span className="text-[10px] font-bold text-muted-foreground">
                 Protein
               </span>
             </div>
@@ -499,29 +491,28 @@ export default function ProgressDashboardScreen({
 
         {/* Today's Summary Metrics Grid */}
         <div>
-          <h2 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+          <h2 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             Today's Summary
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <div
-              className="rounded-2xl bg-white p-4 border border-slate-100"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-muted-foreground block mb-1">
                 Meals Logged
               </span>
               <span
-                className="text-xl font-bold block"
-                style={{ color: '#0f172a' }}
+                className="text-xl font-bold block text-foreground"
               >
                 {loggedMealsCount} meal{loggedMealsCount !== 1 ? 's' : ''}
               </span>
             </div>
             <div
-              className="rounded-2xl bg-white p-4 border border-slate-100"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-muted-foreground block mb-1">
                 Calories Consumed
               </span>
               <span
@@ -532,10 +523,10 @@ export default function ProgressDashboardScreen({
               </span>
             </div>
             <div
-              className="rounded-2xl bg-white p-4 border border-slate-100"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-muted-foreground block mb-1">
                 Water Intake
               </span>
               <span
@@ -546,15 +537,14 @@ export default function ProgressDashboardScreen({
               </span>
             </div>
             <div
-              className="rounded-2xl bg-white p-4 border border-slate-100"
+              className="rounded-2xl bg-card text-card-foreground p-4 border border-slate-100 dark:border-border"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
-              <span className="text-[11px] font-bold text-slate-500 block mb-1">
+              <span className="text-[11px] font-bold text-muted-foreground block mb-1">
                 Habit Streaks
               </span>
               <span
-                className="text-xl font-bold block"
-                style={{ color: '#0f172a' }}
+                className="text-xl font-bold block text-foreground"
               >
                 {habitCompletionRate}% done
               </span>
@@ -564,87 +554,87 @@ export default function ProgressDashboardScreen({
 
         {/* Quick Actions Grid */}
         <div>
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Analytics Modules
           </h2>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={() => onNavigate('progress-weekly')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <Activity size={18} className="text-[#34C759]" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Weekly Report
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-monthly')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <TrendingUp size={18} className="text-[#0ea5e9]" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Monthly Trend
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-nutrition')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <Leaf size={18} className="text-[#fb923c]" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Nutrition
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-weight')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <TrendingUp size={18} className="text-[#a855f7]" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Weight Log ({userWeight} kg)
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-habits')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <Calendar size={18} className="text-[#e11d48]" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Habits Heatmap
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-insights')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <MessageCircle size={18} className="text-amber-500" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 AI Insights feed
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-achievements')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <Award size={18} className="text-indigo-500" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Achievements
               </span>
             </button>
             <button
               onClick={() => onNavigate('progress-goals')}
-              className="flex items-center gap-3 rounded-2xl bg-white p-4 text-left border border-slate-100 hover:bg-[#f2faf5] transition-colors"
+              className="flex items-center gap-3 rounded-2xl bg-card text-card-foreground p-4 text-left border border-slate-100 dark:border-border hover:bg-[#f2faf5] dark:hover:bg-primary/10 transition-colors"
               style={{ boxShadow: '0 4px 12px rgba(16,32,26,0.02)' }}
             >
               <Target size={18} className="text-rose-500" />
-              <span className="text-xs font-bold" style={{ color: ink }}>
+              <span className="text-xs font-bold text-foreground" >
                 Goals Setup
               </span>
             </button>

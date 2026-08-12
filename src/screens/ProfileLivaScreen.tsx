@@ -9,14 +9,15 @@ export default function ProfileLivaScreen({
   onBack,
   memories,
   onUpdateMemories,
+  personality,
+  setPersonality,
 }: {
   onBack: () => void;
   memories: MemoryItem[];
   onUpdateMemories: (memories: MemoryItem[]) => void;
+  personality: string;
+  setPersonality: (style: string) => void;
 }) {
-  const [personality, setPersonality] = useState<
-    'friendly' | 'pro' | 'motivational'
-  >('friendly');
   const [newMemory, setNewMemory] = useState('');
 
   const handleDeleteMemory = (id: number) => {
@@ -39,35 +40,37 @@ export default function ProfileLivaScreen({
       subtitle="Optimize Liva's communication personality style and memory."
       onBack={onBack}
     >
-      <div className="space-y-5 pb-8 text-center">
-        <LivaAvatar size={100} floating />
+      <div className="space-y-6 pb-8">
+        <div className="flex flex-col items-center pt-2">
+          <LivaAvatar size={100} floating />
+        </div>
 
         {/* AI Personality Type Buttons */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border text-left"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3">
             Coach Communication Style
           </h3>
           <div className="grid grid-cols-3 gap-2 text-xs">
             {[
-              { key: 'friendly', label: 'Friendly' },
-              { key: 'pro', label: 'Scientific' },
-              { key: 'motivational', label: 'Motivate' },
-            ].map((style) => (
+              { key: 'Friendly', label: 'Friendly' },
+              { key: 'Scientific', label: 'Scientific' },
+              { key: 'Motivate', label: 'Motivate' },
+            ].map((st) => (
               <button
-                key={style.key}
-                onClick={() => setPersonality(style.key as any)}
+                key={st.key}
+                onClick={() => setPersonality(st.key)}
                 className="py-2.5 rounded-xl border text-center font-bold transition-all"
                 style={{
-                  background: personality === style.key ? green : 'white',
-                  color: personality === style.key ? 'white' : muted,
+                  background: personality === st.key ? green : 'white',
+                  color: personality === st.key ? 'white' : muted,
                   borderColor:
-                    personality === style.key ? green : 'rgba(16,32,26,0.06)',
+                    personality === st.key ? green : 'rgba(16,32,26,0.06)',
                 }}
               >
-                {style.label}
+                {st.label}
               </button>
             ))}
           </div>
@@ -75,10 +78,10 @@ export default function ProfileLivaScreen({
 
         {/* Liva's Memory list */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left space-y-3.5"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border text-left space-y-3.5"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-1">
             What Liva Knows (AI Memory)
           </h3>
 
@@ -86,13 +89,13 @@ export default function ProfileLivaScreen({
             {memories.map((m) => (
               <div
                 key={m.id}
-                className="flex justify-between items-start gap-4 pb-2 border-b border-slate-50 last:border-b-0"
+                className="flex justify-between items-start gap-4 pb-2 border-b border-slate-100 dark:border-border/50 last:border-b-0"
               >
                 <div>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide block">
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide block">
                     {m.category}
                   </span>
-                  <span className="text-xs font-medium text-slate-700 leading-relaxed block mt-0.5">
+                  <span className="text-xs font-medium text-foreground leading-relaxed block mt-0.5">
                     "{m.text}"
                   </span>
                 </div>
@@ -109,23 +112,23 @@ export default function ProfileLivaScreen({
 
         {/* Teach Liva input box */}
         <div
-          className="rounded-[24px] bg-white p-5 border border-slate-100 text-left"
+          className="rounded-[24px] bg-card text-card-foreground p-5 border border-slate-100 dark:border-border text-left"
           style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
         >
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
             Teach Liva Something New
           </h3>
-          <form onSubmit={handleTeachLiva} className="flex gap-2">
+          <form onSubmit={handleTeachLiva} className="flex items-center gap-2 mt-3">
             <input
               type="text"
               placeholder="e.g. I fast every Monday"
-              className="flex-1 bg-slate-50 px-3 py-2.5 rounded-xl border-none outline-none text-xs text-slate-700 font-semibold"
+              className="flex-1 bg-slate-50 dark:bg-muted px-4 py-3 rounded-2xl border border-slate-100 dark:border-border/50 outline-none text-xs text-foreground font-semibold focus:border-emerald-500/50 transition-colors"
               value={newMemory}
               onChange={(e) => setNewMemory(e.target.value)}
             />
             <button
               type="submit"
-              className="bg-[#34c759] text-white px-4.5 py-2.5 rounded-xl text-xs font-bold hover:bg-[#25ad48]"
+              className="bg-[#34c759] text-white px-6 py-3 rounded-2xl text-xs font-bold hover:bg-[#25ad48] shadow-sm transition-transform hover:scale-95"
             >
               Add
             </button>

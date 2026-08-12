@@ -102,7 +102,7 @@ export default function CameraLoggingScreen({
           Gallery
         </SecondaryButton>
         <div
-          className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white"
+          className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-card text-card-foreground"
           style={{ boxShadow: '0 0 0 6px rgba(255,255,255,0.18)' }}
         >
           <span
