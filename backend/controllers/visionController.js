@@ -47,7 +47,7 @@ Do not include markdown tags like \`\`\`json or any other text. Just the raw JSO
     const apiKey = process.env.GEMINI_API_KEY
       ? process.env.GEMINI_API_KEY.trim()
       : '';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent`;
 
     const body = {
       system_instruction: { parts: [{ text: 'You are a helpful assistant.' }] },
