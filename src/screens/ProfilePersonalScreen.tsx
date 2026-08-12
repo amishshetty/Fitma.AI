@@ -1,9 +1,9 @@
 import { motion } from 'motion/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ScreenShell from './ScreenShell';
 import { ink } from '../constants';
-import { Camera, User, Mail, Phone, Ruler, Fingerprint, ChevronDown } from 'lucide-react';
+import { Screen } from '../types';
 
 export default function ProfilePersonalScreen({
   onBack,
@@ -31,43 +31,24 @@ export default function ProfilePersonalScreen({
     units: string
   ) => void;
 }) {
-  const [name, setName] = useState(initialName || 'Amish Shetty');
-  const [gender, setGender] = useState(initialGender || 'Male');
-  const [height, setHeight] = useState(initialHeight || '178');
-  const [email, setEmail] = useState(initialEmail || 'amish.shetty@example.com');
-  const [phone, setPhone] = useState(initialPhone || '9876543210');
-  const [units, setUnits] = useState(initialUnits || 'Metric (kg, cm)');
+  const [name, setName] = useState(initialName || '');
+  const [gender, setGender] = useState(initialGender || '');
+  const [height, setHeight] = useState(initialHeight || '');
+  const [email, setEmail] = useState(initialEmail || '');
+  const [phone, setPhone] = useState(initialPhone || '');
+  const [units, setUnits] = useState('Metric (kg, cm)');
   const [success, setSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleProfileClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleSave = () => {
     onUpdatePersonal(name, email, phone, gender, height, units);
     setSuccess(true);
     setTimeout(() => setSuccess(false), 2400);
   };
-
-  const InputField = ({ label, icon: Icon, value, onChange, type = 'text', prefix = '' }: any) => (
-    <div className="space-y-1.5">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
-        {label}
-      </label>
-      <div className="relative flex items-center group">
-        <div className="absolute left-4 text-slate-400 transition-colors group-focus-within:text-blue-500">
-          <Icon size={16} strokeWidth={2.5} />
-        </div>
-        {prefix && (
-          <div className="absolute left-10 text-sm font-bold text-slate-700 border-r border-slate-200 pr-2">
-            {prefix}
-          </div>
-        )}
-        <input
-          type={type}
-          className={`w-full bg-slate-50/80 p-3.5 rounded-2xl border-2 border-transparent outline-none font-bold text-sm text-slate-800 transition-all focus:bg-white focus:border-blue-500/20 focus:shadow-[0_0_0_4px_rgba(59,130,246,0.1)] ${prefix ? 'pl-20' : 'pl-11'}`}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      </div>
-    </div>
-  );
 
   return (
     <ScreenShell
@@ -78,69 +59,72 @@ export default function ProfilePersonalScreen({
         <PrimaryButton onClick={handleSave}>Save Personal Data</PrimaryButton>
       }
     >
-      <div className="space-y-6 pb-8 relative">
+      <div className="space-y-4 pb-8 relative">
         {success && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="rounded-2xl p-4 bg-green-50 text-green-700 text-sm font-bold border border-green-200 shadow-sm flex items-center gap-2"
+            className="rounded-2xl p-4 bg-[#f2faf5] text-[#197a38] text-xs font-bold border border-[#34c759]/20"
           >
-            <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">✓</div>
-            Profile information updated successfully.
+            ✓ Success: Profile information updated successfully.
           </motion.div>
         )}
 
-        <div className="flex flex-col items-center pt-2 pb-4">
-          <div className="relative mb-3 group cursor-pointer">
-            <div className="w-24 h-24 rounded-[28px] overflow-hidden shadow-lg border-4 border-white bg-slate-100">
-              <img 
-                src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80" 
-                alt="Profile" 
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        <div
+          className="rounded-[24px] bg-white p-5 border border-slate-100 space-y-4"
+          style={{ boxShadow: '0 6px 18px rgba(16,32,26,0.03)' }}
+        >
+          <div 
+            className="flex items-center gap-4 border-b border-slate-50 pb-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleProfileClick}
+          >
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/png, image/jpeg" 
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  // Profile photo upload logic goes here in the future
+                  console.log('Selected file:', e.target.files[0]);
+                }
+              }}
+            />
+            <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-black">
+              {name ? name.charAt(0).toUpperCase() : 'A'}
+            </div>
+            <div>
+              <span className="text-xs font-bold block" style={{ color: ink }}>
+                Change profile photo
+              </span>
+              <span className="text-[9px] text-slate-400 font-semibold block mt-0.5">
+                JPG or PNG. Max 2MB
+              </span>
+            </div>
+          </div>
+
+          {[
+            { label: 'Full Name', value: name, setter: setName },
+            { label: 'Gender', value: gender, setter: setGender },
+            { label: 'Height', value: height, setter: setHeight },
+            { label: 'Email Address', value: email, setter: setEmail },
+            { label: 'Phone Number', value: phone, setter: setPhone },
+            { label: 'Preferred Units', value: units, setter: setUnits },
+          ].map((field) => (
+            <div key={field.label} className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                {field.label}
+              </label>
+              <input
+                type="text"
+                className={`w-full bg-slate-50 p-3 rounded-xl border-none outline-none font-bold text-xs text-slate-700 ${field.label === 'Preferred Units' ? 'opacity-70 cursor-not-allowed' : ''}`}
+                value={field.value}
+                readOnly={field.label === 'Preferred Units'}
+                onChange={(e) => field.setter(e.target.value)}
               />
             </div>
-            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-blue-500 rounded-2xl shadow-md border-[3px] border-[#f2faf5] flex items-center justify-center text-white transition-transform group-hover:scale-110">
-              <Camera size={16} strokeWidth={2.5} />
-            </div>
-          </div>
-          <h2 className="text-lg font-extrabold text-slate-800">{name}</h2>
-          <p className="text-xs font-bold text-slate-400">High Level Member</p>
-        </div>
-
-        <div
-          className="rounded-[32px] bg-white p-6 border border-slate-100/50 space-y-5"
-          style={{ boxShadow: '0 8px 32px rgba(16,32,26,0.04)' }}
-        >
-          <InputField label="Full Name" icon={User} value={name} onChange={setName} />
-          <InputField label="Email Address" icon={Mail} type="email" value={email} onChange={setEmail} />
-          
-          <InputField label="Phone Number" icon={Phone} type="tel" value={phone} onChange={setPhone} prefix="+91" />
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
-                Gender
-              </label>
-              <div className="relative flex items-center group">
-                <div className="absolute left-4 text-slate-400">
-                  <Fingerprint size={16} strokeWidth={2.5} />
-                </div>
-                <select
-                  className="w-full appearance-none bg-slate-50/80 p-3.5 pl-11 rounded-2xl border-2 border-transparent outline-none font-bold text-sm text-slate-800 transition-all focus:bg-white focus:border-blue-500/20 focus:shadow-[0_0_0_4px_rgba(59,130,246,0.1)]"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-4 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            <InputField label="Height (cm)" icon={Ruler} type="number" value={height} onChange={setHeight} />
-          </div>
+          ))}
         </div>
       </div>
     </ScreenShell>
