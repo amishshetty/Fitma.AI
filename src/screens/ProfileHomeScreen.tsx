@@ -242,11 +242,6 @@ export default function ProfileHomeScreen({
               desc: 'What Liva knows & memory timeline',
             },
             {
-              label: 'Connected Devices',
-              screen: 'profile-devices' as Screen,
-              desc: 'Sync Apple Watch & Garmin logs',
-            },
-            {
               label: 'Premium Upgrade',
               screen: 'profile-premium' as Screen,
               desc: 'View plan details and benefits',
@@ -266,11 +261,22 @@ export default function ProfileHomeScreen({
               screen: 'profile-settings' as Screen,
               desc: 'Accessibility text, theme, units',
             },
+            {
+              label: 'Connected Devices (Coming Soon)',
+              screen: 'profile-devices' as Screen,
+              desc: 'Sync Apple Watch & Garmin logs',
+              disabled: true,
+            },
           ].map((item) => (
             <button
               key={item.label}
-              onClick={() => onNavigate(item.screen)}
-              className="w-full flex items-center justify-between text-left pb-2 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 rounded-lg p-1 transition-all"
+              onClick={() => {
+                if (!item.disabled) onNavigate(item.screen);
+              }}
+              disabled={item.disabled}
+              className={`w-full flex items-center justify-between text-left pb-2 border-b border-slate-50 last:border-b-0 rounded-lg p-1 transition-all ${
+                item.disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50'
+              }`}
             >
               <div>
                 <span
