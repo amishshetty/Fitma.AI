@@ -17,7 +17,7 @@ export const handleVisionAnalyze = async (req, res) => {
           calories: 350,
           protein: 8,
           carbs: 40,
-          fats: 12,
+          fat: 12,
           mealType: mealType || 'unknown',
         },
       });
@@ -33,14 +33,14 @@ export const handleVisionAnalyze = async (req, res) => {
 
     const prompt = `You are an expert nutritionist. 
 Analyze this image of a meal. Identify the main food dishes and their approximate quantities. 
-Calculate the total estimated calories, protein, carbs, and fats.${recentMealsContext}
+Calculate the total estimated calories, protein, carbs, and fat.${recentMealsContext}
 You MUST respond ONLY with a valid JSON object in this exact format:
 {
   "items": ["list of concise, high-level names for the dishes found (e.g., '1 sandwich' or '1 Bowl of Pasta'). Do NOT list out all the raw ingredients individually."],
   "calories": NUMBER,
   "protein": NUMBER,
   "carbs": NUMBER,
-  "fats": NUMBER
+  "fat": NUMBER
 }
 Do not include markdown tags like \`\`\`json or any other text. Just the raw JSON object.`;
 
@@ -118,7 +118,7 @@ Do not include markdown tags like \`\`\`json or any other text. Just the raw JSO
         calories: 300,
         protein: 10,
         carbs: 30,
-        fats: 15,
+        fat: 15,
         mealType: mealType || 'unknown',
       },
     });
