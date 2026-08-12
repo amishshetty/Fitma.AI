@@ -65,9 +65,6 @@ export default function ProfileHealthScreen({
       title="Health Profile"
       subtitle="Medical markers and activity details used by Liva."
       onBack={onBack}
-      footer={
-        <PrimaryButton onClick={handleSave}>Save preferences</PrimaryButton>
-      }
     >
       <div className="space-y-5 pb-8">
         {success && (
@@ -270,6 +267,11 @@ export default function ProfileHealthScreen({
               </>
             )}
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="pt-2">
+          <PrimaryButton onClick={handleSave}>Save preferences</PrimaryButton>
         </div>
       </div>
     </ScreenShell>

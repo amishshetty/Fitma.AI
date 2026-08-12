@@ -64,9 +64,6 @@ export default function ProfilePersonalScreen({
       title="Personal Information"
       subtitle="Edit your contact and body metrics. Auto-saved."
       onBack={onBack}
-      footer={
-        <PrimaryButton onClick={handleSave}>Save Personal Data</PrimaryButton>
-      }
     >
       <div className="space-y-4 pb-8 relative">
         {success && (
@@ -159,6 +156,11 @@ export default function ProfilePersonalScreen({
               )}
             </div>
           ))}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="pt-2">
+          <PrimaryButton onClick={handleSave}>Save Personal Data</PrimaryButton>
         </div>
       </div>
     </ScreenShell>

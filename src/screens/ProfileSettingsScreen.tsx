@@ -23,14 +23,6 @@ export default function ProfileSettingsScreen({
       title="General Settings"
       subtitle="Granular accessibility and database configuration."
       onBack={onBack}
-      footer={
-        <button
-          onClick={onLogout}
-          className="w-full bg-rose-50 text-[#f43f5e] hover:bg-rose-100 transition-colors py-3 rounded-2xl text-xs font-bold"
-        >
-          Logout Account
-        </button>
-      }
     >
       <div className="space-y-4 pb-8">
         {/* Appearance Settings */}
@@ -192,8 +184,18 @@ export default function ProfileSettingsScreen({
           </div>
         </div>
 
+        {/* Action Buttons */}
+        <div className="pt-2">
+          <button
+            onClick={onLogout}
+            className="w-full bg-rose-50 text-[#f43f5e] hover:bg-rose-100 transition-colors py-3 rounded-2xl text-sm font-bold shadow-sm"
+          >
+            Logout Account
+          </button>
+        </div>
+
         {/* System Info */}
-        <div className="text-center text-[10px] text-muted-foreground font-semibold space-y-0.5">
+        <div className="text-center text-[10px] text-muted-foreground font-semibold space-y-0.5 pt-4">
           <p>© 2026 Fitma Technologies Inc. All rights reserved.</p>
         </div>
       </div>
