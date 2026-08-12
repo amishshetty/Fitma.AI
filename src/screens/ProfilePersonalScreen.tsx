@@ -106,23 +106,37 @@ export default function ProfilePersonalScreen({
 
           {[
             { label: 'Full Name', value: name, setter: setName },
-            { label: 'Gender', value: gender, setter: setGender },
+            { label: 'Gender', value: gender, setter: setGender, options: ['Male', 'Female', 'Other', 'Prefer not to say'] },
             { label: 'Height', value: height, setter: setHeight },
             { label: 'Email Address', value: email, setter: setEmail },
-            { label: 'Phone Number', value: phone, setter: setPhone },
+            { label: 'Phone Number', value: phone, setter: setPhone, placeholder: 'Please add your phone number' },
             { label: 'Preferred Units', value: units, setter: setUnits },
           ].map((field) => (
             <div key={field.label} className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                 {field.label}
               </label>
-              <input
-                type="text"
-                className={`w-full bg-slate-50 p-3 rounded-xl border-none outline-none font-bold text-xs text-slate-700 ${field.label === 'Preferred Units' ? 'opacity-70 cursor-not-allowed' : ''}`}
-                value={field.value}
-                readOnly={field.label === 'Preferred Units'}
-                onChange={(e) => field.setter(e.target.value)}
-              />
+              {field.options ? (
+                <select
+                  className="w-full bg-slate-50 p-3 rounded-xl border-none outline-none font-bold text-xs text-slate-700"
+                  value={field.value}
+                  onChange={(e) => field.setter(e.target.value)}
+                >
+                  <option value="" disabled>Select gender</option>
+                  {field.options.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  className={`w-full bg-slate-50 p-3 rounded-xl border-none outline-none font-bold text-xs text-slate-700 ${field.label === 'Preferred Units' ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  value={field.value}
+                  placeholder={field.placeholder || ''}
+                  readOnly={field.label === 'Preferred Units'}
+                  onChange={(e) => field.setter(e.target.value)}
+                />
+              )}
             </div>
           ))}
         </div>
