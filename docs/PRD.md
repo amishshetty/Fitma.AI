@@ -285,9 +285,10 @@ To ensure Fitma.ai addresses the needs of different user groups, five primary pe
 
 **AI Capabilities**
 - Voice interaction through Liva
+- AI image-based food recognition (Vision AI)
 - AI-powered nutrition analysis & recommendations
-- Smart reminders & Daily/Weekly summaries
-- Personalized coaching & Habit learning (basic)
+- Smart Push Notifications & Daily/Weekly summaries
+- Personalized coaching, Memory context & Habit learning
 
 **Analytics**
 - Daily calorie intake & Macro breakdown
@@ -298,7 +299,7 @@ To ensure Fitma.ai addresses the needs of different user groups, five primary pe
 - Food delivery & Grocery shopping integration
 - Smart kitchen appliance & Wearable device synchronization
 - Medical diagnosis & Medication management
-- AI image-based food recognition & Barcode scanner
+- Barcode scanner (Future)
 
 ---
 
@@ -442,18 +443,17 @@ The MVP is expected to include 45–60 screens, categorized into Authentication,
 ---
 
 ## 22. MVP Definition
-**P0 – Must Have:** Authentication, User Profile, Meal Tracking (Voice/Manual, Calories/Macros), AI Liva (Voice Conversations, Nutrition Analysis, Smart Reminders), Dashboard.
+**P0 – Must Have:** Authentication, User Profile, Meal Tracking (Voice/Image/Manual, Calories/Macros), AI Liva (Voice/Image Conversations, Nutrition Analysis, Push Reminders, Memory Context), Dashboard.
 **P1 – Should Have:** Weekly/Monthly Reports, Habit Detection, Cheat Meal Tracking, AI Coaching, Achievement Badges.
-**P2 – Could Have:** Image-based Food Recognition, Barcode Scanner, Wearable Integration, Family Profiles.
+**P2 – Could Have:** Barcode Scanner, Wearable Integration, Family Profiles.
 
 ---
 
 ## 23. Future Roadmap
-- **Phase 1 – MVP:** Auth, Voice Logging, AI Chat, Meal Tracking, Dashboards.
-- **Phase 2 – Enhanced Intelligence:** Weekly Reports, Habit Detection, Personalized Coaching.
-- **Phase 3 – AI Personalization:** Image Recognition, Smart Grocery, Predictive Meal Planning.
-- **Phase 4 – Health Ecosystem:** Wearables, Sleep/Fitness Tracking, Family Accounts.
-- **Phase 5 – Preventive Healthcare:** Corporate Wellness, Provider Integration, Risk Predictions.
+- **Phase 1 – MVP (Current):** Auth, Voice & Image Logging, AI Chat with Memory, Push Reminders, Dashboards.
+- **Phase 2 – Enhanced Intelligence:** Weekly Reports, Advanced Habit Detection, Personalized Coaching.
+- **Phase 3 – Health Ecosystem:** Wearables, Sleep/Fitness Tracking, Family Accounts.
+- **Phase 4 – Preventive Healthcare:** Corporate Wellness, Provider Integration, Risk Predictions.
 
 ---
 
