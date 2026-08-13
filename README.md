@@ -32,7 +32,7 @@ The current web-based MVP is built using a modern, scalable stack:
 
 - **Frontend**: React 18 (SPA), Vite, TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion
 - **Backend**: Node.js, Express.js
-- **AI Engine**: Google Generative AI (`gemini-3.1-flash-lite`) powering Liva for ultra-fast, intelligent responses
+- **AI Engine**: Advanced proprietary AI models powered by Google Generative AI (Gemini) for ultra-fast, intelligent responses
 - **Database & Auth**: Firebase (Authentication & Firestore) and MongoDB (via Mongoose)
 - **Deployment**: Vercel (Frontend), Render/Heroku (Backend)
 
