@@ -795,7 +795,10 @@ export default function App() {
     const SpeechRecognition =
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    
+    // iOS Safari crashes or throws strict security errors if SpeechRecognition is instantiated without a direct user gesture.
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!SpeechRecognition || isIOS) return;
 
     let wakeWordRecognition: any = null;
     try {

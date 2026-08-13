@@ -23,7 +23,10 @@ export default function LivaVoiceScreen({
     const SpeechRecognition =
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+      
+    // iOS Safari crashes or throws strict security errors if SpeechRecognition is instantiated without a direct user gesture.
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!SpeechRecognition || isIOS) {
       setVoiceStatus('error');
       return;
     }
