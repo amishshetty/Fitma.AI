@@ -61,6 +61,7 @@ The core endpoint for the Liva AI companion. It processes user chat messages, de
 {
   "message": "I just ate 2 rotis and some dal.",
   "localDateStr": "Sat Jul 25 2026",
+  "currentTime": "14:30",
   "profile": {
     "name": "User",
     "goal": "Health",
@@ -84,7 +85,14 @@ The core endpoint for the Liva AI companion. It processes user chat messages, de
       "mealType": "snack",
       "dateString": "Sat Jul 25 2026"
     }
-  ]
+  ],
+  "memories": [
+    "User prefers vegan food",
+    "User is allergic to peanuts"
+  ],
+  "customVocabulary": {
+    "dal": "Lentil soup"
+  }
 }
 ```
 
@@ -108,6 +116,7 @@ The core endpoint for the Liva AI companion. It processes user chat messages, de
   "summaryData": null,
   "waterData": null,
   "deleteData": null,
+  "updateVocabularyData": null,
   "recommendationData": [
     {
       "meal": "Paneer Tikka",
@@ -159,6 +168,87 @@ Accepts a Base64 encoded image of a meal, uses Gemini Vision AI to identify the 
     "protein": 10,
     "mealType": "lunch"
   }
+}
+```
+
+---
+
+## 4. Push Notifications
+
+### `POST /api/notifications/subscribe`
+Subscribe a user device to push notifications via the Web Push API.
+
+**Request Body:**
+```json
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/...",
+    "keys": { "p256dh": "...", "auth": "..." }
+  },
+  "deviceId": "fitma_user_123"
+}
+```
+**Success Response:** `201 Created`
+
+### `POST /api/notifications/fcm-token`
+Save an FCM (Firebase Cloud Messaging) token for cross-device mobile delivery.
+
+**Request Body:**
+```json
+{
+  "fcmToken": "cfs2k3...",
+  "deviceId": "fitma_user_123"
+}
+```
+**Success Response:** `200 OK`
+
+### `POST /api/notifications/send`
+Manually trigger a push notification (used for testing).
+
+**Request Body:**
+```json
+{
+  "deviceId": "fitma_user_123",
+  "title": "Drink Water!",
+  "body": "It's been a while since you logged water.",
+  "url": "/dashboard"
+}
+```
+
+### `GET /api/notifications/cron/evaluate`
+Trigger the AI reminder background cron engine to evaluate which users need push notifications based on their logging behavior.
+
+### `GET /api/notifications/cron/force`
+Force send a test push notification to all subscribed users to verify VAPID/FCM configuration.
+
+---
+
+## 5. Direct Logging
+
+### `POST /api/logs/meal`
+Directly log a meal to Firebase Realtime Database.
+
+**Request Body:**
+```json
+{
+  "deviceId": "fitma_user_123",
+  "mealType": "lunch",
+  "notes": "Healthy salad",
+  "calories": 350,
+  "protein": 20,
+  "carbs": 15,
+  "fat": 10
+}
+```
+
+### `POST /api/logs/water`
+Directly log water consumption to Firebase Realtime Database (running total for the day).
+
+**Request Body:**
+```json
+{
+  "deviceId": "fitma_user_123",
+  "amountMl": 250
 }
 ```
 
