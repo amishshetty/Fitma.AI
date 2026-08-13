@@ -39,6 +39,7 @@ export default function LivaHomeScreen({
   loggedMeals = [],
   initialMessage,
   initialResponse,
+  memories = [],
 }: {
   onNavigate: (screen: Screen) => void;
   onStartLog: (mode: EntryMode) => void;
@@ -91,6 +92,7 @@ export default function LivaHomeScreen({
   const silenceTimeoutRef = useRef<any>(null);
   const suggestionsScrollRef = useRef<HTMLDivElement>(null);
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [coachInsight, setCoachInsight] = useState<string | null>(null);
   const [customVocabulary, setCustomVocabulary] = useState<
     Record<string, string>
   >(() => {
@@ -267,7 +269,7 @@ export default function LivaHomeScreen({
     setIsTyping(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
+      const API_URL = import.meta.env.PROD ? 'https://fitma-ai.onrender.com' : (import.meta.env.VITE_API_URL || '');
       const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
@@ -284,6 +286,7 @@ export default function LivaHomeScreen({
             motivationStyle: 'Friendly',
             language: 'English',
           },
+          currentTime: timestamp,
           memories: memories || [],
           previousMessages: messages.map((m) => ({
             sender: m.sender,
@@ -304,7 +307,8 @@ export default function LivaHomeScreen({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to contact Liva backend');
+        const errText = await response.text().catch(() => '');
+        throw new Error(`HTTP ${response.status} - ${errText.substring(0, 50)}`);
       }
 
       const data = await response.json();
@@ -322,6 +326,10 @@ export default function LivaHomeScreen({
 
       if (data.deleteData && onMealDeleted) {
         onMealDeleted(data.deleteData);
+      }
+
+      if (data.motivation || data.greeting) {
+        setCoachInsight(data.motivation || data.greeting);
       }
 
       if (data.updateVocabularyData) {
@@ -371,18 +379,19 @@ export default function LivaHomeScreen({
               : undefined,
         },
       ]);
-    } catch (err) {
+    } catch (err: any) {
       console.error(
         'Error communicating with Liva backend, using local fallback:',
         err
       );
+      const errMsg = err?.message || 'Unknown error';
       // Fallback
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: 'liva',
-          text: `Hey ${userName || 'Amish'}! I heard: "${textToSend}". I'm in fallback mode, but keep up the great work!`,
+          text: `[DEBUG: ${errMsg}] Hey ${userName || 'Amish'}! I heard: "${textToSend}". I'm in fallback mode...`,
           timestamp: new Date().toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -557,34 +566,34 @@ export default function LivaHomeScreen({
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)'
       }}
     >
+      {/* Fixed Header */}
+      <div className="px-6 pb-6 flex items-center justify-between shrink-0">
+        <div>
+          <h1 className="text-3xl font-extrabold text-foreground" >
+            Hi {userName || 'User'} 👋
+          </h1>
+          <p
+            className="mt-1.5 text-sm font-semibold text-muted-foreground"
+          >
+            Liva Coach Mode is active
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {messages.length > 0 && (
+            <button
+              onClick={() => setMessages([])}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-muted text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
+              title="Clear Chat"
+            >
+              <Trash2 size={20} />
+            </button>
+          )}
+          <LivaAvatar size={54} floating />
+        </div>
+      </div>
+
       {/* Scrollable Main Content */}
       <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-[350px]">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold text-foreground" >
-              Hi {userName || 'User'} 👋
-            </h1>
-            <p
-              className="mt-1.5 text-sm font-semibold text-muted-foreground"
-              
-            >
-              Liva Coach Mode is active
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {messages.length > 0 && (
-              <button
-                onClick={() => setMessages([])}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-muted text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
-                title="Clear Chat"
-              >
-                <Trash2 size={20} />
-              </button>
-            )}
-            <LivaAvatar size={54} floating />
-          </div>
-        </div>
 
         {/* Coach Insight */}
         <div className="mb-8 relative overflow-hidden rounded-[20px] p-5 border border-[#d1f2db] dark:border-primary/20 bg-[#f1fcf5] dark:bg-primary/5">
@@ -604,20 +613,26 @@ export default function LivaHomeScreen({
               </p>
             </div>
             <p className="text-[14px] font-bold text-[#1e293b] dark:text-foreground leading-snug mb-4">
-              You have{' '}
-              <span className="text-[#34C759]">
-                {remainingCalories} calories
-              </span>{' '}
-              remaining today.
-              <span className="block mt-1">
-                Would you like{' '}
-                {new Date().getHours() < 11
-                  ? 'breakfast'
-                  : new Date().getHours() < 16
-                    ? 'lunch'
-                    : 'dinner'}{' '}
-                suggestions?
-              </span>
+              {coachInsight ? (
+                <span>{coachInsight}</span>
+              ) : (
+                <>
+                  You have{' '}
+                  <span className="text-[#34C759]">
+                    {remainingCalories} calories
+                  </span>{' '}
+                  remaining today.
+                  <span className="block mt-1">
+                    Would you like{' '}
+                    {new Date().getHours() < 11
+                      ? 'breakfast'
+                      : new Date().getHours() < 16
+                        ? 'lunch'
+                        : 'dinner'}{' '}
+                    suggestions?
+                  </span>
+                </>
+              )}
             </p>
             <button
               onClick={() =>

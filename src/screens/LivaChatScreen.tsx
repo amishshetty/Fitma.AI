@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import LivaAvatar from '../components/layout/LivaAvatar';
+import GlassBackButton from '../components/ui/GlassBackButton';
 import IconButton from '../components/ui/IconButton';
 import { ink } from '../constants';
 import { Screen } from '../types';
@@ -35,6 +36,7 @@ export default function LivaChatScreen({
   onWaterLogged,
   onMealDeleted,
   loggedMeals = [],
+  memories = [],
 }: {
   onBack: () => void;
   onNavigate: (screen: Screen) => void;
@@ -473,9 +475,7 @@ export default function LivaChatScreen({
         }}
       >
         <div className="flex items-center gap-3">
-          <IconButton onClick={onBack} label="Back">
-            <ArrowLeft size={19} />
-          </IconButton>
+          <GlassBackButton onClick={onBack} />
           <div>
             <h1 className="text-[17px] font-bold text-foreground">
               {getGreetingTime()}, {userName || 'Amish'}! 👋

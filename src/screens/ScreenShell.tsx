@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import IconButton from '../components/ui/IconButton';
+import GlassBackButton from '../components/ui/GlassBackButton';
 import { ink, muted } from '../constants';
 import { Screen } from '../types';
 
@@ -28,9 +29,7 @@ export default function ScreenShell({
         <div className="flex items-start gap-3">
           {onBack && (
             <div className="flex-shrink-0 pt-[2px]">
-              <IconButton onClick={onBack} label="Back">
-                <ArrowLeft size={19} />
-              </IconButton>
+              <GlassBackButton onClick={onBack} />
             </div>
           )}
           <div className="min-w-0 flex-1">

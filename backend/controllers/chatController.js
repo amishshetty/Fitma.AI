@@ -11,6 +11,8 @@ export const handleChat = async (req, res) => {
     profile,
     previousMessages = [],
     loggedMeals = [],
+    memories = [],
+    currentTime = '',
     remainingCalories,
     customVocabulary = {},
   } = req.body || {};
@@ -20,6 +22,7 @@ export const handleChat = async (req, res) => {
   console.log('LoggedMeals:', JSON.stringify(loggedMeals, null, 2));
   console.log('CustomVocabulary:', JSON.stringify(customVocabulary));
   console.log('LocalDateStr:', req.body.localDateStr);
+  console.log('CurrentTime:', currentTime);
   console.log('===============================');
 
   if (!message || message.trim() === '') {
@@ -80,7 +83,9 @@ export const handleChat = async (req, res) => {
       combinedMeals,
       dynamicRemainingCalories,
       userLocalDateStr,
-      customVocabulary
+      customVocabulary,
+      memories,
+      currentTime
     );
 
     console.log('=== SYSTEM PROMPT ===');
