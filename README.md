@@ -20,9 +20,10 @@ At the center of the experience is **Liva**, an intelligent AI nutrition compani
 ## ✨ Core Features (MVP)
 
 - 🤖 **Liva AI Companion**: Log meals through natural conversation. Say *"Liva, I just had two rotis, dal, and rice,"* and Liva automatically estimates nutrition, updates daily calories, and tracks macros.
+- 🧠 **Dynamic AI Memory & Context**: Liva is specially tuned with deep Indian nutritional context and remembers your preferences across sessions.
 - ⚡ **Frictionless Onboarding**: Progressive profiling that gets you started in under 2 minutes.
 - 📊 **Smart Dashboard**: Track daily calories, protein, water intake, and view AI insights at a glance.
-- 🔔 **Proactive Notifications**: Smart meal reminders, water reminders, and AI check-ins to keep you motivated.
+- 🔔 **Cross-Device Notifications**: Smart meal reminders, water reminders, and AI check-ins delivered seamlessly across all your devices using secure token-based push notifications.
 - 📈 **Progress Tracking**: Weekly trends, nutrition reports, and streak tracking to build sustainable habits.
 
 ## 🛠️ System Architecture & Tech Stack
@@ -31,7 +32,7 @@ The current web-based MVP is built using a modern, scalable stack:
 
 - **Frontend**: React 18 (SPA), Vite, TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion
 - **Backend**: Node.js, Express.js
-- **AI Engine**: Google Generative AI (Gemini) SDK powering Liva
+- **AI Engine**: Google Generative AI (`gemini-3.1-flash-lite`) powering Liva for ultra-fast, intelligent responses
 - **Database & Auth**: Firebase (Authentication & Firestore) and MongoDB (via Mongoose)
 - **Deployment**: Vercel (Frontend), Render/Heroku (Backend)
 
