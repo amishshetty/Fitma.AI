@@ -50,7 +50,7 @@ export async function subscribeUserToPush() {
 
     // Send subscription to backend
     const deviceId =
-      localStorage.getItem('fitma_device_id') || 'unknown-device';
+      localStorage.getItem('fitma_token') || localStorage.getItem('fitma_device_id') || 'unknown-device';
     const response = await fetch('/api/notifications/subscribe', {
       method: 'POST',
       headers: {

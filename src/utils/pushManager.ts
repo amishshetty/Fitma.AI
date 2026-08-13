@@ -31,7 +31,7 @@ export const subscribeToPushNotifications = async () => {
 
       console.log('Push registered:', subscription);
 
-      const deviceId = getDeviceId();
+      const deviceId = localStorage.getItem('fitma_token') || getDeviceId();
       await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: {
