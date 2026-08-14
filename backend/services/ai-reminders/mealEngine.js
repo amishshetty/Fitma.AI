@@ -15,24 +15,39 @@ class MealEngine {
       };
     }
 
-    // We will check if current time is roughly +20 mins or +60 mins from predicted meal time
+    // Get current time
+    const nowMs = Date.now();
+
+    // Determine today's date in IST
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const parts = formatter.formatToParts(new Date());
+    const year = parts.find((p) => p.type === 'year').value;
+    const month = parts.find((p) => p.type === 'month').value;
+    const day = parts.find((p) => p.type === 'day').value;
+
     let activeMeal = null;
     let expectedTime = null;
 
     for (const [mealName, timeStr] of Object.entries(mealTimes)) {
-      const mealHour = parseInt(timeStr.split(':')[0]);
-      const mealMin = parseInt(timeStr.split(':')[1]);
+      const mealHourStr = timeStr.split(':')[0].padStart(2, '0');
+      const mealMinStr = timeStr.split(':')[1].padStart(2, '0');
 
-      const mealTimeDate = new Date();
-      mealTimeDate.setHours(mealHour, mealMin, 0, 0);
+      // Construct ISO string for the meal time today in IST (+05:30)
+      const isoString = `${year}-${month}-${day}T${mealHourStr}:${mealMinStr}:00+05:30`;
+      const mealTimeDate = new Date(isoString);
 
-      const diffMins = (now - mealTimeDate) / (1000 * 60);
+      const diffMins = (nowMs - mealTimeDate.getTime()) / (1000 * 60);
 
       // PRD Logic:
       // Wait 20 mins -> Reminder 1
       // Wait 60 mins -> Reminder 2
       // Wait 120 mins -> Reminder 3
-      if (diffMins > 0 && diffMins <= 120) {
+      if (diffMins > 0 && diffMins <= 180) {
         activeMeal = mealName;
         expectedTime = mealTimeDate;
         break;
@@ -53,7 +68,7 @@ class MealEngine {
     }
 
     // Check if we already sent a reminder recently
-    const diffMins = (now - expectedTime) / (1000 * 60);
+    const diffMins = (nowMs - expectedTime.getTime()) / (1000 * 60);
 
     if (diffMins >= 20 && diffMins < 60) {
       return {

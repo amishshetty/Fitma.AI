@@ -68,6 +68,11 @@ export async function subscribeUserToPush() {
     }
   } catch (error) {
     console.error('Error during push subscription', error);
-    return { success: false, error: String(error) };
+    let errorMessage = String(error);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    if (isIOS && (errorMessage.includes('NotAllowedError') || errorMessage.includes('denied'))) {
+      errorMessage = 'iOS Safari requires you to tap "Share -> Add to Home Screen" to enable notifications.';
+    }
+    return { success: false, error: errorMessage };
   }
 }

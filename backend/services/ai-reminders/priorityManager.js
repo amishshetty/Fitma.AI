@@ -3,8 +3,8 @@ import { getDatabase } from 'firebase-admin/database';
 class PriorityManager {
   constructor() {
     this.LIMITS = {
-      TOTAL_DAILY: 8,
-      MEAL: 3,
+      TOTAL_DAILY: 20,
+      MEAL: 9,
       WATER: 6,
       PROTEIN: 2,
       WEIGHT: 1,
