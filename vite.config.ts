@@ -24,7 +24,7 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
-    basicSsl(),
+    // basicSsl(), // Uncomment if testing on a local LAN IP (e.g. 192.168.x.x), but note that Service Workers (Web Push) will fail to register due to self-signed certs.
   ],
   resolve: {
     alias: {

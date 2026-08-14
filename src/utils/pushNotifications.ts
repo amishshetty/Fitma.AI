@@ -72,6 +72,8 @@ export async function subscribeUserToPush() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     if (isIOS && (errorMessage.includes('NotAllowedError') || errorMessage.includes('denied'))) {
       errorMessage = 'iOS Safari requires you to tap "Share -> Add to Home Screen" to enable notifications.';
+    } else if (errorMessage.includes('SecurityError') && window.location.hostname === 'localhost' && window.location.protocol === 'https:') {
+      errorMessage = 'Service Workers cannot be registered on localhost with a self-signed HTTPS certificate. Please test Push Notifications on the deployed Vercel URL, or remove basicSsl() from vite.config.ts to use http://localhost.';
     }
     return { success: false, error: errorMessage };
   }
