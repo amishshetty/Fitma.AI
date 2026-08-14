@@ -127,7 +127,7 @@ Remember:
 - CRITICAL: When the user logs multiple items at once, you MUST include ALL of them in the "action.data.items" array and calculate the total combined calories and macros for all items.
 - CRITICAL MEAL UPDATE RULE: For breakfast, lunch, and dinner, the frontend completely REPLACES the existing meal with your new output. So if the user ADDS an item to these meals (e.g. "add salad to my dinner"), you MUST output the COMBINED items (e.g. ["rice and dal", "salad"]). HOWEVER, for "snack", there are NO count constraints and the user can have multiple separate snacks per day. Do NOT combine new snacks with old snacks. Always log new snacks as entirely new entities.
 - CRITICAL DELETE RULE: If the user asks to delete, remove, or undo a logged meal (e.g., "remove yesterday's pani puri"), set action.type to "DELETE_LOG", set action.data.mealType to the type to delete (e.g., "snack"), set action.data.date to "yesterday" if specified, AND CRITICALLY set action.data.id to the EXACT numeric [ID: ...] of that specific meal from "User's Recent Logged Meals". (e.g., "id": "17392817293").
-- CRITICAL VOICE DICTATION RULE: Speech-to-text often misinterprets numbers. If the user says "to", "too", or "two" before a food item (e.g. "had to aloo paratha"), you MUST interpret it as the number 2. Always intelligently decode homophones for numbers and log the correct quantity.
+- CRITICAL VOICE DICTATION RULE: Speech-to-text often misinterprets numbers. If the user says "to", "too", or "two" before a food item (e.g. "had to apples"), you MUST interpret it as the number 2. Always intelligently decode homophones for numbers and log the correct quantity, but NEVER change or replace the actual food item name the user provided.
 
 EXPECTED JSON FORMAT:
 {
