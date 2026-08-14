@@ -43,8 +43,17 @@ export const startCronJobs = () => {
   cron.schedule('0 * * * *', async () => {
     console.log('⏰ Running Proactive Coach Cron Job');
     try {
-      const currentHour = new Date().getHours();
-      // Only send notifications between 8 AM and 9 PM
+      // Convert server time (UTC) to IST to check the correct local hour
+      const currentHour = parseInt(
+        new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Kolkata',
+          hour: 'numeric',
+          hourCycle: 'h23',
+        }).format(new Date()),
+        10
+      );
+
+      // Only send notifications between 8 AM and 9 PM (IST)
       if (currentHour < 8 || currentHour >= 21) return;
 
       let expectedMeal = '';
