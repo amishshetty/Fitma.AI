@@ -2184,6 +2184,7 @@ export default function App() {
                 setToastMessage(`Meal saved in ${meal.mealType}!`);
                 setTimeout(() => setToastMessage(null), 3000);
               }}
+              loggedMeals={loggedMeals}
             />
           )}
         </AnimatePresence>

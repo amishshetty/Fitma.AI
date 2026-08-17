@@ -9,11 +9,13 @@ export default function TextLoggingDrawer({
   onLogMeal,
   userProfile,
   memories,
+  loggedMeals = [],
 }: {
   onClose: () => void;
   onLogMeal: (meal: any) => void;
   userProfile: any;
   memories: any[];
+  loggedMeals?: any[];
 }) {
   const [text, setText] = useState('');
   const [isParsing, setIsParsing] = useState(false);
@@ -82,11 +84,31 @@ export default function TextLoggingDrawer({
     }
   };
 
-  const suggestions = [
-    'Add 2 roti 2 egg in breakfast',
-    'Had chicken and rice for lunch',
-    'Ate 1 apple for snack',
-  ];
+  const { recentMealNames, isCustom } = useMemo(() => {
+    const names = new Set<string>();
+    // Assume id is timestamp, sort descending
+    const sorted = [...(loggedMeals || [])].sort((a, b) => parseInt(b.id || '0') - parseInt(a.id || '0'));
+    for (const meal of sorted) {
+      if (meal.name && typeof meal.name === 'string' && meal.name.trim() !== '') {
+        names.add(meal.name);
+      }
+      if (names.size >= 3) break;
+    }
+    const arr = Array.from(names);
+    if (arr.length > 0) {
+      return { recentMealNames: arr, isCustom: true };
+    }
+    return {
+      recentMealNames: [
+        'Add 2 roti 2 egg in breakfast',
+        'Had chicken and rice for lunch',
+        'Ate 1 apple for snack',
+      ],
+      isCustom: false,
+    };
+  }, [loggedMeals]);
+
+  const suggestions = recentMealNames;
 
   return (
     <div className="absolute inset-0 z-50 flex flex-col justify-end overflow-hidden pointer-events-auto">
@@ -177,7 +199,7 @@ export default function TextLoggingDrawer({
 
         <div className="mb-6">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
-            Try these examples
+            {isCustom ? 'Previously Logged' : 'Try these examples'}
           </p>
           <div className="flex flex-col gap-2">
             {suggestions.map((suggestion) => (
