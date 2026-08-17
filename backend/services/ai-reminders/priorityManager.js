@@ -9,6 +9,7 @@ class PriorityManager {
       PROTEIN: 2,
       WEIGHT: 1,
       WEEKLY_REPORT: 1,
+      DAILY_SUMMARY: 1,
       AI_INSIGHTS: 3, // per week, but handled daily limits below if needed
     };
   }

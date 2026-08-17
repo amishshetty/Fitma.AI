@@ -54,7 +54,29 @@ class MealEngine {
       }
     }
 
-    if (!activeMeal) return null; // Not currently around any meal time
+    if (!activeMeal) {
+      // Check for End of Day Notification (10 PM)
+      const eodIsoString = `${year}-${month}-${day}T22:00:00+05:30`;
+      const eodDate = new Date(eodIsoString);
+      const eodDiffMins = (nowMs - eodDate.getTime()) / (1000 * 60);
+
+      // Between 22:00 and 23:00 (60 minutes window)
+      if (eodDiffMins >= 0 && eodDiffMins <= 60) {
+        const hasLoggedMeals = todayLogs.meals && todayLogs.meals.length > 0;
+        const hasLoggedWater = todayLogs.water && todayLogs.water > 0;
+        
+        if (!hasLoggedMeals && !hasLoggedWater) {
+          return {
+            category: 'DAILY_SUMMARY',
+            priority: 'CRITICAL',
+            title: 'End of Day Check-in 🌙',
+            message: "We missed you today! You haven't logged anything yet. A quick log helps you stay on track! 🌟",
+            reminderNumber: 1,
+          };
+        }
+      }
+      return null;
+    }
 
     // Check if user logged the active meal today
     const hasLoggedMeal = (todayLogs.meals || []).some(

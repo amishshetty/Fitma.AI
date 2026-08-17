@@ -34,6 +34,8 @@ class NotificationSender {
           niceTitle = 'Meal Reminder 🍽️';
         } else if (notificationPayload.category === 'CALORIE') {
           niceTitle = 'Nutrition Update 🥗';
+        } else if (notificationPayload.category === 'DAILY_SUMMARY') {
+          niceTitle = 'End of Day Check-in 🌙';
         }
 
         const payload = JSON.stringify({
