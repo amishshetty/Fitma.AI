@@ -1480,6 +1480,11 @@ export default function App() {
             goals={goals}
             history={history}
             syncDailyData={syncDailyData}
+            onLogWeight={(w: number) => {
+              setUserWeight(w);
+              const updatedGoals = { ...goals, weight: w };
+              syncProfile({ weight: w, goals: updatedGoals });
+            }}
             onDeleteMeal={(mealType, date, id) =>
               deleteLivaMealByType(mealType, date, id)
             }
@@ -1826,6 +1831,8 @@ export default function App() {
               const updatedGoals = { ...goals, weight: w };
               setGoals(updatedGoals);
               syncProfile({ weight: w, goals: updatedGoals });
+              const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+              syncDailyData(todayStr, { weight: w });
             }}
           />
         );
@@ -2011,6 +2018,10 @@ export default function App() {
                 ...(updated.weight ? { weight: updated.weight } : {}),
                 ...(updated.height ? { height: `${updated.height} cm` } : {}),
               });
+              if (updated.weight) {
+                const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                syncDailyData(todayStr, { weight: updated.weight });
+              }
             }}
             primaryGoal={primaryGoal}
             onUpdatePrimaryGoal={(goal) => {

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import ProgressDots from '../components/ui/ProgressDots';
 import SecondaryButton from '../components/ui/SecondaryButton';
@@ -18,7 +18,17 @@ const ModernSlider = ({
   icon: Icon,
   unit,
 }: any) => {
-  const percentage = ((value - min) / (max - min)) * 100;
+  const [inputValue, setInputValue] = useState(value.toString());
+
+  useEffect(() => {
+    if (value !== '' && Number(inputValue) !== value) {
+      setInputValue(value.toString());
+    }
+  }, [value]);
+
+  const numValue = Number(value) || min;
+  const percentage = Math.max(0, Math.min(100, ((numValue - min) / (max - min)) * 100));
+
   return (
     <div className="space-y-3 p-4 bg-card/60 text-card-foreground backdrop-blur-xl rounded-2xl border border-white shadow-sm">
       <div className="flex justify-between items-center text-sm font-bold">
@@ -34,11 +44,19 @@ const ModernSlider = ({
         <div className="flex items-center gap-1 bg-card/50 text-card-foreground backdrop-blur-md px-3 py-1.5 rounded-xl shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] border border-white focus-within:ring-2 focus-within:ring-opacity-50 transition-all duration-200" style={{ '--tw-ring-color': color } as any}>
           <input
             type="number"
-            value={value}
+            value={inputValue}
             onChange={(e) => {
               const val = e.target.value;
-              if (val === '') onChange(min);
-              else onChange(Number(val));
+              setInputValue(val);
+              if (val !== '') {
+                onChange(Number(val));
+              }
+            }}
+            onBlur={() => {
+              if (inputValue === '') {
+                setInputValue(min.toString());
+                onChange(min);
+              }
             }}
             className="w-14 text-right bg-transparent border-none outline-none font-black text-lg tabular-nums p-0 m-0"
             style={{ color: color }}
@@ -74,8 +92,12 @@ const ModernSlider = ({
           max={max}
           step={step}
           className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
+          value={numValue}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            setInputValue(val.toString());
+            onChange(val);
+          }}
         />
       </div>
     </div>

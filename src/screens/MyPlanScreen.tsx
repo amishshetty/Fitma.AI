@@ -27,20 +27,27 @@ import { GoalConfig, LoggedMeal } from '../types';
 
 export default function MyPlanScreen({
   onNavigate,
-  loggedMeals = [],
+  loggedMeals,
   goals,
-  history = {},
+  history,
   syncDailyData,
+  onLogWeight,
   onDeleteMeal,
   onEditMeal,
 }: {
-  onNavigate: (screen: Screen) => void;
-  loggedMeals: LoggedMeal[];
-  goals: GoalConfig;
-  history?: Record<string, any>;
-  syncDailyData?: (dateStr: string, updater: any) => void;
-  onDeleteMeal?: (mealType: string, date: string, id: string) => void;
-  onEditMeal?: (id: string, updatedData: Partial<LoggedMeal>) => void;
+  onNavigate: (screen: string) => void;
+  loggedMeals: any[];
+  goals: any;
+  history: any;
+  syncDailyData: (date: string, partialData: any) => void;
+  onLogWeight?: (w: number) => void;
+  onDeleteMeal: (mealType: string, date: string, id: string) => void;
+  onEditMeal: (
+    mealType: string,
+    date: string,
+    id: string,
+    updatedData: any
+  ) => void;
 }) {
   const [selectedDate, setSelectedDate] = useState(
     () =>
@@ -51,6 +58,8 @@ export default function MyPlanScreen({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
   const [isWaterDrawerOpen, setIsWaterDrawerOpen] = useState(false);
+  const [isWeightDrawerOpen, setIsWeightDrawerOpen] = useState(false);
+  const [weightInput, setWeightInput] = useState('');
   const [activeActionMeal, setActiveActionMeal] = useState<LoggedMeal | null>(
     null
   );
@@ -96,6 +105,7 @@ export default function MyPlanScreen({
       .split('T')[0];
   const selectedData = history[selectedDate] || {};
   const displayWater = selectedData.water || 0;
+  const displayWeight = selectedData.weight || goals?.weight || 0;
 
   const dailyGoalCal = goals?.calories || 2000;
   const dailyGoalWater = goals?.water || 2500;
@@ -410,6 +420,7 @@ export default function MyPlanScreen({
 
           {/* Log Weight Card */}
           <button
+            onClick={() => setIsWeightDrawerOpen(true)}
             className="relative flex w-full items-center overflow-hidden rounded-[24px] bg-card text-card-foreground text-left transition-transform active:scale-95"
             style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}
           >
@@ -417,7 +428,7 @@ export default function MyPlanScreen({
               <div className="mb-2 h-6 w-6 rounded-full border-[2px] border-slate-100 dark:border-border" />
               <h3 className="text-base font-bold text-foreground">Log Weight</h3>
               <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-                <Target size={12} /> <span className="text-foreground">0</span>{' '}
+                <Target size={12} /> <span className="text-foreground">{displayWeight}</span>{' '}
                 kg
               </p>
             </div>
@@ -560,9 +571,9 @@ export default function MyPlanScreen({
                   key={amount}
                   onClick={() => {
                     if (syncDailyData) {
-                      syncDailyData(selectedDate, (curr: any) => ({
-                        water: Math.max(0, (curr.water || 0) + amount),
-                      }));
+                      syncDailyData(selectedDate, {
+                        water: Math.max(0, (displayWater || 0) + amount),
+                      });
                     }
                     setIsWaterDrawerOpen(false);
                   }}
@@ -580,6 +591,67 @@ export default function MyPlanScreen({
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Log Weight Drawer */}
+      {isWeightDrawerOpen && (
+        <div
+          className="absolute inset-0 z-50 flex flex-col justify-end bg-black/40 backdrop-blur-sm transition-opacity overflow-hidden"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsWeightDrawerOpen(false);
+          }}
+        >
+          <div className="animate-in slide-in-from-bottom-full flex w-full flex-col rounded-t-[32px] bg-card text-card-foreground p-6 shadow-2xl pb-10">
+            <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-border" />
+            <h3 className="mb-2 text-center text-xl font-bold text-foreground">
+              Log Weight
+            </h3>
+            <p className="mb-6 text-center text-sm font-semibold text-muted-foreground">
+              Update your body weight for {isToday ? 'today' : new Date(selectedDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            </p>
+
+            <div className="mb-6 px-4">
+              <div className="relative flex items-center justify-center">
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={weightInput}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                  placeholder={displayWeight ? String(displayWeight) : '70.0'}
+                  className="w-full max-w-[200px] bg-slate-50 dark:bg-muted border border-slate-100 dark:border-border shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] rounded-[24px] p-5 font-black text-center text-foreground text-3xl focus:outline-none focus:ring-2 focus:ring-[#34C759]/40 focus:border-[#34C759] transition-all placeholder:text-muted-foreground/30"
+                />
+                <span className="absolute right-12 text-lg font-bold text-muted-foreground">
+                  kg
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  const val = parseFloat(weightInput);
+                  if (!isNaN(val) && val > 0 && syncDailyData) {
+                    syncDailyData(selectedDate, { weight: val });
+                    if (isToday && onLogWeight) {
+                      onLogWeight(val);
+                    }
+                  }
+                  setIsWeightDrawerOpen(false);
+                  setWeightInput('');
+                }}
+                className="w-full flex items-center justify-center p-4 rounded-2xl bg-[#34C759] text-white shadow-[0_8px_24px_rgba(52,199,89,0.25)] font-bold text-[16px] active:scale-[0.98] transition-all"
+              >
+                Save Weight
+              </button>
+              <button
+                onClick={() => setIsWeightDrawerOpen(false)}
+                className="w-full rounded-[16px] bg-slate-50 dark:bg-muted py-4 font-bold text-muted-foreground active:scale-95 transition-transform"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
