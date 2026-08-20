@@ -458,7 +458,7 @@ export default function HomeScreen({
         </section>
 
         <section
-          className="mb-6 rounded-[32px] bg-card text-card-foreground p-6 border border-slate-100 dark:border-border"
+          className="mb-6 rounded-[32px] bg-white/60 dark:bg-black/40 backdrop-blur-xl p-6 border border-white/40 dark:border-white/10 shadow-[0_8px_32px_rgba(52,199,89,0.1)] text-card-foreground"
         >
           <div className="mb-6 flex items-center justify-between">
             <div>

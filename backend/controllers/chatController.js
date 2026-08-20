@@ -125,6 +125,7 @@ Remember:
 - CRITICAL: If the user is just logging a meal or water, or asking for a summary, you MUST leave "recommendations" EMPTY. Only provide recommendations if EXPLICITLY asked.
 - CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), you MUST set mealType to "unknown" so the app can ask them.
 - CRITICAL: When the user logs multiple items at once, you MUST include ALL of them in the "action.data.items" array and calculate the total combined calories and macros for all items.
+- CRITICAL: When extracting food names for "action.data.items", STRICTLY remove any conversational filler or meal indicators like "for breakfast", "in snacks", "for lunch", "i had", etc. The items should be the pure food name and quantity ONLY (e.g. "1 vadapav", not "1 vadapav in snacks").
 - CRITICAL MEAL UPDATE RULE: For breakfast, lunch, and dinner, the frontend completely REPLACES the existing meal with your new output. So if the user ADDS an item to these meals (e.g. "add salad to my dinner"), you MUST output the COMBINED items (e.g. ["rice and dal", "salad"]). HOWEVER, for "snack", there are NO count constraints and the user can have multiple separate snacks per day. Do NOT combine new snacks with old snacks. Always log new snacks as entirely new entities.
 - CRITICAL DELETE RULE: If the user asks to delete, remove, or undo a logged meal (e.g., "remove yesterday's pani puri"), set action.type to "DELETE_LOG", set action.data.mealType to the type to delete (e.g., "snack"), set action.data.date to "yesterday" if specified, AND CRITICALLY set action.data.id to the EXACT numeric [ID: ...] of that specific meal from "User's Recent Logged Meals". (e.g., "id": "17392817293").
 - CRITICAL VOICE DICTATION RULE: Speech-to-text often misinterprets numbers. If the user says "to", "too", or "two" before a food item (e.g. "had to apples"), you MUST interpret it as the number 2. Always intelligently decode homophones for numbers and log the correct quantity, but NEVER change or replace the actual food item name the user provided.
@@ -191,7 +192,7 @@ EXPECTED JSON FORMAT:
     const result = await Promise.race([
       fetchPromise,
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Gemini Timeout')), 30000)
+        setTimeout(() => reject(new Error('Gemini Timeout')), 60000)
       ),
     ]);
 

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import BottomNav from '../components/layout/BottomNav';
+import PremiumButton from '../components/ui/PremiumButton';
 import { ink, muted } from '../constants';
 import { Screen } from '../types';
 import { quickOptions } from '../constants';
@@ -198,10 +199,9 @@ export default function MyPlanScreen({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 pb-5">
-        {/* Futuristic Daily Summary (Light Theme) */}
+        {/* Futuristic Daily Summary */}
         <div
-          className="relative overflow-hidden rounded-[32px] p-6 mb-8 bg-card text-card-foreground"
-          style={{ boxShadow: '0 12px 32px rgba(0,0,0,0.04)' }}
+          className="relative overflow-hidden rounded-[32px] p-6 mb-8 backdrop-blur-xl bg-white/60 dark:bg-slate-900/40 border border-white/40 dark:border-white/10 shadow-[0_12px_40px_rgba(52,199,89,0.15)] text-card-foreground"
         >
           <div className="relative z-10 grid grid-cols-2 gap-3 mb-6">
             {[
@@ -979,77 +979,70 @@ export default function MyPlanScreen({
               </div>
 
               <div className="pt-4 space-y-3">
-                <button
-                  disabled={isSaving}
-                  className="w-full relative overflow-hidden flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r from-[#34C759] to-[#2ba148] text-white shadow-[0_12px_30px_rgba(52,199,89,0.35)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-70 disabled:scale-100"
-                  onClick={async () => {
+                <PremiumButton
+                  className="w-full relative overflow-hidden flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r from-[#34C759] to-[#2ba148] text-white shadow-[0_12px_30px_rgba(52,199,89,0.35)] font-bold text-[16px] transition-all duration-300"
+                  onClick={() => {
                     if (!editFormData.name?.trim()) return;
-                    setIsSaving(true);
 
-                    try {
-                      const API_URL = import.meta.env.VITE_API_URL || '';
-                      const response = await fetch(`${API_URL}/api/chat`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          message: `[SYSTEM COMMAND] Force log exactly this food: "${editFormData.name}" for ${activeActionMeal.mealType} today. DO NOT ask any follow-up questions or make conversation. You MUST output the MEAL_LOG JSON immediately with fully calculated calories, protein, carbs, and fat.`,
-                        }),
+                    // Optimistic update of the name immediately
+                    if (onEditMeal && activeActionMeal) {
+                      onEditMeal(activeActionMeal.id, {
+                        name: editFormData.name,
                       });
-
-                      const data = await response.json();
-                      let macros = {
-                        calories: 0,
-                        protein: 0,
-                        carbs: 0,
-                        fat: 0,
-                      };
-
-                      if (data?.mealData) {
-                        macros = {
-                          calories: data.mealData.calories || 0,
-                          protein: data.mealData.protein || 0,
-                          carbs: data.mealData.carbs || 0,
-                          fat: data.mealData.fat || 0,
-                        };
-                      }
-
-                      if (onEditMeal) {
-                        onEditMeal(activeActionMeal.id, {
-                          name: editFormData.name,
-                          ...macros,
-                        });
-                      }
-                    } catch (error) {
-                      console.error('Failed to fetch macros', error);
-                      // Fallback just update name
-                      if (onEditMeal)
-                        onEditMeal(activeActionMeal.id, {
-                          name: editFormData.name,
-                        });
-                    } finally {
-                      setIsSaving(false);
-                      setIsEditingMeal(false);
-                      setActiveActionMeal(null);
                     }
+
+                    // Keep references to current action meal
+                    const mealId = activeActionMeal.id;
+                    const mealType = activeActionMeal.mealType;
+                    const foodName = editFormData.name;
+
+                    // Close modal immediately to avoid loading state delay
+                    setIsEditingMeal(false);
+                    setActiveActionMeal(null);
+
+                    // Fetch macros in background
+                    (async () => {
+                      try {
+                        const API_URL = import.meta.env.VITE_API_URL || '';
+                        const response = await fetch(`${API_URL}/api/chat`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            message: `[SYSTEM COMMAND] Force log exactly this food: "${foodName}" for ${mealType} today. DO NOT ask any follow-up questions or make conversation. You MUST output the MEAL_LOG JSON immediately with fully calculated calories, protein, carbs, and fat.`,
+                          }),
+                        });
+
+                        const data = await response.json();
+                        let macros = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+                        if (data?.mealData) {
+                          macros = {
+                            calories: data.mealData.calories || 0,
+                            protein: data.mealData.protein || 0,
+                            carbs: data.mealData.carbs || 0,
+                            fat: data.mealData.fat || 0,
+                          };
+                        }
+
+                        if (onEditMeal && data?.mealData) {
+                          onEditMeal(mealId, { ...macros });
+                        }
+                      } catch (error) {
+                        console.error('Failed to fetch macros in background', error);
+                      }
+                    })();
                   }}
                 >
                   <div className="absolute inset-0 bg-card/20 text-card-foreground opacity-0 active:opacity-100 transition-opacity duration-300" />
-                  {isSaving ? (
-                    <div className="flex items-center gap-3">
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                      <span>Calculating Macros...</span>
-                    </div>
-                  ) : (
-                    'Save Changes'
-                  )}
-                </button>
-                <button
-                  disabled={isSaving}
-                  className="w-full flex items-center justify-center p-4 rounded-2xl bg-card/60 text-card-foreground backdrop-blur-lg border border-slate-100 dark:border-border/50 text-foreground shadow-[0_8px_24px_rgba(0,0,0,0.03)] font-bold text-[16px] active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
+                  <span className="relative z-10 drop-shadow-sm">
+                    Save Changes
+                  </span>
+                </PremiumButton>
+                <PremiumButton
+                  className="w-full flex justify-center items-center py-4 rounded-2xl bg-card border border-slate-100 dark:border-border text-foreground font-bold shadow-sm transition-transform"
                   onClick={() => setIsEditingMeal(false)}
                 >
                   Cancel
-                </button>
+                </PremiumButton>
               </div>
             </div>
           )}

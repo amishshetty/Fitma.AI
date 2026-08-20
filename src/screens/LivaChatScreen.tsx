@@ -630,8 +630,7 @@ export default function LivaChatScreen({
 
       {/* Chat Input Bar (Mockup 1) */}
       <div
-        className="px-5 pb-8 pt-2 bg-card text-card-foreground"
-        style={{ borderTop: '1px solid rgba(52,199,89,0.06)' }}
+        className="px-5 pb-8 pt-2 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 border-t border-white/20 dark:border-white/10"
       >
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2 bg-[#f8faf8] dark:bg-black/30 rounded-full px-4 py-2.5 border border-slate-100 dark:border-border">

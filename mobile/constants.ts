@@ -114,7 +114,17 @@ export const screens = [
   'profile-settings',
 ] as const;
 
-import { Mic, Camera, Search } from 'lucide-react';
+import {
+  Mic,
+  Camera,
+  Search,
+  MessageSquare,
+  Utensils,
+  Zap,
+  Timer,
+  Apple,
+  Dumbbell
+} from 'lucide-react-native';
 
 export const quickOptions = [
   {
