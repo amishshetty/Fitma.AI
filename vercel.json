@@ -12,7 +12,7 @@
   "crons": [
     {
       "path": "/api/notifications/cron/evaluate",
-      "schedule": "* * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
