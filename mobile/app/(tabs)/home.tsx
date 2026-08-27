@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { View, ScrollView, Pressable, TextInput, StyleSheet, Modal, Text as RNText } from 'react-native';
+import { View, ScrollView, Pressable, TextInput, StyleSheet, Text as RNText, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   Mic, Camera, Keyboard, Bell, MessageCircle, Send, Plus, Sparkles,
-  Droplets, Minus, Sunrise, Sun, Moon, Coffee, Trash2, ArrowRight, Zap
+  Droplets, Minus, Sunrise, Sun, Moon, Coffee, Trash2, ArrowRight, Zap, Check
 } from 'lucide-react-native';
 import { green, muted, softGreen, ink } from '../../constants';
 import LivaAvatar from '../../components/layout/LivaAvatar';
+
+import Svg, { Circle } from 'react-native-svg';
 
 const Text = (props: any) => (
   <RNText 
@@ -15,13 +18,41 @@ const Text = (props: any) => (
   />
 );
 
-const ProgressRing = ({ value, size, color }: any) => (
-  <View style={{ width: size, height: size, borderRadius: size / 2, borderWidth: 4, borderColor: color, alignItems: 'center', justifyContent: 'center' }}>
-    <Text style={{ fontSize: size / 4, color, fontWeight: 'bold' }}>{value}%</Text>
-  </View>
-);
+const ProgressRing = ({ value, size, color }: any) => {
+  const strokeWidth = 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const safeValue = Math.min(Math.max(value || 0, 0), 100);
+  const strokeDashoffset = circumference - (safeValue / 100) * circumference;
 
-const green = '#34C759';
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Svg width={size} height={size} style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
+        <Circle
+          stroke="#e2e8f0"
+          fill="none"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+        />
+        <Circle
+          stroke={color}
+          fill="none"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+        />
+      </Svg>
+      <Text style={{ fontSize: size / 4, color, fontWeight: 'bold' }}>{safeValue}%</Text>
+    </View>
+  );
+};
+
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -30,27 +61,70 @@ const getGreeting = () => {
   return 'Good evening';
 };
 
-export default function HomeScreen({
-  onNavigate = () => {},
-  onStartLog = () => {},
-  userName = 'User',
-  caloriesLogged = 0,
-  proteinLogged = 0,
-  loggedMeals = [],
-  waterLogged = 0,
-  goals = { calories: 2000, water: 2500, protein: 100 },
-  onLogWater = () => {},
-  onDeleteMeal = () => {},
-  onSetChatInitialMsg = () => {},
-}: any) {
+import { useRouter } from 'expo-router';
+import { useAppStore } from '../../store/useAppStore';
+
+export default function HomeScreen() {
+  const router = useRouter();
+  
+  // Connect to Zustand store
+  const userName = useAppStore((state) => state.userName);
+  const goals = useAppStore((state) => state.goals);
+  const rawWaterLogged = useAppStore((state) => state.waterLogged);
+  const history = useAppStore((state) => state.history);
+  const loggedMeals = useAppStore((state) => state.meals);
+  const logWater = useAppStore((state) => state.logWater);
+  const deleteMeal = useAppStore((state) => state.deleteMeal);
+
+  // Compute today's metrics dynamically (like the Web App does)
+  const targetStart = new Date().setHours(0, 0, 0, 0);
+  const targetEnd = new Date().setHours(23, 59, 59, 999);
+  
+  const todayMeals = loggedMeals.filter((m: any) => {
+    const time = parseInt(m.id);
+    if (isNaN(time)) return true; // fallback for mocked data without proper ID
+    return time >= targetStart && time <= targetEnd;
+  });
+
+  const todayStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+  const waterLogged = history[todayStr]?.water || 0;
+
+  const caloriesLogged = todayMeals.reduce((acc: number, curr: any) => acc + (curr.calories || 0), 0);
+  const proteinLogged = todayMeals.reduce((acc: number, curr: any) => acc + (curr.protein || 0), 0);
+
+  const calPercent = Math.min(100, Math.round((caloriesLogged / (goals?.calories || 2000)) * 100));
+  const proteinPercent = Math.min(100, Math.round((proteinLogged / (goals?.protein || 120)) * 100));
+  const waterPercent = Math.min(100, Math.round((waterLogged / (goals?.water || 2500)) * 100));
+  
+  const onNavigate = (route: string) => {
+    // Basic mapping from web route names to expo paths
+    if (route === 'quick-log') router.push('/quick-log');
+    else if (route === 'liva-home') router.push('/(tabs)/liva-home');
+    else if (route === 'reminder-center') router.push('/reminder-center');
+    else router.push('/(tabs)/home'); // Fallback
+  };
+  
+  const onStartLog = (mode: string) => {
+    if (mode === 'text') router.push('/text-logging');
+    else if (mode === 'voice') router.push('/voice-logging');
+    else if (mode === 'camera') router.push('/camera-meal-selection');
+    else router.push('/quick-log');
+  };
+  
+  const onLogWater = (amount: number) => {
+    logWater(amount);
+  };
+  
+  const onDeleteMeal = (id: string) => {
+    deleteMeal(id);
+  };
+  const onSetChatInitialMsg = (msg: string) => {};
   const [askLivaText, setAskLivaText] = useState('');
   const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
   const [selectedMealCategory, setSelectedMealCategory] = useState<string | null>(null);
 
   const waterGlasses = Math.min(12, Math.round(waterLogged / 250));
-  const calPercent = Math.min(100, Math.round((caloriesLogged / (goals?.calories || 2000)) * 100));
-  const waterPercent = Math.min(100, Math.round((waterLogged / (goals?.water || 2500)) * 100));
-  const proteinPercent = Math.min(100, Math.round((proteinLogged / (goals?.protein || 100)) * 100));
+
 
   const insights = useMemo(() => {
     const hour = new Date().getHours();
@@ -60,9 +134,9 @@ export default function HomeScreen({
     const calRemaining = Math.max(0, calTarget - caloriesLogged);
     const protRemaining = Math.max(0, protTarget - proteinLogged);
 
-    const hasBreakfast = loggedMeals.some((m: any) => m.mealType === 'breakfast');
-    const hasLunch = loggedMeals.some((m: any) => m.mealType === 'lunch');
-    const hasDinner = loggedMeals.some((m: any) => m.mealType === 'dinner');
+    const hasBreakfast = loggedMeals.some((m: any) => m.mealType?.toLowerCase() === 'breakfast');
+    const hasLunch = loggedMeals.some((m: any) => m.mealType?.toLowerCase() === 'lunch');
+    const hasDinner = loggedMeals.some((m: any) => m.mealType?.toLowerCase() === 'dinner');
 
     if (hour >= 17) {
       if (!hasDinner) {
@@ -150,13 +224,22 @@ export default function HomeScreen({
 
     generated.push({
       id: 'trend-fat',
-      icon: <Zap size={16} color="#34C759" />,
+      type: 'suggestion',
+      icon: <Check size={16} color="#34C759" />,
       title: 'Weekly Trend',
       text: 'You ate a lot of fats this week. Try eating more veggies today. 🌱',
-      actionText: 'Get light recipes',
-      onClick: () => onNavigate('liva-home'),
-      color: '#34C759',
     });
+    if (generated.length === 0) {
+      generated.push({
+        id: '5',
+        type: 'success',
+        icon: <Check size={16} color="#34C759" />,
+        title: 'On Track!',
+        text: "You're doing great today. Keep up the consistent logging.",
+        actionText: 'View trends',
+        onClick: () => onNavigate('progress-dashboard'),
+      });
+    }
 
     return generated.slice(0, 3);
   }, [caloriesLogged, proteinLogged, waterGlasses, goals, proteinPercent, calPercent, onNavigate, onStartLog, onLogWater, loggedMeals]);
@@ -174,9 +257,10 @@ export default function HomeScreen({
   ];
 
   const getMealCategoryData = (category: string) => {
-    const categoryMeals = loggedMeals.filter((m: any) => m.mealType === category);
+    const categoryMeals = todayMeals.filter((m: any) => m.mealType && m.mealType.toLowerCase() === category.toLowerCase());
+    
     if (categoryMeals.length === 0) return { calories: '0 kcal', status: 'Not logged yet', active: false };
-    const totalCal = categoryMeals.reduce((sum: number, m: any) => sum + m.calories, 0);
+    const totalCal = categoryMeals.reduce((sum: number, m: any) => sum + (m.calories || 0), 0);
     const names = categoryMeals.map((m: any) => m.name).join(', ');
     return { calories: `${totalCal} kcal`, status: names, active: true };
   };
@@ -190,19 +274,21 @@ export default function HomeScreen({
 
   return (
     <View style={styles.rootContainer}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.greetingText}>{getGreeting()}, {userName}</Text>
+            <Text style={styles.greetingText}>{getGreeting()},{'\n'}{userName || 'User'}</Text>
             <Text style={styles.subGreetingText}>Small wins today. Log meals quickly and let Liva keep the numbers tidy.</Text>
           </View>
           <View style={styles.headerRight}>
             <Pressable style={styles.bellButton} onPress={() => onNavigate('reminder-center')}>
               <Bell size={20} color={green} />
             </Pressable>
-            <LivaAvatar size={48} />
+            <View style={styles.avatarWrapper}>
+              <LivaAvatar size={44} floating={false} />
+            </View>
           </View>
         </View>
 
@@ -255,7 +341,7 @@ export default function HomeScreen({
               <Text style={styles.quickLogTitle}>Quick Log Meal</Text>
               <Text style={styles.quickLogSub}>Under 15 seconds</Text>
             </View>
-            <Pressable style={styles.quickLogPlus} onPress={() => onNavigate('quick-log')}>
+            <Pressable style={styles.quickLogPlus} onPress={() => onNavigate('text-logging')}>
               <Plus size={20} color="#fff" />
             </Pressable>
           </View>
@@ -319,15 +405,48 @@ export default function HomeScreen({
               <Pressable
                 key={i}
                 onPress={() => onLogWater(((i + 1) * 250) - waterLogged)}
-                style={[styles.waterTick, { backgroundColor: i < waterGlasses ? green : '#f1f5f9', opacity: i < waterGlasses ? 1 : 0.6 }]}
-              />
+                style={[{ flex: 1, borderRadius: 6, overflow: 'hidden' }, { opacity: i < waterGlasses ? 1 : 0.6 }]}
+              >
+                <View style={[
+                  { flex: 1, backgroundColor: '#f1f5f9' },
+                  i < waterGlasses && Platform.OS === 'web' && {
+                    backgroundImage: 'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)'
+                  } as any
+                ]}>
+                  {i < waterGlasses && Platform.OS !== 'web' && (
+                    <LinearGradient 
+                      colors={['#34C759', '#00C4B0']} 
+                      start={{ x: 0, y: 0 }} 
+                      end={{ x: 1, y: 1 }} 
+                      style={StyleSheet.absoluteFillObject} 
+                    />
+                  )}
+                </View>
+              </Pressable>
             ))}
           </View>
           <View style={styles.waterActions}>
             <Pressable style={styles.waterBtnIcon} onPress={() => onLogWater(-250)}>
               <Minus size={20} color={muted} />
             </Pressable>
-            <Pressable style={styles.waterBtnAdd} onPress={() => onLogWater(250)}>
+            <Pressable 
+              style={[
+                styles.waterBtnAdd, 
+                { overflow: 'hidden', backgroundColor: '#34C759' },
+                Platform.OS === 'web' && {
+                  backgroundImage: 'linear-gradient(135deg, #34C759 0%, #00C4B0 100%)'
+                } as any
+              ]} 
+              onPress={() => onLogWater(250)}
+            >
+              {Platform.OS !== 'web' && (
+                <LinearGradient 
+                  colors={['#34C759', '#00C4B0']} 
+                  start={{ x: 0, y: 0 }} 
+                  end={{ x: 1, y: 1 }} 
+                  style={StyleSheet.absoluteFillObject}
+                />
+              )}
               <Droplets size={18} color="#fff" />
               <Text style={styles.waterBtnAddText}>Add 250 ml</Text>
             </Pressable>
@@ -409,37 +528,41 @@ export default function HomeScreen({
         
       </ScrollView>
 
-      {/* Meal Details Modal */}
-      <Modal visible={isMealDrawerOpen} transparent animationType="slide">
-        <Pressable style={styles.modalOverlay} onPress={() => setIsMealDrawerOpen(false)} />
-        <View style={styles.modalContent}>
-          <View style={styles.modalHandle} />
-          <Text style={styles.modalTitle}>{selectedMealCategory} Details</Text>
-          <View style={styles.modalBody}>
-            {loggedMeals.filter((m: any) => m.mealType === selectedMealCategory).length === 0 ? (
-              <Text style={styles.modalEmpty}>No meals logged for this category.</Text>
-            ) : (
-              loggedMeals.filter((m: any) => m.mealType === selectedMealCategory).map((m: any) => (
-                <View key={m.id} style={styles.modalMealCard}>
-                  <View>
-                    <Text style={styles.modalMealName}>{m.name}</Text>
-                    <Text style={styles.modalMealStats}>{m.calories} kcal • {m.protein}g protein</Text>
-                    <Text style={styles.modalMealTime}>{m.timestamp}</Text>
+      {/* Meal Details Drawer — inline overlay */}
+      {isMealDrawerOpen && (
+        <View style={styles.modalOverlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsMealDrawerOpen(false)} />
+          <View style={[styles.modalContent, { maxHeight: '85%' }]}>
+            <Pressable style={styles.modalHandle} onPress={() => setIsMealDrawerOpen(false)} />
+            <Text style={styles.modalTitle}>{selectedMealCategory} Details</Text>
+            <ScrollView contentContainerStyle={styles.modalBody} showsVerticalScrollIndicator={false}>
+            {todayMeals.filter((m: any) => m.mealType?.toLowerCase() === selectedMealCategory?.toLowerCase()).length === 0 ? (
+                <Text style={styles.modalEmpty}>No meals logged for this category.</Text>
+              ) : (
+                todayMeals.filter((m: any) => m.mealType?.toLowerCase() === selectedMealCategory?.toLowerCase()).map((m: any) => (
+                  <View key={m.id} style={styles.modalMealCard}>
+                    <View>
+                      <Text style={styles.modalMealName}>{m.name}</Text>
+                      <Text style={styles.modalMealStats}>{m.calories} kcal • {m.protein}g protein</Text>
+                      <Text style={styles.modalMealTime}>
+                        {m.time ? new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : m.timestamp || ''}
+                      </Text>
+                    </View>
+                    <Pressable onPress={() => {
+                      onDeleteMeal(m.id);
+                      if (todayMeals.filter((meal: any) => meal.mealType?.toLowerCase() === selectedMealCategory?.toLowerCase()).length <= 1) {
+                        setIsMealDrawerOpen(false);
+                      }
+                    }} style={styles.deleteBtn}>
+                      <Trash2 size={16} color="#ef4444" />
+                    </Pressable>
                   </View>
-                  <Pressable onPress={() => {
-                    onDeleteMeal(m.id);
-                    if (loggedMeals.filter((meal: any) => meal.mealType === selectedMealCategory).length <= 1) {
-                      setIsMealDrawerOpen(false);
-                    }
-                  }} style={styles.deleteBtn}>
-                    <Trash2 size={16} color="#ef4444" />
-                  </Pressable>
-                </View>
-              ))
-            )}
+                ))
+              )}
+            </ScrollView>
           </View>
         </View>
-      </Modal>
+      )}
     </View>
   );
 }
@@ -451,7 +574,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F4FAF6',
   },
   scrollView: {
     flex: 1,
@@ -504,10 +627,13 @@ const styles = StyleSheet.create({
   askLivaContainer: {
     marginBottom: 16,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: '#fff',
     padding: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
   },
   askLivaRow: {
     flexDirection: 'row',
@@ -528,11 +654,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     borderRadius: 16,
-    backgroundColor: 'rgba(52,199,89,0.1)',
+    backgroundColor: 'rgba(52,199,89,0.08)',
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'rgba(52,199,89,0.15)',
+    borderColor: 'rgba(52,199,89,0.12)',
   },
   askLivaInput: {
     flex: 1,
@@ -543,8 +669,9 @@ const styles = StyleSheet.create({
   quickLogContainer: {
     marginBottom: 16,
     borderRadius: 28,
-    backgroundColor: '#34C759',
+    backgroundColor: '#10b981',
     padding: 16,
+    overflow: 'hidden',
   },
   quickLogHeader: {
     flexDirection: 'row',
@@ -556,6 +683,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  avatarWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#EAF8F1',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#10201a',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   quickLogSub: {
     fontSize: 14,
@@ -859,8 +998,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(15,23,42,0.4)',
+    justifyContent: 'flex-end',
+    zIndex: 100,
   },
   modalContent: {
     position: 'absolute',
@@ -934,3 +1079,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

@@ -13,12 +13,14 @@ const Text = (props: any) => (
   />
 );
 
-const green = '#34C759';
+import { useAppStore } from '../../store/useAppStore';
 
 export default function LivaHomeScreen() {
   const router = useRouter();
-  const userName = 'Amish'; // Defaulted
-  const remainingCalories = 1800;
+  const userName = useAppStore(s => s.userName) || 'User';
+  const caloriesLogged = useAppStore(s => s.caloriesLogged);
+  const goals = useAppStore(s => s.goals);
+  const remainingCalories = Math.max(0, (goals?.calories || 2000) - caloriesLogged);
   
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState('');
@@ -36,7 +38,7 @@ export default function LivaHomeScreen() {
     { label: 'Log Water', icon: Droplets, action: () => handleSendText('Log a glass of water') },
   ];
 
-  const handleSendText = (textToSend: string) => {
+  const handleSendText = async (textToSend: string) => {
     if (!textToSend.trim()) return;
 
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -47,22 +49,50 @@ export default function LivaHomeScreen() {
       timestamp,
     };
 
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const { generateCoachResponse } = await import('../../utils/ai');
+      const { useAppStore } = await import('../../store/useAppStore');
+      const state = useAppStore.getState();
+      
+      const result = await generateCoachResponse(updatedMessages, textToSend, state);
+      
+      let responseText = result?.response || "I hear you!";
+      
+      if (result?.type === 'water') {
+        state.logWater(result.waterAmountMl || 250);
+        responseText = result.response || `Got it! I logged ${result.waterAmountMl || 250}ml of water.`;
+      } else if (result?.type === 'meal' && result.mealData) {
+        await state.logMeal(result.mealData);
+        responseText = result.response || `Got it! I logged ${result.mealData.calories} kcal for your ${result.mealData.mealType || 'snack'}.`;
+      }
+
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: 'liva',
-          text: "I'm here for you! Try asking me something about nutrition or log a meal.",
+          text: responseText,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
+    } catch (e) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: 'liva',
+          text: "I'm having trouble connecting right now. Try again?",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const scrollSuggestions = () => {
@@ -501,4 +531,5 @@ const styles = StyleSheet.create({
     padding: 4,
   },
 });
+
 

@@ -13,7 +13,6 @@ const Text = (props: any) => (
   />
 );
 
-const green = '#34C759';
 
 export default function LivaThinkingScreen() {
   const router = useRouter();
@@ -174,4 +173,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
+
 

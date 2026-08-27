@@ -3,6 +3,10 @@ import { View, Text as RNText, TextInput, Pressable, StyleSheet, ScrollView } fr
 import { router } from "expo-router";
 import { Mail, Lock, Eye, EyeOff, Check } from "lucide-react-native";
 import Svg, { Circle, Path, Ellipse, Line } from "react-native-svg";
+import { useAppStore } from '../store/useAppStore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { get, ref } from 'firebase/database';
+import { auth, db } from '../firebase';
 
 // Fix for Android squashed text
 const Text = (props: any) => (
@@ -64,7 +68,64 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
+  
+  const login = useAppStore((state) => state.login);
+  const setProfile = useAppStore((state) => state.setProfile);
+
+  const fetchProfileAndRedirect = async (user: any) => {
+    try {
+      const snapshot = await get(ref(db, `users/${user.uid}`));
+      if (snapshot.exists()) {
+        setProfile(snapshot.val());
+      }
+    } catch (err) {
+      console.log('Error fetching user profile:', err);
+    }
+    login(user.displayName || user.email?.split('@')[0] || 'User');
+    router.push("/(tabs)/home");
+  };
+
+  const handleAuth = async () => {
+    try {
+      // Basic validation
+      if (!email || !password) {
+        alert("Please enter both email and password");
+        return;
+      }
+      
+      // Attempt login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await fetchProfileAndRedirect(userCredential.user);
+      
+    } catch (error: any) {
+      console.error("Auth Error:", error);
+      
+      // If user not found or invalid login, maybe they want to sign up?
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        try {
+          const newUser = await createUserWithEmailAndPassword(auth, email, password);
+          await fetchProfileAndRedirect(newUser.user);
+        } catch (signupError: any) {
+          alert(`Sign up failed: ${signupError.message}`);
+        }
+      } else {
+        alert(`Login failed: ${error.message}`);
+      }
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const userCredential = await signInWithPopup(auth, provider);
+      await fetchProfileAndRedirect(userCredential.user);
+    } catch (error: any) {
+      console.error("Google Auth Error:", error);
+      alert(`Google Login failed: ${error.message}`);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -137,9 +198,9 @@ export default function LoginScreen() {
 
           <Pressable 
             style={styles.primaryButton}
-            onPress={() => router.push("/(tabs)/home")}
+            onPress={handleAuth}
           >
-            <Text style={styles.primaryButtonText}>Sign In</Text>
+            <Text style={styles.primaryButtonText}>Sign In / Sign Up</Text>
           </Pressable>
         </View>
 
@@ -152,7 +213,7 @@ export default function LoginScreen() {
         </View>
 
         {/* Social Login */}
-        <Pressable style={styles.googleButton}>
+        <Pressable style={styles.googleButton} onPress={handleGoogleAuth}>
           <GoogleIcon />
           <Text style={styles.googleButtonText}>Continue with Google</Text>
         </Pressable>

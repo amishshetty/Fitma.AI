@@ -21,33 +21,67 @@ const ProgressRing = ({ value, size, color, label }: any) => (
   </View>
 );
 
-const green = '#34C759';
 
 const getHealthScore = (caloriesLogged: number, waterLogged: number, goals: any, completedHabits: any) => {
   return 85; // Mock for demo, the user uses getHealthScore from utils.
 };
 
-export default function ProgressDashboardScreen({
-  onNavigate = () => {},
-  userWeight = 75.4,
-  waterLogged = 0,
-  completedHabits = {},
-  goals = { calories: 2000, water: 2500, protein: 100 },
-  caloriesLogged = 0,
-  proteinLogged = 0,
-  loggedMealsCount = 0,
-  history = {},
-  todaysLoggedMeals = [],
-}: any) {
+import { useRouter } from 'expo-router';
+import { useAppStore } from '../../store/useAppStore';
+
+export default function ProgressDashboardScreen() {
+  const router = useRouter();
+  
+  const waterLogged = useAppStore((state) => state.waterLogged);
+  const caloriesLogged = useAppStore((state) => state.caloriesLogged);
+  const proteinLogged = useAppStore((state) => state.proteinLogged);
+  const goals = useAppStore((state) => state.goals);
+  const meals = useAppStore((state) => state.meals);
+  const history = useAppStore((state) => state.history);
+  
+  const userWeight = 75.4; // TODO: Pull from settings
+  const loggedMealsCount = meals.length;
+  
+  const todaysLoggedMeals = meals;
+
+  const onNavigate = (route: string) => {
+    router.push('/(tabs)/home'); 
+  };
   const [activeChartTab, setActiveChartTab] = useState('Today');
 
-  const habitCompletionRate = useMemo(() => {
-    const total = 5;
-    const completed = Object.values(completedHabits).filter(Boolean).length;
-    return Math.round((completed / total) * 100);
-  }, [completedHabits]);
+  // Simple dynamic health score calculation
+  const score = useMemo(() => {
+    let pts = 0;
+    const calTarget = goals?.calories || 2000;
+    const waterTarget = goals?.water || 2500;
+    
+    // Adherence to calorie goal
+    if (caloriesLogged > 0) {
+      const calRatio = caloriesLogged / calTarget;
+      if (calRatio >= 0.8 && calRatio <= 1.1) pts += 40;
+      else if (calRatio > 0 && calRatio < 1.3) pts += 25;
+    }
+    
+    // Adherence to water goal
+    if (waterLogged > 0) {
+      const waterRatio = Math.min(1, waterLogged / waterTarget);
+      pts += (waterRatio * 30);
+    }
+    
+    // Base score for using the app
+    pts += 15;
+    
+    // Additional points for logging multiple meals
+    pts += Math.min(15, meals.length * 5);
+    
+    return Math.min(100, Math.round(pts));
+  }, [caloriesLogged, waterLogged, goals, meals.length]);
 
-  const score = getHealthScore(caloriesLogged, waterLogged, goals, completedHabits);
+  const habitCompletionRate = useMemo(() => {
+    // Fake metric based on meals logged today
+    return Math.min(100, (meals.length / 3) * 100);
+  }, [meals.length]);
+
   let scoreBgClass = '#f2faf5';
   let scoreTextClass = '#197a38';
   let dot = '#22c55e';
@@ -487,4 +521,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
 

@@ -13,8 +13,6 @@ const Text = (props: any) => (
   />
 );
 
-const green = '#34C759';
-const muted = '#64748b';
 
 export default function LivaSmartEngineScreen() {
   const [enabled, setEnabled] = useState(true);
@@ -374,4 +372,5 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
 

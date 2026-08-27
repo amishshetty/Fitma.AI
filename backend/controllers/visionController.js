@@ -18,7 +18,7 @@ export const handleVisionAnalyze = async (req, res) => {
           protein: 8,
           carbs: 40,
           fat: 12,
-          mealType: mealType || 'unknown',
+          mealType: mealType || 'snack',
         },
       });
     }
@@ -102,7 +102,7 @@ Do not include markdown tags like \`\`\`json or any other text. Just the raw JSO
     }
 
     const parsedData = JSON.parse(jsonString);
-    parsedData.mealType = mealType || 'unknown';
+    parsedData.mealType = mealType || 'snack';
 
     return res.json({
       success: true,
@@ -119,7 +119,7 @@ Do not include markdown tags like \`\`\`json or any other text. Just the raw JSO
         protein: 10,
         carbs: 30,
         fat: 15,
-        mealType: mealType || 'unknown',
+        mealType: mealType || 'snack',
       },
     });
   }

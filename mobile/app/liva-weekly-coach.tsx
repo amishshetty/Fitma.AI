@@ -15,7 +15,6 @@ const Text = (props: any) => (
   />
 );
 
-const green = '#34C759';
 
 export default function LivaWeeklyCoachScreen() {
   const router = useRouter();
@@ -359,4 +358,5 @@ const styles = StyleSheet.create({
     borderTopColor: '#f1f5f9',
   },
 });
+
 

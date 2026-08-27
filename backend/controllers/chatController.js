@@ -123,7 +123,7 @@ Remember:
 - CRITICAL: You MUST return a single, strictly valid JSON object matching the schema provided.
 - CRITICAL: If the user asks for food suggestions, you MUST provide at least 1 meal in the "recommendations" array.
 - CRITICAL: If the user is just logging a meal or water, or asking for a summary, you MUST leave "recommendations" EMPTY. Only provide recommendations if EXPLICITLY asked.
-- CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), you MUST set mealType to "unknown" so the app can ask them.
+- CRITICAL: If logging a meal, set action.type to "MEAL_LOG" and set action.data.mealType to one of: "breakfast", "lunch", "dinner", "snack". If the user did NOT mention which meal they ate (e.g. "I had 2 rotis"), intelligently GUESS the mealType based on the current time (e.g. Morning = breakfast, Afternoon = lunch, Evening = dinner). If it's a small item outside typical hours, use "snack". NEVER use "unknown".
 - CRITICAL: When the user logs multiple items at once, you MUST include ALL of them in the "action.data.items" array and calculate the total combined calories and macros for all items.
 - CRITICAL: When extracting food names for "action.data.items", STRICTLY remove any conversational filler or meal indicators like "for breakfast", "in snacks", "for lunch", "i had", etc. The items should be the pure food name and quantity ONLY (e.g. "1 vadapav", not "1 vadapav in snacks").
 - CRITICAL MEAL UPDATE RULE: For breakfast, lunch, and dinner, the frontend completely REPLACES the existing meal with your new output. So if the user ADDS an item to these meals (e.g. "add salad to my dinner"), you MUST output the COMBINED items (e.g. ["rice and dal", "salad"]). HOWEVER, for "snack", there are NO count constraints and the user can have multiple separate snacks per day. Do NOT combine new snacks with old snacks. Always log new snacks as entirely new entities.
@@ -157,7 +157,7 @@ EXPECTED JSON FORMAT:
       "carbs": 40,
       "fat": 15,
       "items": ["2 rotis", "paneer"],
-      "mealType": "unknown",
+      "mealType": "snack",
       "date": "today",
       "id": "17067823932",
       "amountML": 0

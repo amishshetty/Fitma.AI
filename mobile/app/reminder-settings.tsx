@@ -55,9 +55,7 @@ export default function ReminderSettingsScreen() {
     meals: true, water: true, protein: true, weekly: true, weight: true, habits: true
   });
 
-  const green = '#34C759';
-  const muted = '#64748b';
-
+    
   return (
     <View style={styles.root}>
       <ScreenShell 
@@ -204,4 +202,5 @@ const styles = StyleSheet.create({
   timeLabel: { fontSize: 12, fontWeight: '700', color: '#64748b', marginBottom: 8 },
   timeInput: { backgroundColor: '#f8fafc', borderRadius: 12, padding: 12, fontSize: 14, fontWeight: '700', color: '#64748b' }
 });
+
 
