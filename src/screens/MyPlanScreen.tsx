@@ -500,16 +500,12 @@ export default function MyPlanScreen({
                     key={i}
                     onClick={() => {
                       setIsMealDrawerOpen(false);
-                      if (option.title === 'Ask Liva AI') {
-                        onNavigate('liva-home');
-                      } else if (option.title === 'Voice Logging') {
+                      if (option.mode === 'voice') {
                         onNavigate('voice-log');
-                      } else if (option.title === 'Camera Logging') {
+                      } else if (option.mode === 'camera') {
                         onNavigate('camera-log');
-                      } else if (option.title === 'Search Food') {
+                      } else if (option.mode === 'text') {
                         onNavigate('text-log');
-                      } else if (option.title === 'Scan Barcode') {
-                        onNavigate('camera-log');
                       }
                     }}
                     className="flex w-full items-center gap-4 rounded-[20px] border-[1.5px] border-slate-100 dark:border-border bg-card text-card-foreground p-4 transition-transform active:scale-95 active:bg-slate-50 dark:active:bg-muted"
