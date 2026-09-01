@@ -1,0 +1,1 @@
+﻿import dotenv from 'dotenv'; dotenv.config({ path: 'mobile/.env' }); import { processVoiceCommand } from './mobile/utils/ai.ts'; processVoiceCommand('I just had a banana').then(console.log).catch(console.error);
