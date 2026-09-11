@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text as RNText, StyleSheet, Pressable, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, useColorScheme, Text as RNText, StyleSheet, Pressable, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { X, Activity, Check } from 'lucide-react-native';
 import { parseMealLog } from '../utils/ai';
@@ -14,6 +14,11 @@ const Text = (props: any) => (
 );
 
 export default function TextLoggingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [text, setText] = useState('');
   const [isParsing, setIsParsing] = useState(false);
@@ -161,7 +166,7 @@ export default function TextLoggingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
@@ -175,12 +180,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   drawer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
     paddingBottom: 32,
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -195,7 +200,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   subtitle: {
     fontSize: 14,
@@ -205,7 +210,7 @@ const styles = StyleSheet.create({
   closeBtn: {
     padding: 8,
     borderRadius: 20,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
   },
   inputContainer: {
     position: 'relative',
@@ -213,12 +218,12 @@ const styles = StyleSheet.create({
   },
   input: {
     minHeight: 128,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 24,
     padding: 20,
     fontSize: 16,
-    color: '#10201a',
-    borderColor: '#e2e8f0',
+    color: isDark ? '#f8fafc' : '#10201a',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
     borderWidth: 1,
   },
   aiBadge: {
@@ -236,7 +241,7 @@ const styles = StyleSheet.create({
   aiBadgeText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   pendingContainer: {
     marginBottom: 20,
@@ -261,7 +266,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   parsedStatBox: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 8,
     padding: 10,
     flex: 1,
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
   parsedStatVal: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   parsedStatLbl: {
     fontSize: 10,
@@ -280,8 +285,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   pendingLabel: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e2e8f0',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
     borderWidth: 1,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -295,14 +300,14 @@ const styles = StyleSheet.create({
   pendingLabelText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   mealTypes: {
     gap: 8,
   },
   mealTypeBtn: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e2e8f0',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
     borderWidth: 1,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -312,7 +317,7 @@ const styles = StyleSheet.create({
   mealTypeText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   suggestionsContainer: {
     marginBottom: 24,
@@ -325,8 +330,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   suggestionBtn: {
-    backgroundColor: '#ffffff',
-    borderColor: '#e2e8f0',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
     borderWidth: 1,
     padding: 12,
     borderRadius: 12,
@@ -338,7 +343,7 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     flexDirection: 'row',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     paddingVertical: 16,
     borderRadius: 24,
     justifyContent: 'center',
@@ -349,7 +354,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   primaryBtnText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },

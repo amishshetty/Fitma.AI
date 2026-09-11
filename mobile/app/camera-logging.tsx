@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, Text as RNText, ActivityIndicator, Alert, Image, ScrollView } from 'react-native';
+import { View, useColorScheme, StyleSheet, Pressable, Text as RNText, ActivityIndicator, Alert, Image, ScrollView } from 'react-native';
 import { ArrowLeft, Utensils, Flashlight, Image as ImageIcon, Camera as CameraIcon, Activity, Check } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -15,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function CameraLoggingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
@@ -169,7 +174,7 @@ export default function CameraLoggingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
   subtitle: {
     fontSize: 14,
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
     width: 60,
   },
   footerBtnText: {
-    color: '#fff',
+    color: isDark ? '#1e293b' : '#fff',
     fontSize: 12,
   },
   captureButtonOuter: {
@@ -257,6 +262,6 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
     borderRadius: 24,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   }
 });

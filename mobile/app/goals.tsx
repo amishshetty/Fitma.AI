@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text as RNText, Pressable, ScrollView } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Flame, Target, Leaf, Wheat, Sparkles, Search } from 'lucide-react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -15,6 +16,11 @@ const Text = (props: any) => (
 );
 
 export default function GoalsScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -90,14 +96,14 @@ export default function GoalsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -117,7 +123,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     lineHeight: 20,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   grid: {
     flexDirection: 'row',
@@ -133,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 2,
     padding: 16,
   },

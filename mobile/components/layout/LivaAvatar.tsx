@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Easing, StyleSheet } from 'react-native';
+import { useAppStore } from '../../store/useAppStore';
+import { View, useColorScheme, Animated, Easing, StyleSheet } from 'react-native';
 import Svg, { Circle, Path, Ellipse, Line } from 'react-native-svg';
 
 export default function LivaAvatar({
@@ -9,6 +10,11 @@ export default function LivaAvatar({
   size?: number;
   floating?: boolean;
 }) {
+    const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -72,11 +78,11 @@ export default function LivaAvatar({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     elevation: 8,
     shadowColor: 'rgba(52, 199, 89, 0.4)',
     shadowOffset: { width: 0, height: 8 },

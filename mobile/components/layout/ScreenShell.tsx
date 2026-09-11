@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Pressable, Text as RNText, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Pressable, Text as RNText, StyleSheet, ScrollView, SafeAreaView, useColorScheme } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
+
+import { useAppStore } from '../../store/useAppStore';
 
 const Text = (props: any) => (
   <RNText 
@@ -25,17 +27,28 @@ export default function ScreenShell({
   onBack?: () => void;
   compact?: boolean;
 }) {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+  
+  const textColor = isDark ? '#f8fafc' : '#000';
+  const subtextColor = isDark ? '#94a3b8' : '#64748b';
+  const iconColor = isDark ? '#f8fafc' : '#10201A';
+  const bgColor = isDark ? '#0f172a' : '#ffffff';
+  const backBtnBg = isDark ? '#334155' : '#f1f5f9';
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: bgColor }]}>
       <View style={styles.header}>
         {onBack && (
-          <Pressable onPress={onBack} style={styles.backButton}>
-            <ArrowLeft size={24} color="#10201A" />
+          <Pressable onPress={onBack} style={[styles.backButton, { backgroundColor: backBtnBg }]}>
+            <ArrowLeft size={24} color={iconColor} />
           </Pressable>
         )}
         <View style={styles.titleContainer}>
-          {title && <Text style={styles.title}>{title}</Text>}
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {title && <Text style={[styles.title, { color: textColor }]}>{title}</Text>}
+          {subtitle && <Text style={[styles.subtitle, { color: subtextColor }]}>{subtitle}</Text>}
         </View>
       </View>
       
@@ -48,10 +61,10 @@ export default function ScreenShell({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -64,7 +77,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
@@ -75,13 +88,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
     lineHeight: 32,
   },
   subtitle: {
     marginTop: 4,
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   content: {

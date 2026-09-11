@@ -1,8 +1,13 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, useColorScheme, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, Construction } from 'lucide-react-native';
 
 export default function MissingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const { missing } = useLocalSearchParams();
   
@@ -30,10 +35,10 @@ export default function MissingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
@@ -47,7 +52,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -69,22 +74,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 15,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 32,
   },
   path: {
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   button: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 16,
@@ -94,7 +99,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   buttonText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },

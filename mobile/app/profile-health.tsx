@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -42,6 +43,11 @@ const shellStyles = StyleSheet.create({
 });
 
 export default function ProfileHealthScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   const [activity, setActivity] = useState('moderate');
@@ -233,45 +239,45 @@ export default function ProfileHealthScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff' },
   content: { gap: 20 },
   successBox: { backgroundColor: '#f2faf5', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(52, 199, 89, 0.2)' },
   successText: { fontSize: 12, fontWeight: '700', color: '#197a38' },
   
-  card: { borderRadius: 24, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: '#f1f5f9', shadowColor: '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
-  cardTitle: { fontSize: 12, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 14 },
+  card: { borderRadius: 24, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
+  cardTitle: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 14 },
   
   grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between' },
-  activityCard: { width: '48%', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: '#f1f5f9', backgroundColor: '#fff' },
-  activityCardActive: { backgroundColor: '#f2faf5', borderColor: '#34C759' },
-  activityLabel: { fontSize: 12, fontWeight: '700', color: '#000' },
-  activityLabelActive: { color: '#34C759' },
-  activityDesc: { fontSize: 9, fontWeight: '500', color: '#64748b', marginTop: 2 },
-  activityDescActive: { color: '#34C759' },
+  activityCard: { width: '48%', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', backgroundColor: isDark ? '#1e293b' : '#fff' },
+  activityCardActive: { backgroundColor: '#f2faf5', borderColor: isDark ? '#4ade80' : '#34C759' },
+  activityLabel: { fontSize: 12, fontWeight: '700', color: isDark ? '#f8fafc' : '#000' },
+  activityLabelActive: { color: isDark ? '#4ade80' : '#34C759' },
+  activityDesc: { fontSize: 9, fontWeight: '500', color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
+  activityDescActive: { color: isDark ? '#4ade80' : '#34C759' },
 
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   tag: { borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: '#e2eae6', backgroundColor: '#f8fdfb' },
-  tagActive: { backgroundColor: '#34C759', borderColor: '#34C759' },
-  allergyActive: { backgroundColor: '#f43f5e', borderColor: '#f43f5e' },
-  tagText: { fontSize: 12, fontWeight: '700', color: '#64748b' },
-  tagTextActive: { color: '#fff' },
+  tagActive: { backgroundColor: isDark ? '#4ade80' : '#34C759', borderColor: isDark ? '#4ade80' : '#34C759' },
+  allergyActive: { backgroundColor: isDark ? '#fb7185' : '#f43f5e', borderColor: isDark ? '#fb7185' : '#f43f5e' },
+  tagText: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b' },
+  tagTextActive: { color: isDark ? '#1e293b' : '#fff' },
 
   customAllergyContainer: { marginTop: 16 },
-  customAllergyLabel: { fontSize: 10, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  customAllergyLabel: { fontSize: 10, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
   customAllergyRow: { flexDirection: 'row', gap: 8 },
-  customAllergyInput: { flex: 1, backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, color: '#000' },
+  customAllergyInput: { flex: 1, backgroundColor: isDark ? '#0f172a' : '#f8fafc', borderWidth: 1, borderColor: isDark ? '#334155' : '#e2e8f0', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, color: isDark ? '#f8fafc' : '#000' },
   addButton: { backgroundColor: '#f2faf5', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, justifyContent: 'center' },
   addButtonDisabled: { opacity: 0.5 },
-  addButtonText: { color: '#34C759', fontSize: 14, fontWeight: '700' },
+  addButtonText: { color: isDark ? '#4ade80' : '#34C759', fontSize: 14, fontWeight: '700' },
   customAllergyTag: { backgroundColor: '#fbf8f9', borderWidth: 1, borderColor: '#e2eae6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  customAllergyTagText: { fontSize: 12, color: '#000' },
-  customAllergyTagClose: { fontSize: 16, color: '#64748b', lineHeight: 18 },
+  customAllergyTagText: { fontSize: 12, color: isDark ? '#f8fafc' : '#000' },
+  customAllergyTagClose: { fontSize: 16, color: isDark ? '#94a3b8' : '#64748b', lineHeight: 18 },
 
-  uploadArea: { borderWidth: 2, borderStyle: 'dashed', borderColor: '#f1f5f9', borderRadius: 16, padding: 24, backgroundColor: '#f8fafc', alignItems: 'center', justifyContent: 'center' },
+  uploadArea: { borderWidth: 2, borderStyle: 'dashed', borderColor: isDark ? '#334155' : '#f1f5f9', borderRadius: 16, padding: 24, backgroundColor: isDark ? '#0f172a' : '#f8fafc', alignItems: 'center', justifyContent: 'center' },
   uploadSuccessText: { fontSize: 12, fontWeight: '700', color: '#197a38' },
-  uploadTitle: { fontSize: 12, fontWeight: '700', color: '#64748b' },
-  uploadSubtitle: { fontSize: 9, color: '#64748b', marginTop: 2, marginBottom: 12 },
-  uploadButton: { borderRadius: 999, backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 6, borderWidth: 1, borderColor: '#34C759' },
-  uploadButtonText: { fontSize: 10, fontWeight: '700', color: '#34C759' }
+  uploadTitle: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b' },
+  uploadSubtitle: { fontSize: 9, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2, marginBottom: 12 },
+  uploadButton: { borderRadius: 999, backgroundColor: isDark ? '#1e293b' : '#fff', paddingHorizontal: 16, paddingVertical: 6, borderWidth: 1, borderColor: isDark ? '#4ade80' : '#34C759' },
+  uploadButtonText: { fontSize: 10, fontWeight: '700', color: isDark ? '#4ade80' : '#34C759' }
 });

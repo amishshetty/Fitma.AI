@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text as RNText, Pressable, Animated } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Pressable, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Droplets } from 'lucide-react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function LivaWaterScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [waterLogged, setWaterLogged] = useState(0);
   const waterGoal = 2500; // Mock goal
@@ -112,14 +118,14 @@ export default function LivaWaterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   contentSpace: {
     gap: 24,
@@ -129,7 +135,7 @@ const styles = StyleSheet.create({
   },
   glassCard: {
     borderRadius: 28,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     padding: 24,
     borderColor: 'rgba(52, 199, 89, 0.12)',
     borderWidth: 1,
@@ -146,14 +152,14 @@ const styles = StyleSheet.create({
     height: 176, // 44 * 4
     width: 96, // 24 * 4
     borderWidth: 4,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: 'hidden',
     justifyContent: 'flex-end',
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
   },
   waterFill: {
     width: '100%',
@@ -189,7 +195,7 @@ const styles = StyleSheet.create({
   metricsLabel: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -200,7 +206,7 @@ const styles = StyleSheet.create({
   },
   metricsTarget: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '600',
   },
   resetButton: {
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    color: '#f43f5e',
+    color: isDark ? '#fb7185' : '#f43f5e',
   },
   logButtonsGrid: {
     flexDirection: 'row',
@@ -222,7 +228,7 @@ const styles = StyleSheet.create({
   logButton: {
     flex: 1,
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingVertical: 18,
     paddingHorizontal: 8,
     alignItems: 'center',
@@ -245,7 +251,7 @@ const styles = StyleSheet.create({
   },
   logButtonLabel: {
     fontSize: 9,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
 });

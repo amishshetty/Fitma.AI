@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text as RNText, StyleSheet, Pressable, Animated, Platform } from 'react-native';
+import { View, useColorScheme, Text as RNText, StyleSheet, Pressable, Animated, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Mic, Check } from 'lucide-react-native';
 import { parseMealLog } from '../utils/ai';
@@ -14,6 +14,11 @@ const Text = (props: any) => (
 );
 
 export default function VoiceLoggingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const logMeal = useAppStore((state) => state.logMeal);
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -172,14 +177,14 @@ export default function VoiceLoggingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   content: {
     flex: 1,
@@ -191,11 +196,11 @@ const styles = StyleSheet.create({
     width: 144,
     height: 144,
     borderRadius: 72,
-    backgroundColor: '#34C759', // fallback
+    backgroundColor: isDark ? '#4ade80' : '#34C759', // fallback
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 40,
-    shadowColor: '#34C759',
+    shadowColor: isDark ? '#4ade80' : '#34C759',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.35,
     shadowRadius: 24,
@@ -204,7 +209,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     marginBottom: 16,
   },
   subtitle: {
@@ -235,24 +240,24 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   doneBtn: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: 'center',
   },
   doneBtnText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },
   cancelBtn: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: 'center',
   },
   cancelBtnText: {
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     fontSize: 16,
     fontWeight: 'bold',
   },

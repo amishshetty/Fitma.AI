@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
 import { Clock, Calendar, Droplets, Utensils, Coffee, Droplet } from 'lucide-react-native';
 
 const Text = (props: any) => (
@@ -21,6 +22,11 @@ export default function ReminderPreviewScreen({
   onNavigate?: (screen: Screen) => void;
   userName?: string;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const firstName = userName.split(' ')[0];
 
   const previews = [
@@ -128,14 +134,14 @@ export default function ReminderPreviewScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     padding: 24,
@@ -145,12 +151,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '500',
   },
   scrollContent: {
@@ -166,8 +172,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
-    shadowColor: '#10201a',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 16,
@@ -178,7 +184,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -190,20 +196,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   highlightText: {
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     fontWeight: '700',
   },
   previewCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     borderRadius: 20,
     padding: 16,
     gap: 12,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 16,
@@ -223,7 +229,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -233,7 +239,7 @@ const styles = StyleSheet.create({
   livaText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     letterSpacing: -0.5,
   },
   cardHeaderRight: {
@@ -258,13 +264,13 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   bodyText: {
     fontSize: 13,
     fontWeight: '500',
     lineHeight: 20,
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     paddingLeft: 4,
   },
   cardFooter: {
@@ -277,12 +283,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
   },
   dismissText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   actionButton: {
     flexDirection: 'row',
@@ -291,11 +297,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   actionButtonText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
 });

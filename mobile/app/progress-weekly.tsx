@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Text as RNText } from 'react-native';
 import LivaAvatar from '../components/layout/LivaAvatar';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import { ink, green, muted } from '../constants';
@@ -18,6 +19,11 @@ export default function ProgressWeeklyScreen({
   loggedMeals = [],
   goals = { calories: 1800, protein: 100 },
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   const stats = useMemo(() => {
@@ -153,14 +159,14 @@ export default function ProgressWeeklyScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -175,20 +181,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   trendCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     marginBottom: 24,
   },
   trendTitle: {
@@ -241,7 +247,7 @@ const styles = StyleSheet.create({
   },
   highlightCard: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
@@ -250,17 +256,17 @@ const styles = StyleSheet.create({
   highlightLabel: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginBottom: 6,
   },
   highlightVal: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   livaCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 18,
     borderWidth: 1,
@@ -280,13 +286,13 @@ const styles = StyleSheet.create({
   },
   livaDesc: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 18,
   },
   footer: {
     padding: 24,
     borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
-    backgroundColor: '#fff',
+    borderTopColor: isDark ? '#334155' : '#f1f5f9',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
   },
 });

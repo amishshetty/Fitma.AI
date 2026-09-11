@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Image, Text as RNText, SafeAreaView } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, Image, Text as RNText, SafeAreaView } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function LivaRecommendationsScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   const recommendations = [
@@ -96,10 +102,10 @@ export default function LivaRecommendationsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   container: {
     width: '100%',
@@ -107,13 +113,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   backButton: {
     width: 36,
@@ -128,7 +134,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 8,
   },
   subtitle: {
@@ -143,11 +149,11 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 26,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: 'rgba(52,199,89,0.1)',
     overflow: 'hidden',
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
@@ -157,7 +163,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: 128,
     width: '100%',
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     position: 'relative',
   },
   image: {
@@ -185,7 +191,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   cardDesc: {
     marginTop: 4,
@@ -219,6 +225,6 @@ const styles = StyleSheet.create({
   viewButtonText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
 });

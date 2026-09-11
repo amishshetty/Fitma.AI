@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
 
 const Text = (props: any) => (
   <RNText 
@@ -18,6 +19,11 @@ export default function ReminderMealFlowScreen({
   onLogCalories?: (kcal: number) => void;
   userName?: string;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [response, setResponse] = useState<string | null>(null);
 
   const handleSelection = (choice: 'yes' | 'not_yet' | 'skip') => {
@@ -82,14 +88,14 @@ export default function ReminderMealFlowScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     padding: 24,
@@ -99,12 +105,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '500',
   },
   scrollContent: {
@@ -126,10 +132,10 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -145,14 +151,14 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     textAlign: 'center',
     marginBottom: 8,
   },
   descriptionText: {
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -175,24 +181,24 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   primaryButton: {
-    backgroundColor: '#0f172a',
+    backgroundColor: isDark ? '#f8fafc' : '#0f172a',
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 14,
     fontWeight: '700',
   },
   secondaryButton: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     fontSize: 14,
     fontWeight: '700',
   },
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
   skipButtonText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },

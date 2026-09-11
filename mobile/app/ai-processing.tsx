@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text as RNText, Animated, Easing } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Animated, Easing } from 'react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
 import ScreenShell from '../components/layout/ScreenShell';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function AIProcessingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [factIndex, setFactIndex] = useState(0);
   
@@ -94,14 +100,14 @@ export default function AIProcessingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   container: {
     flex: 1,
@@ -138,7 +144,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
   },
   progressBarContainer: {
@@ -152,7 +158,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 6,
   },
 });

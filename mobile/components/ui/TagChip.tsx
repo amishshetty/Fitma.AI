@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React from 'react';
-import { Pressable, Text as RNText, StyleSheet } from 'react-native';
+import { Pressable, useColorScheme, Text as RNText, StyleSheet } from 'react-native';
 
 const Text = (props: any) => (
   <RNText 
@@ -19,6 +20,11 @@ export default function TagChip({
   onClick?: () => void;
   onPress?: () => void;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <Pressable
       onPress={onPress || onClick}
@@ -29,17 +35,17 @@ export default function TagChip({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     shadowColor: 'rgba(0,0,0,0.02)',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
@@ -49,6 +55,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
   },
 });

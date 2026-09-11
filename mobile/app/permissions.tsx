@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text as RNText, Pressable, ScrollView } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Camera, Mic, Bell, Check } from 'lucide-react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -15,6 +16,11 @@ const Text = (props: any) => (
 );
 
 export default function PermissionsScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [granted, setGranted] = useState<Set<number>>(new Set());
 
@@ -105,14 +111,14 @@ export default function PermissionsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -132,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     lineHeight: 20,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   list: {
     gap: 12,
@@ -142,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1.5,
     padding: 16,
   },
@@ -165,7 +171,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   checkbox: {
     height: 28,

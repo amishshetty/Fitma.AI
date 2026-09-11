@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Pressable, Text as RNText } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import { ink } from '../constants';
 import { Check } from 'lucide-react-native';
@@ -18,6 +19,11 @@ export default function ProgressWeightScreen({
   goals = {},
   onLogWeight = () => {},
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const goalWeight = goals.targetWeight || 70.0;
   const startWeight = 75.4; 
   const progressPercent = Math.max(0, Math.min(100, Math.round(((startWeight - userWeight) / (startWeight - goalWeight)) * 100)));
@@ -114,14 +120,14 @@ export default function ProgressWeightScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -136,20 +142,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   progressCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     marginBottom: 24,
   },
@@ -176,7 +182,7 @@ const styles = StyleSheet.create({
   progressBarBg: {
     width: '100%',
     height: 8,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 8,
@@ -192,11 +198,11 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
   },
   sliderCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     marginBottom: 24,
   },
   sliderHeader: {
@@ -208,7 +214,7 @@ const styles = StyleSheet.create({
   sliderTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   sliderValue: {
     fontSize: 14,
@@ -256,11 +262,11 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
   },
   milestonesCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   milestonesTitle: {
     fontSize: 12,
@@ -287,7 +293,7 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 9,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: isDark ? '#1e293b' : '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -295,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#a855f7',
   },
   timelineDotInactive: {
-    backgroundColor: '#e2e8f0',
+    backgroundColor: isDark ? '#334155' : '#e2e8f0',
   },
   timelineContent: {
     paddingLeft: 8,

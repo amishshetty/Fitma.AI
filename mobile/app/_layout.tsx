@@ -11,8 +11,9 @@ export default function RootLayout() {
   const router = useRouter();
   const setProfile = useAppStore(s => s.setProfile);
   const login = useAppStore(s => s.login);
+  const appTheme = useAppStore(s => s.appTheme);
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
   const bg = isDark ? '#0f172a' : '#EAF8F1';
 
   // Inject viewport meta on web so mobile browsers render at correct scale

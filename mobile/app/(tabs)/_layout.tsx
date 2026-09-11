@@ -1,6 +1,7 @@
 import { Tabs, useRouter, usePathname } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Platform, Pressable, Text, Animated, ScrollView } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { Home, Calendar, Sparkles, Target, User } from 'lucide-react-native';
 import LivaAvatar from '../../components/layout/LivaAvatar';
 import LivaSiriOverlay from '../../components/layout/LivaSiriOverlay';
@@ -9,6 +10,10 @@ import { useAppStore } from '../../store/useAppStore';
 export default function TabsLayout() {
   const router = useRouter();
   const pathname = usePathname();
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
   
   const showFloatingLiva = !pathname.includes('liva-home');
 
@@ -211,7 +216,7 @@ export default function TabsLayout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: '#ffffff',
+            backgroundColor: isDark ? '#1e293b' : '#ffffff',
             borderTopWidth: 0,
             elevation: 0,
             shadowOpacity: 0,
@@ -225,15 +230,15 @@ export default function TabsLayout() {
                 boxShadow: '0 -4px 20px rgba(0,0,0,0.04)',
               } as any,
               default: {
-                shadowColor: '#000',
+                shadowColor: isDark ? '#000' : '#000',
                 shadowOffset: { width: 0, height: -4 },
                 shadowOpacity: 0.04,
                 shadowRadius: 20,
               },
             }),
           },
-          tabBarActiveTintColor: '#34C759',
-          tabBarInactiveTintColor: '#94a3b8',
+          tabBarActiveTintColor: isDark ? '#4ade80' : '#34C759',
+          tabBarInactiveTintColor: isDark ? '#64748b' : '#94a3b8',
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '700',
@@ -362,7 +367,7 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   activeIcon: {
     backgroundColor: 'rgba(52, 199, 89, 0.1)',
     borderRadius: 12,
@@ -377,12 +382,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tooltipContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
     marginRight: 8, // Space between tooltip and avatar
-    shadowColor: '#000',
+    shadowColor: isDark ? '#000' : '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -417,14 +422,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cueCardBubble: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomRightRadius: 16,
     borderBottomLeftRadius: 4,
-    shadowColor: '#000',
+    shadowColor: isDark ? '#000' : '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -449,7 +454,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.2)',
-    shadowColor: '#000',
+    shadowColor: isDark ? '#000' : '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,

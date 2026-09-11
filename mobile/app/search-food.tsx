@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, StyleSheet, TextInput, ScrollView, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, TextInput, ScrollView, Text as RNText } from 'react-native';
 import { Search } from 'lucide-react-native';
 import FoodCard from '../components/ui/FoodCard';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -18,6 +19,11 @@ export default function SearchFoodScreen({
   onBack,
   onContinue,
 }: any) {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <View style={styles.container}>
       <ScreenShell
@@ -86,14 +92,14 @@ export default function SearchFoodScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: isDark ? '#1e293b' : '#ffffff'
   },
   content: {
     flex: 1,
@@ -103,11 +109,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 20,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 16,
@@ -116,7 +122,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     padding: 0,
     fontFamily: 'sans-serif',
   },
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   tagsContainer: {
     flexDirection: 'row',

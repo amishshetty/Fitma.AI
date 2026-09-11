@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text as RNText, TextInput, Pressable, StyleSheet, ScrollView } from "react-native";
+import { View, useColorScheme, Text as RNText, TextInput, Pressable, StyleSheet, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Mail, Lock, Eye, EyeOff, Check } from "lucide-react-native";
 import Svg, { Circle, Path, Ellipse, Line } from "react-native-svg";
@@ -17,29 +17,7 @@ const Text = (props: any) => (
   />
 );
 
-function LivaAvatarSmall() {
-  const size = 52;
-  const svgSize = Math.round(size * 0.62);
 
-  return (
-    <View style={styles.avatarContainer}>
-      <Svg width={svgSize} height={svgSize} viewBox="0 0 80 80" fill="none">
-        <Circle cx="40" cy="44" r="30" fill="#f0fdf4" />
-        <Circle cx="40" cy="44" r="29" stroke="#d8f3df" strokeWidth="2" />
-        <Circle cx="31" cy="40" r="5" fill="#0f1f1a" />
-        <Circle cx="49" cy="40" r="5" fill="#0f1f1a" />
-        <Circle cx="33" cy="38" r="2" fill="white" />
-        <Circle cx="51" cy="38" r="2" fill="white" />
-        <Path d="M32 51Q40 60 48 51" stroke="#0f1f1a" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-        <Ellipse cx="26" cy="52" rx="6" ry="4" fill="#fca5a5" fillOpacity="0.48" />
-        <Ellipse cx="54" cy="52" rx="6" ry="4" fill="#fca5a5" fillOpacity="0.48" />
-        <Line x1="40" y1="14" x2="40" y2="24" stroke="#34C759" strokeWidth="2.5" strokeLinecap="round" />
-        <Circle cx="40" cy="11" r="5" fill="#34C759" />
-        <Circle cx="40" cy="11" r="2.5" fill="#22c55e" />
-      </Svg>
-    </View>
-  );
-}
 
 function GoogleIcon() {
   return (
@@ -65,6 +43,39 @@ function GoogleIcon() {
 }
 
 export default function LoginScreen() {
+function LivaAvatarSmall() {
+  const size = 52;
+  const svgSize = Math.round(size * 0.62);
+
+  return (
+    <View style={styles.avatarContainer}>
+      <Svg width={svgSize} height={svgSize} viewBox="0 0 80 80" fill="none">
+        <Circle cx="40" cy="44" r="30" fill="#f0fdf4" />
+        <Circle cx="40" cy="44" r="29" stroke="#d8f3df" strokeWidth="2" />
+        <Circle cx="31" cy="40" r="5" fill="#0f1f1a" />
+        <Circle cx="49" cy="40" r="5" fill="#0f1f1a" />
+        <Circle cx="33" cy="38" r="2" fill="white" />
+        <Circle cx="51" cy="38" r="2" fill="white" />
+        <Path d="M32 51Q40 60 48 51" stroke="#0f1f1a" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <Ellipse cx="26" cy="52" rx="6" ry="4" fill="#fca5a5" fillOpacity="0.48" />
+        <Ellipse cx="54" cy="52" rx="6" ry="4" fill="#fca5a5" fillOpacity="0.48" />
+        <Line x1="40" y1="14" x2="40" y2="24" stroke="#34C759" strokeWidth="2.5" strokeLinecap="round" />
+        <Circle cx="40" cy="11" r="5" fill="#34C759" />
+        <Circle cx="40" cy="11" r="2.5" fill="#22c55e" />
+      </Svg>
+    </View>
+  );
+}
+
+
+
+
+
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -228,10 +239,10 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
@@ -251,7 +262,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     width: 52,
     height: 52,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     elevation: 8,
     shadowColor: 'rgba(52, 199, 89, 0.5)',
     shadowOffset: { width: 0, height: 8 },
@@ -262,7 +273,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
     lineHeight: 32,
   },
   subtitle: {
@@ -299,16 +310,16 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   input: {
-    backgroundColor: '#F8FAFC', // slate-50
+    backgroundColor: isDark ? '#0f172a' : '#F8FAFC', // slate-50
     borderWidth: 1,
-    borderColor: '#F1F5F9', // slate-100
+    borderColor: isDark ? '#334155' : '#F1F5F9', // slate-100
     borderRadius: 12,
     paddingVertical: 12,
     paddingLeft: 40,
     paddingRight: 16,
     fontSize: 14,
     fontWeight: '600',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',
@@ -317,7 +328,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   rememberMeContainer: {
     flexDirection: 'row',
@@ -329,14 +340,14 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0', // slate-200
+    borderColor: isDark ? '#334155' : '#E2E8F0', // slate-200
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkboxActive: {
-    backgroundColor: '#34C759',
-    borderColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
+    borderColor: isDark ? '#4ade80' : '#34C759',
   },
   rememberMeText: {
     fontSize: 12,
@@ -344,7 +355,7 @@ const styles = StyleSheet.create({
     color: '#6d8779',
   },
   primaryButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     height: 52,
     borderRadius: 14,
     alignItems: 'center',
@@ -357,7 +368,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   primaryButtonText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontWeight: 'bold',
     fontSize: 15,
   },
@@ -371,10 +382,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: isDark ? '#334155' : '#F1F5F9',
   },
   dividerBadge: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 12,
   },
   dividerText: {
@@ -388,9 +399,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: isDark ? '#334155' : '#F1F5F9',
     height: 52,
     borderRadius: 14,
     shadowColor: 'rgba(0,0,0,0.02)',
@@ -402,7 +413,7 @@ const styles = StyleSheet.create({
   googleButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
   },
   footerLink: {
     alignItems: 'center',
@@ -411,6 +422,6 @@ const styles = StyleSheet.create({
   footerLinkText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
 });

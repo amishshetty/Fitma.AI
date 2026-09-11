@@ -13,24 +13,7 @@ const Text = (props: any) => (
   />
 );
 
-function ProgressDots({ total = 5, current = 0 }) {
-  return (
-    <View style={styles.progressContainer}>
-      {Array.from({ length: total }).map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.dot,
-            {
-              width: index === current ? 22 : 7,
-              backgroundColor: index === current ? '#34C759' : '#cfebd8',
-            }
-          ]}
-        />
-      ))}
-    </View>
-  );
-}
+
 
 function LivaAvatarFloating() {
   const translateY = useRef(new Animated.Value(0)).current;
@@ -121,6 +104,25 @@ function MainAnimation() {
 }
 
 export default function WelcomeScreen() {
+function ProgressDots({ total = 5, current = 0 }) {
+  return (
+    <View style={styles.progressContainer}>
+      {Array.from({ length: total }).map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.dot,
+            {
+              width: index === current ? 22 : 7,
+              backgroundColor: index === current ? '#34C759' : '#cfebd8',
+            }
+          ]}
+        />
+      ))}
+    </View>
+  );
+}
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>

@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, Text as RNText } from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import QuantityStepper from '../components/ui/QuantityStepper';
 import ScreenShell from '../components/layout/ScreenShell';
@@ -17,6 +18,11 @@ export default function PortionSelectionScreen({
   onBack,
   onContinue,
 }: any) {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [quantities, setQuantities] = useState([2, 1, 1]);
   const items = mealItems || [
     { name: 'Paneer Paratha', calories: 310 },
@@ -84,14 +90,14 @@ export default function PortionSelectionScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: isDark ? '#1e293b' : '#ffffff'
   },
   content: {
     flex: 1,
@@ -108,32 +114,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   liveCaloriesLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   liveCaloriesValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   foodCard: {
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     padding: 16,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.06,
     shadowRadius: 18,
@@ -149,11 +155,11 @@ const styles = StyleSheet.create({
   foodName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   foodCalories: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   detailsGrid: {
@@ -170,12 +176,12 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   detailValue: {
     marginTop: 4,
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   }
 });

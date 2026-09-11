@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, StyleSheet, SafeAreaView, TextInput } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, SafeAreaView, TextInput } from 'react-native';
 import { Text as RNText } from 'react-native';
 import { Clock3, ChevronLeft } from 'lucide-react-native';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function SaveMealScreen({ onBack, onSave }: any) {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [mealType, setMealType] = useState('Lunch');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -99,38 +105,38 @@ export default function SaveMealScreen({ onBack, onSave }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#ffffff' },
-  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff', flexDirection: 'column' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff' },
+  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff', flexDirection: 'column' },
   header: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 },
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'flex-start' },
   content: { flex: 1 },
   contentContainer: { paddingHorizontal: 20, paddingBottom: 40 },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#000', marginBottom: 8 },
+  title: { fontSize: 28, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#000', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#666', marginBottom: 24 },
   
-  summaryCard: { backgroundColor: '#fff', borderRadius: 28, padding: 20, shadowColor: '#10201a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.07, shadowRadius: 26, elevation: 4, marginBottom: 24 },
+  summaryCard: { backgroundColor: isDark ? '#1e293b' : '#fff', borderRadius: 28, padding: 20, shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.07, shadowRadius: 26, elevation: 4, marginBottom: 24 },
   summaryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  summaryTitle: { fontSize: 18, fontWeight: 'bold', color: '#000' },
-  summaryCalories: { fontSize: 18, fontWeight: 'bold', color: '#34C759' },
+  summaryTitle: { fontSize: 18, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#000' },
+  summaryCalories: { fontSize: 18, fontWeight: 'bold', color: isDark ? '#4ade80' : '#34C759' },
   macrosRow: { flexDirection: 'row', gap: 8, justifyContent: 'space-between' },
   macroBadge: { flex: 1, backgroundColor: '#f2faf5', borderRadius: 16, paddingVertical: 12, alignItems: 'center' },
-  macroText: { fontSize: 12, fontWeight: 'bold', color: '#000' },
+  macroText: { fontSize: 12, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#000' },
 
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 14, fontWeight: 'bold', color: '#000', marginBottom: 12 },
+  sectionTitle: { fontSize: 14, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#000', marginBottom: 12 },
   mealTypeGrid: { flexDirection: 'row', gap: 8 },
-  mealTypeButton: { flex: 1, backgroundColor: '#fff', paddingVertical: 12, borderRadius: 16, alignItems: 'center' },
-  mealTypeButtonActive: { backgroundColor: '#34C759' },
+  mealTypeButton: { flex: 1, backgroundColor: isDark ? '#1e293b' : '#fff', paddingVertical: 12, borderRadius: 16, alignItems: 'center' },
+  mealTypeButtonActive: { backgroundColor: isDark ? '#4ade80' : '#34C759' },
   mealTypeText: { fontSize: 12, fontWeight: 'bold', color: '#666' },
-  mealTypeTextActive: { color: '#fff' },
+  mealTypeTextActive: { color: isDark ? '#1e293b' : '#fff' },
 
-  timeButton: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 16, borderRadius: 16 },
-  timeText: { fontSize: 14, fontWeight: '600', color: '#000' },
+  timeButton: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: isDark ? '#1e293b' : '#fff', paddingHorizontal: 16, paddingVertical: 16, borderRadius: 16 },
+  timeText: { fontSize: 14, fontWeight: '600', color: isDark ? '#f8fafc' : '#000' },
 
-  notesInput: { backgroundColor: '#fff', borderRadius: 16, padding: 16, minHeight: 96, fontSize: 14, color: '#000' },
+  notesInput: { backgroundColor: isDark ? '#1e293b' : '#fff', borderRadius: 16, padding: 16, minHeight: 96, fontSize: 14, color: isDark ? '#f8fafc' : '#000' },
 
   footer: { padding: 20, borderTopWidth: 1, borderTopColor: '#f0f0f0' },
-  primaryButton: { backgroundColor: '#34C759', height: 56, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  primaryButton: { backgroundColor: isDark ? '#4ade80' : '#34C759', height: 56, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
+  primaryButtonText: { color: isDark ? '#1e293b' : '#fff', fontSize: 16, fontWeight: 'bold' },
 });

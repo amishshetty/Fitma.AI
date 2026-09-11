@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
 import { TrendingUp } from 'lucide-react-native';
 
 const Text = (props: any) => (
@@ -28,6 +29,11 @@ export default function ReminderCenterScreen({
   onBack?: () => void;
   onNavigate?: (screen: Screen) => void;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [activeTab, setActiveTab] = useState<'today' | 'earlier'>('today');
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
@@ -175,14 +181,14 @@ export default function ReminderCenterScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     padding: 24,
@@ -192,12 +198,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '500',
   },
   scrollContent: {
@@ -217,7 +223,7 @@ const styles = StyleSheet.create({
     top: 4,
     bottom: 4,
     width: '50%',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 12,
   },
   tabButton: {
@@ -233,19 +239,19 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   tabTextActive: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
   feedContainer: {
     gap: 12,
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
-    shadowColor: '#10201a',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 12,
@@ -254,7 +260,7 @@ const styles = StyleSheet.create({
   },
   cardUnread: {
     borderLeftWidth: 4,
-    borderLeftColor: '#34C759',
+    borderLeftColor: isDark ? '#4ade80' : '#34C759',
   },
   cardRead: {
     opacity: 0.78,
@@ -263,7 +269,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -282,17 +288,17 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   timeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   messageText: {
     fontSize: 12,
     lineHeight: 18,
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     marginBottom: 12,
   },
   actionButtons: {
@@ -309,10 +315,10 @@ const styles = StyleSheet.create({
   actNowText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   clearButton: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 12,
@@ -320,12 +326,12 @@ const styles = StyleSheet.create({
   clearText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   emptyText: {
     textAlign: 'center',
     paddingVertical: 40,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -334,9 +340,9 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 24,
     paddingTop: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
+    borderTopColor: isDark ? '#334155' : '#f1f5f9',
   },
   markReadButton: {
     flex: 1,
@@ -344,7 +350,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: '#dcf4e6',
   },
@@ -361,15 +367,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderRadius: 16,
-    backgroundColor: '#34C759',
-    shadowColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
+    shadowColor: isDark ? '#4ade80' : '#34C759',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
     elevation: 4,
   },
   smartRemindersText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 16,

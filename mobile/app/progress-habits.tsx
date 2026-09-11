@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Pressable, Text as RNText } from 'react-native';
 import { ink, green } from '../constants';
 import { Check } from 'lucide-react-native';
 
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 export default function ProgressHabitsScreen({
   onBack = () => {},
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [habits, setHabits] = useState<{ [key: string]: boolean }>({});
   
   const onToggleHabit = (key: string) => {
@@ -141,14 +147,14 @@ export default function ProgressHabitsScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -163,20 +169,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   heatmapCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     marginBottom: 20,
   },
   cardHeader: {
@@ -201,7 +207,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   grid: {
     flexDirection: 'row',
@@ -239,7 +245,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,

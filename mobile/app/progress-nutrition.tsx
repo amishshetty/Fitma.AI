@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Text as RNText } from 'react-native';
 import { ink, green } from '../constants';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -16,6 +17,11 @@ export default function ProgressNutritionScreen({
   loggedMeals = [],
   goals = { calories: 1800, protein: 100 },
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const { macros, nutrientBars, alerts } = useMemo(() => {
     let todayCarbs = 0;
     let todayProtein = 0;
@@ -236,14 +242,14 @@ export default function ProgressNutritionScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -258,20 +264,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   macroCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -307,7 +313,7 @@ const styles = StyleSheet.create({
   },
   donutCenterSubtitle: {
     fontSize: 8,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     fontWeight: 'bold',
   },
@@ -349,15 +355,15 @@ const styles = StyleSheet.create({
   alertText: {
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginBottom: 8,
   },
   targetsCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   targetsTitle: {
     fontSize: 12,
@@ -387,7 +393,7 @@ const styles = StyleSheet.create({
     height: 8,
     width: '100%',
     borderRadius: 4,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     overflow: 'hidden',
   },
   barFill: {

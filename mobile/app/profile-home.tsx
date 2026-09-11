@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, Text as RNText } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function ProfileHomeScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   // Mock data to match the web props
@@ -91,7 +97,7 @@ export default function ProfileHomeScreen() {
         <View style={styles.achievementsContainer}>
           <Text style={styles.achievementsTitle}>RECENT BADGES</Text>
           <View style={styles.badgesRow}>
-            {['🏆', '🥗', '💪', '⚡'].map((badge, idx) => (
+            {['🔥', '💧', '🎯', '🏆'].map((badge, idx) => (
               <View key={idx} style={styles.badgeBox}>
                 <Text style={styles.badgeText}>{badge}</Text>
               </View>
@@ -126,47 +132,47 @@ export default function ProfileHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff', paddingTop: 48 },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  container: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff', paddingTop: 48 },
   scrollContainer: { flex: 1 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 96, gap: 24 },
   
   headerContainer: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  avatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#34C759', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, elevation: 4, borderWidth: 2, borderColor: '#fff' },
-  avatarText: { color: '#fff', fontSize: 24, fontWeight: '900', textTransform: 'uppercase' },
+  avatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: isDark ? '#4ade80' : '#34C759', alignItems: 'center', justifyContent: 'center', shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, elevation: 4, borderWidth: 2, borderColor: isDark ? '#1e293b' : '#fff' },
+  avatarText: { color: isDark ? '#1e293b' : '#fff', fontSize: 24, fontWeight: '900', textTransform: 'uppercase' },
   headerTextContainer: { flex: 1 },
-  headerTitle: { fontSize: 24, fontWeight: '900', color: '#000' },
-  headerSubtitle: { fontSize: 12, fontWeight: '600', color: '#64748b', marginTop: 2 },
+  headerTitle: { fontSize: 24, fontWeight: '900', color: isDark ? '#f8fafc' : '#000' },
+  headerSubtitle: { fontSize: 12, fontWeight: '600', color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
 
-  healthScoreCard: { borderRadius: 28, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: 'rgba(52, 199, 89, 0.12)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#10201a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.04, shadowRadius: 24, elevation: 2 },
+  healthScoreCard: { borderRadius: 28, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: 'rgba(52, 199, 89, 0.12)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.04, shadowRadius: 24, elevation: 2 },
   healthScoreLeft: { gap: 4 },
-  healthScoreLabel: { fontSize: 10, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
-  healthScoreValue: { fontSize: 30, fontWeight: '900', color: '#000' },
-  healthScoreValueMax: { fontSize: 16, fontWeight: '600', color: '#64748b' },
+  healthScoreLabel: { fontSize: 10, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
+  healthScoreValue: { fontSize: 30, fontWeight: '900', color: isDark ? '#f8fafc' : '#000' },
+  healthScoreValueMax: { fontSize: 16, fontWeight: '600', color: isDark ? '#94a3b8' : '#64748b' },
   progressBadge: { backgroundColor: '#f2faf5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999, alignSelf: 'flex-start', marginTop: 4 },
   progressBadgeText: { fontSize: 10, fontWeight: '700', color: '#197a38' },
   healthScoreRight: { alignItems: 'flex-end' },
-  trendText: { fontSize: 12, fontWeight: '800', color: '#34C759' },
-  trendLabel: { fontSize: 9, fontWeight: '500', color: '#64748b', marginTop: 2 },
+  trendText: { fontSize: 12, fontWeight: '800', color: isDark ? '#4ade80' : '#34C759' },
+  trendLabel: { fontSize: 9, fontWeight: '500', color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
 
   statsGrid: { flexDirection: 'row', gap: 10 },
-  statCard: { flex: 1, borderRadius: 16, backgroundColor: '#fff', padding: 12, borderWidth: 1, borderColor: '#f1f5f9', shadowColor: '#10201a', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.02, shadowRadius: 12, elevation: 1 },
-  statLabel: { fontSize: 9, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
-  statValue: { fontSize: 12, fontWeight: '900', color: '#000', marginTop: 8 },
-  statTarget: { fontSize: 8, color: '#64748b', marginTop: 2 },
+  statCard: { flex: 1, borderRadius: 16, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 12, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.02, shadowRadius: 12, elevation: 1 },
+  statLabel: { fontSize: 9, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
+  statValue: { fontSize: 12, fontWeight: '900', color: isDark ? '#f8fafc' : '#000', marginTop: 8 },
+  statTarget: { fontSize: 8, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
 
   achievementsContainer: {},
-  achievementsTitle: { fontSize: 12, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  achievementsTitle: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
   badgesRow: { flexDirection: 'row', gap: 8 },
-  badgeBox: { width: 44, height: 44, borderRadius: 16, backgroundColor: '#fff', borderWidth: 1, borderColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+  badgeBox: { width: 44, height: 44, borderRadius: 16, backgroundColor: isDark ? '#1e293b' : '#fff', borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', alignItems: 'center', justifyContent: 'center', shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
   badgeText: { fontSize: 18 },
 
-  menuContainer: { borderRadius: 28, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: '#f1f5f9', shadowColor: '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2, marginBottom: 24 },
-  menuTitle: { fontSize: 12, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  menuContainer: { borderRadius: 28, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2, marginBottom: 24 },
+  menuTitle: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: isDark ? '#334155' : '#f1f5f9' },
   menuItemLast: { borderBottomWidth: 0 },
   menuItemDisabled: { opacity: 0.4 },
   menuItemTextContainer: { flex: 1 },
-  menuItemLabel: { fontSize: 12, fontWeight: '700', color: '#000' },
-  menuItemDesc: { fontSize: 9, color: '#64748b', marginTop: 2 },
+  menuItemLabel: { fontSize: 12, fontWeight: '700', color: isDark ? '#f8fafc' : '#000' },
+  menuItemDesc: { fontSize: 9, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
 });

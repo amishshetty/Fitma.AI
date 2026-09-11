@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronRight, LogOut, ShieldCheck, Mail, Smartphone, Edit2 } from 'lucide-react-native';
 import { useAppStore } from '../../store/useAppStore';
@@ -16,6 +16,11 @@ const Text = (props: any) => (
 );
 
 export default function ProfileHomeScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   const userName = useAppStore((state) => state.userName);
@@ -169,7 +174,7 @@ export default function ProfileHomeScreen() {
         <View style={styles.badgesSection}>
           <Text style={styles.sectionHeading}>Recent Badges</Text>
           <View style={styles.badgesRow}>
-            {['🔥', '🏃', '🥗', '💧'].map((badge, idx) => (
+            {['🏆', '🔥', '💧', '🎯'].map((badge, idx) => (
               <View key={idx} style={styles.badgeBox}>
                 <Text style={styles.badgeEmoji}>{badge}</Text>
               </View>
@@ -209,10 +214,10 @@ export default function ProfileHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#ffffff',
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
@@ -227,20 +232,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   headerSubtitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 4,
   },
   profileHeaderCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     marginBottom: 16,
   },
   profileHeaderRow: {
@@ -255,12 +260,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   profileJoined: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   logoutBtn: {
@@ -274,24 +279,24 @@ const styles = StyleSheet.create({
     borderColor: '#fee2e2',
   },
   editProfileBtn: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   editProfileText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   scoreCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     marginBottom: 16,
   },
   scoreHeader: {
@@ -303,7 +308,7 @@ const styles = StyleSheet.create({
   scoreTitle: {
     fontSize: 12,
     fontWeight: '900',
-    color: '#10201a',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#10201a',
     textTransform: 'uppercase',
   },
   scoreBodyRow: {
@@ -318,7 +323,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 32,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   scoreMax: {
     fontSize: 14,
@@ -342,7 +347,7 @@ const styles = StyleSheet.create({
   scoreTrendPos: {
     fontSize: 12,
     fontWeight: '900',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759',
   },
   scoreTrendContext: {
     fontSize: 9,
@@ -357,11 +362,11 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   statLabel: {
     fontSize: 10,
@@ -372,7 +377,7 @@ const styles = StyleSheet.create({
   statVal: {
     fontSize: 14,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     marginTop: 8,
   },
   statContext: {
@@ -398,12 +403,12 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 16,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
-    shadowColor: '#000',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
+    shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     shadowOpacity: 0.02,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
@@ -412,11 +417,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   menuCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     marginBottom: 24,
   },
   menuList: {
@@ -428,7 +433,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   menuItemLast: {
     borderBottomWidth: 0,
@@ -442,7 +447,7 @@ const styles = StyleSheet.create({
   menuItemLabel: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   menuItemDesc: {
     fontSize: 10,

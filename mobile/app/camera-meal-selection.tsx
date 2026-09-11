@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, Text as RNText, StyleSheet, Pressable, Image } from 'react-native';
+import { View, useColorScheme, Text as RNText, StyleSheet, Pressable, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function CameraMealSelectionScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   const meals = [
@@ -66,14 +72,14 @@ export default function CameraMealSelectionScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -87,14 +93,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   content: {
     flex: 1,
@@ -106,13 +112,13 @@ const styles = StyleSheet.create({
     width: 208,
     height: 208,
     borderRadius: 28,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     overflow: 'hidden',
     marginTop: 16,
     marginBottom: 32,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    shadowColor: '#000',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
     shadowRadius: 30,
@@ -125,7 +131,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     marginBottom: 8,
     letterSpacing: -0.5,
   },
@@ -144,15 +150,15 @@ const styles = StyleSheet.create({
   mealBtn: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 16,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    shadowColor: '#000',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 10,
@@ -160,7 +166,7 @@ const styles = StyleSheet.create({
   },
   mealBtnPressed: {
     transform: [{ scale: 0.98 }],
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
   },
   mealIcon: {
     fontSize: 32,
@@ -168,6 +174,6 @@ const styles = StyleSheet.create({
   mealLabel: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
 });

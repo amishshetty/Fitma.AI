@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Text as RNText, Animated } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronRight, Check } from 'lucide-react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -13,6 +14,11 @@ const Text = (props: any) => (
 );
 
 export default function OnboardingSuccessScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const scaleAnim = useRef(new Animated.Value(0.6)).current;
 
@@ -52,14 +58,14 @@ export default function OnboardingSuccessScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   content: {
     flex: 1,
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 64,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   textContainer: {
     alignItems: 'center',
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
     lineHeight: 24,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
   },
   footer: {

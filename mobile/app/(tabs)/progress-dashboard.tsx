@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { green, muted, softGreen, ink } from '../../constants';
-import { View, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, Text as RNText } from 'react-native';
 import {
   TrendingUp, Leaf, Calendar, MessageCircle, Award, Target, Activity, Flame
 } from 'lucide-react-native';
@@ -30,6 +30,11 @@ import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
 
 export default function ProgressDashboardScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   const waterLogged = useAppStore((state) => state.waterLogged);
@@ -256,14 +261,14 @@ export default function ProgressDashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -278,23 +283,23 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   headerSubtitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 4,
   },
   scoreCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     marginBottom: 24,
   },
   scoreLeft: {
@@ -316,7 +321,7 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 38,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     letterSpacing: -1,
   },
   scoreMax: {
@@ -351,7 +356,7 @@ const styles = StyleSheet.create({
   },
   insightCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 16,
     borderWidth: 1,
@@ -379,27 +384,27 @@ const styles = StyleSheet.create({
   },
   insightDesc: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     lineHeight: 18,
     marginTop: 4,
   },
   chartCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     marginBottom: 24,
   },
   chartTitle: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     marginBottom: 16,
   },
   chartTabs: {
     flexDirection: 'row',
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     borderRadius: 14,
     padding: 4,
     marginBottom: 24,
@@ -411,16 +416,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chartTabBtnActive: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     elevation: 1,
   },
   chartTabText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
   },
   chartTabTextActive: {
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   chartMetricRow: {
     flexDirection: 'row',
@@ -431,12 +436,12 @@ const styles = StyleSheet.create({
   chartMetricText: {
     fontSize: 22,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   chartArea: {
     height: 120,
     width: '100%',
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     borderRadius: 16,
     marginBottom: 16,
   },
@@ -458,7 +463,7 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
   },
   summarySection: {
     marginBottom: 24,
@@ -466,7 +471,7 @@ const styles = StyleSheet.create({
   sectionHeading: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 12,
@@ -478,22 +483,22 @@ const styles = StyleSheet.create({
   },
   summaryItem: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   summaryItemLabel: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginBottom: 4,
   },
   summaryItemVal: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   actionsSection: {
     marginBottom: 24,
@@ -508,16 +513,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   actionBtnText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     flex: 1,
   },
 });

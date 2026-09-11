@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, Text as RNText, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, useColorScheme, Text as RNText, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Egg, Wheat, Droplets, Leaf } from 'lucide-react-native';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function NutritionBreakdownScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   return (
@@ -112,14 +118,14 @@ export default function NutritionBreakdownScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -132,7 +138,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -143,7 +149,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   subtitle: {
     fontSize: 14,
@@ -156,37 +162,37 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   mainCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 28,
     padding: 20,
     alignItems: 'center',
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.07,
     shadowRadius: 26,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   ringPlaceholder: {
     width: 132,
     height: 132,
     borderRadius: 66,
     borderWidth: 8,
-    borderColor: '#34C759',
+    borderColor: isDark ? '#4ade80' : '#34C759',
     alignItems: 'center',
     justifyContent: 'center',
   },
   ringLabel: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     textTransform: 'uppercase',
   },
   caloriesText: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
     marginTop: 16,
   },
   caloriesLabel: {
@@ -202,14 +208,14 @@ const styles = StyleSheet.create({
   nutritionCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 20,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   iconContainer: {
     width: 40,
@@ -226,17 +232,17 @@ const styles = StyleSheet.create({
   nutritionValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   scoreCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 20,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   smallRing: {
     width: 64,
@@ -249,7 +255,7 @@ const styles = StyleSheet.create({
   smallRingText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   scoreLabel: {
     fontSize: 12,
@@ -270,7 +276,7 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -283,7 +289,7 @@ const styles = StyleSheet.create({
   aiInsightTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201a',
+    color: isDark ? '#f8fafc' : '#10201a',
   },
   aiInsightText: {
     fontSize: 14,
@@ -296,13 +302,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   primaryBtn: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React, { useRef } from 'react';
-import { Pressable, Text as RNText, StyleSheet, Animated } from 'react-native';
+import { Pressable, useColorScheme, Text as RNText, StyleSheet, Animated } from 'react-native';
 
 const Text = (props: any) => (
   <RNText 
@@ -18,6 +19,11 @@ export default function SecondaryButton({
   onPress?: () => void;
   icon?: React.ReactNode;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -55,7 +61,7 @@ export default function SecondaryButton({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   button: {
     minHeight: 52,
     width: '100%',
@@ -66,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingVertical: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: 'rgba(52,199,89,0.14)',
   },

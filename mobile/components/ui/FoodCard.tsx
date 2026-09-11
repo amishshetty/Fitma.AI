@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React from 'react';
-import { View, Pressable, Text as RNText, StyleSheet } from 'react-native';
+import { View, useColorScheme, Pressable, Text as RNText, StyleSheet } from 'react-native';
 import { Utensils, Plus } from 'lucide-react-native';
 
 const Text = (props: any) => (
@@ -23,6 +24,11 @@ export default function FoodCard({
   serving: string;
   onAdd?: () => void;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <View style={styles.card}>
       <View style={styles.iconContainer}>
@@ -46,16 +52,16 @@ export default function FoodCard({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     shadowColor: 'rgba(0,0,0,0.02)',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -77,16 +83,16 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
   },
   details: {
     marginTop: 4,
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   serving: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   addButton: {
     height: 40,
@@ -94,6 +100,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
 });

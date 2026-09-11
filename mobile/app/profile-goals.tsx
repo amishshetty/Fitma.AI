@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText } from 'react-native';
 import { Target, Activity, Flame, Droplet, Leaf, Wheat, Sparkles, Search, Ruler, Scale, Info, ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
@@ -115,6 +116,11 @@ const targetStyles = StyleSheet.create({
 });
 
 export default function ProfileGoalsScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   // Mock data
@@ -255,38 +261,38 @@ export default function ProfileGoalsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff' },
   successBox: { backgroundColor: '#f2faf5', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(52, 199, 89, 0.2)', marginBottom: 16 },
   successText: { fontSize: 12, fontWeight: '700', color: '#197a38' },
   section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#000', marginBottom: 12, marginTop: 8, marginLeft: 4 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: isDark ? '#f8fafc' : '#000', marginBottom: 12, marginTop: 8, marginLeft: 4 },
   grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  goalCard: { width: '47%', minHeight: 100, borderRadius: 16, backgroundColor: '#fff', padding: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#f1f5f9', gap: 8 },
+  goalCard: { width: '47%', minHeight: 100, borderRadius: 16, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: isDark ? '#334155' : '#f1f5f9', gap: 8 },
   goalIconBox: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  goalLabel: { fontSize: 11, fontWeight: '700', color: '#000', textAlign: 'center' },
+  goalLabel: { fontSize: 11, fontWeight: '700', color: isDark ? '#f8fafc' : '#000', textAlign: 'center' },
   
-  bmiCard: { backgroundColor: '#f8fafc', borderRadius: 16, borderWidth: 1, borderColor: '#f1f5f9', padding: 20, marginTop: 8, marginBottom: 24 },
+  bmiCard: { backgroundColor: isDark ? '#0f172a' : '#f8fafc', borderRadius: 16, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', padding: 20, marginTop: 8, marginBottom: 24 },
   bmiHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   bmiTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  bmiInfoIcon: { padding: 6, backgroundColor: '#e2e8f0', borderRadius: 8 },
-  bmiTitle: { fontSize: 14, fontWeight: '700', color: '#000' },
+  bmiInfoIcon: { padding: 6, backgroundColor: isDark ? '#334155' : '#e2e8f0', borderRadius: 8 },
+  bmiTitle: { fontSize: 14, fontWeight: '700', color: isDark ? '#f8fafc' : '#000' },
   bmiRight: { alignItems: 'flex-end' },
   bmiValue: { fontSize: 24, fontWeight: '900' },
-  bmiCategory: { fontSize: 10, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
-  bmiBar: { height: 10, backgroundColor: '#e2e8f0', borderRadius: 5, flexDirection: 'row', overflow: 'hidden', marginBottom: 12, position: 'relative' },
+  bmiCategory: { fontSize: 10, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
+  bmiBar: { height: 10, backgroundColor: isDark ? '#334155' : '#e2e8f0', borderRadius: 5, flexDirection: 'row', overflow: 'hidden', marginBottom: 12, position: 'relative' },
   bmiSegment: { height: '100%' },
-  bmiIndicator: { position: 'absolute', top: -2, width: 12, height: 14, borderRadius: 6, backgroundColor: '#fff', borderWidth: 2, marginTop: 0 },
-  bmiMessage: { fontSize: 12, fontWeight: '600', color: '#64748b', lineHeight: 18 },
+  bmiIndicator: { position: 'absolute', top: -2, width: 12, height: 14, borderRadius: 6, backgroundColor: isDark ? '#1e293b' : '#fff', borderWidth: 2, marginTop: 0 },
+  bmiMessage: { fontSize: 12, fontWeight: '600', color: isDark ? '#94a3b8' : '#64748b', lineHeight: 18 },
 
   targetsList: { gap: 12 },
   
-  livaCard: { borderRadius: 24, backgroundColor: '#f0fdf4', borderWidth: 1, borderColor: '#bbf7d0', padding: 20, marginTop: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.02, shadowRadius: 8, elevation: 1 },
+  livaCard: { borderRadius: 24, backgroundColor: '#f0fdf4', borderWidth: 1, borderColor: '#bbf7d0', padding: 20, marginTop: 24, shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.02, shadowRadius: 8, elevation: 1 },
   livaHeader: { flexDirection: 'row', gap: 16, alignItems: 'flex-start' },
   livaTextContainer: { flex: 1 },
   livaSubtitle: { fontSize: 11, fontWeight: '800', color: '#059669', textTransform: 'uppercase', letterSpacing: 1 },
-  livaMessage: { fontSize: 13, fontWeight: '500', color: '#000', marginTop: 6, lineHeight: 20 },
+  livaMessage: { fontSize: 13, fontWeight: '500', color: isDark ? '#f8fafc' : '#000', marginTop: 6, lineHeight: 20 },
   livaHighlight: { fontWeight: '700', color: '#047857' },
-  livaButton: { width: '100%', backgroundColor: '#fff', paddingVertical: 12, borderRadius: 16, borderWidth: 1, borderColor: '#d1fae5', alignItems: 'center', marginTop: 16 },
+  livaButton: { width: '100%', backgroundColor: isDark ? '#1e293b' : '#fff', paddingVertical: 12, borderRadius: 16, borderWidth: 1, borderColor: '#d1fae5', alignItems: 'center', marginTop: 16 },
   livaButtonText: { fontSize: 13, fontWeight: '700', color: '#047857' },
 });

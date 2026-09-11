@@ -1,6 +1,7 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect, useRef } from 'react';
 import { green, muted, softGreen, ink } from '../constants';
-import { View, StyleSheet, ScrollView, Pressable, Animated } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, Animated } from 'react-native';
 import { Text as RNText } from 'react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
@@ -17,6 +18,11 @@ const Text = (props: any) => (
 
 
 export default function LivaWeeklyCoachScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const userName = 'User'; // Fallback or pass via context/params
 
@@ -158,14 +164,14 @@ export default function LivaWeeklyCoachScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollContent: {
     paddingBottom: 120, // space for footer
@@ -185,11 +191,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 8,
     fontWeight: '500',
   },
@@ -198,13 +204,13 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   chartCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.1)',
     elevation: 3,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 18,
@@ -233,22 +239,22 @@ const styles = StyleSheet.create({
   },
   chartBarFill: {
     width: '100%',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 14,
   },
   chartLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   insightCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 24,
     padding: 18,
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.1)',
     elevation: 3,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.04,
     shadowRadius: 18,
@@ -261,22 +267,22 @@ const styles = StyleSheet.create({
   insightTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   insightDesc: {
     marginTop: 4,
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   interactiveCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.06)',
     elevation: 2,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 12,
@@ -284,7 +290,7 @@ const styles = StyleSheet.create({
   interactiveTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     marginBottom: 12,
   },
   questionContainer: {
@@ -301,12 +307,12 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   responseBox: {
     marginTop: 12,
     padding: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.16)',
     borderRadius: 16,
@@ -314,7 +320,7 @@ const styles = StyleSheet.create({
   responseText: {
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   metricsGrid: {
     flexDirection: 'row',
@@ -324,13 +330,13 @@ const styles = StyleSheet.create({
   metricCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
     borderColor: 'rgba(52, 199, 89, 0.06)',
     elevation: 2,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.03,
     shadowRadius: 12,
@@ -338,13 +344,13 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   metricValue: {
     marginTop: 6,
     fontSize: 16,
     fontWeight: '800',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   footer: {
     position: 'absolute',
@@ -353,9 +359,9 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 24,
     paddingVertical: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
+    borderTopColor: isDark ? '#334155' : '#f1f5f9',
   },
 });
 

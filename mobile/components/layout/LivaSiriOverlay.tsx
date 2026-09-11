@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Pressable, Animated, Platform } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text, Pressable, Animated, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import LivaAvatar from './LivaAvatar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,6 +17,11 @@ export default function LivaSiriOverlay({
   onClose: () => void;
   cueCard?: React.ReactNode;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const slideAnim = useRef(new Animated.Value(300)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -94,19 +100,19 @@ export default function LivaSiriOverlay({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   overlay: { ...StyleSheet.absoluteFillObject, zIndex: 999, justifyContent: 'flex-end', elevation: 10 },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: Platform.OS === 'web' ? 'transparent' : 'rgba(0,0,0,0.16)' },
-  sheet: { backgroundColor: '#ffffff', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 24, paddingBottom: 40, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: -10 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 20, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
+  sheet: { backgroundColor: isDark ? '#1e293b' : '#ffffff', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 24, paddingBottom: 40, alignItems: 'center', shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: -10 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 20, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
   textContainer: { alignItems: 'center', marginTop: 20, marginBottom: 20 },
   title: { fontSize: 10, fontWeight: 'bold', color: '#94a3b8', letterSpacing: 1.5, marginBottom: 4 },
-  text: { fontSize: 14, fontWeight: 'bold', color: '#10201a', textAlign: 'center' },
+  text: { fontSize: 14, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a', textAlign: 'center' },
   waveContainer: { width: '100%', height: 48, alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: 20 },
   waveOuter: { width: 224, height: 48, borderRadius: 24, position: 'absolute', opacity: 0.85, ...(Platform.OS === 'web' ? { filter: 'blur(16px)' } : {}) as any },
   waveInner: { width: 192, height: 32, borderRadius: 16, position: 'absolute', opacity: 0.6, ...(Platform.OS === 'web' ? { filter: 'blur(8px)' } : {}) as any },
-  notificationPill: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#10201a', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 24, zIndex: 10 },
-  notificationText: { color: '#ffffff', fontSize: 13, fontWeight: 'bold' },
-  dismissBtn: { backgroundColor: '#f1f5f9', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  notificationPill: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isDark ? '#f8fafc' : '#10201a', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 24, zIndex: 10 },
+  notificationText: { color: isDark ? '#1e293b' : '#ffffff', fontSize: 13, fontWeight: 'bold' },
+  dismissBtn: { backgroundColor: isDark ? '#334155' : '#f1f5f9', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   dismissText: { fontSize: 10, fontWeight: '800', color: '#94a3b8', letterSpacing: 0.5 },
   cueCardWrapper: { width: '100%', paddingHorizontal: 16, paddingBottom: 16, zIndex: 10 },
 });

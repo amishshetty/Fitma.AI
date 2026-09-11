@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, Animated, StyleSheet, Text as RNText } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 const Text = (props: any) => (
@@ -23,6 +24,11 @@ export default function ProgressRing({
   color?: string;
   label?: string;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const radius = 38;
   const circumference = 2 * Math.PI * radius;
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -76,7 +82,7 @@ export default function ProgressRing({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',

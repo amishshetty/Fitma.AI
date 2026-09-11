@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText } from 'react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function MeetLivaScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   return (
@@ -41,14 +47,14 @@ export default function MeetLivaScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   content: {
     flex: 1,
@@ -59,7 +65,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 28,
     padding: 24,
     alignItems: 'center',
@@ -79,7 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     lineHeight: 20,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
   },
   badge: {
@@ -91,14 +97,14 @@ const styles = StyleSheet.create({
     height: 8,
     width: 8,
     borderRadius: 4,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   badgeText: {
     fontSize: 12,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   footer: {
     paddingHorizontal: 24,

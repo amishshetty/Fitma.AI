@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Pressable, Animated, Text as RNText, SafeAreaView } from 'react-native';
+import { View, useColorScheme, StyleSheet, Pressable, Animated, Text as RNText, SafeAreaView } from 'react-native';
 import { ArrowLeft, MicOff, Mic } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function LivaVoiceScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'processing' | 'error'>('idle');
   const [transcript, setTranscript] = useState('');
@@ -149,10 +155,10 @@ export default function LivaVoiceScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#10201a',
+    backgroundColor: isDark ? '#f8fafc' : '#10201a',
   },
   container: {
     width: '100%',
@@ -160,7 +166,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#10201a',
+    backgroundColor: isDark ? '#f8fafc' : '#10201a',
   },
   header: {
     flexDirection: 'row',
@@ -173,14 +179,14 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: isDark ? '#1e293b' : '#fff',
   },
   headerSubtitle: {
     fontSize: 12,
@@ -209,18 +215,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   micError: {
-    backgroundColor: '#ef4444',
+    backgroundColor: isDark ? '#fb7185' : '#ef4444',
   },
   micIdle: {
     backgroundColor: '#9bb2a5',
   },
   micActive: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   statusText: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     letterSpacing: 0.5,
   },
   transcriptBox: {
@@ -248,7 +254,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   suggestionHighlight: {
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     fontWeight: '600',
   },
   waveforms: {

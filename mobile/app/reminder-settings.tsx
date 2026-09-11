@@ -1,6 +1,7 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
 import { green, muted, softGreen, ink } from '../constants';
-import { View, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText, Alert } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText, Alert } from 'react-native';
 import { Check, ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -44,6 +45,11 @@ const shellStyles = StyleSheet.create({
 });
 
 export default function ReminderSettingsScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   const [aiEnabled, setAiEnabled] = useState(true);
@@ -173,34 +179,34 @@ export default function ReminderSettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  root: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : '#ffffff' },
   content: { gap: 20 },
-  card: { borderRadius: 24, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: '#f1f5f9', shadowColor: '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
-  cardTitle: { fontSize: 12, fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 14 },
+  card: { borderRadius: 24, backgroundColor: isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9', shadowColor: isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
+  cardTitle: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 14 },
   
   toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   toggleTextContainer: { flex: 1 },
-  toggleTitle: { fontSize: 14, fontWeight: '700', color: '#000' },
-  toggleSubtitle: { fontSize: 10, fontWeight: '600', color: '#64748b', marginTop: 2 },
+  toggleTitle: { fontSize: 14, fontWeight: '700', color: isDark ? '#f8fafc' : '#000' },
+  toggleSubtitle: { fontSize: 10, fontWeight: '600', color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
   toggleSwitch: { width: 48, height: 26, borderRadius: 13, padding: 2, justifyContent: 'center' },
-  toggleThumb: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 2, elevation: 2 },
+  toggleThumb: { width: 22, height: 22, borderRadius: 11, backgroundColor: isDark ? '#1e293b' : '#fff', shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 2, elevation: 2 },
 
-  checkboxRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
+  checkboxRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: isDark ? '#334155' : '#f1f5f9' },
   checkboxRowLast: { borderBottomWidth: 0, paddingBottom: 0 },
   checkboxTextContainer: { flex: 1 },
-  checkboxLabel: { fontSize: 12, fontWeight: '700', color: '#000' },
-  checkboxDesc: { fontSize: 9, color: '#64748b', marginTop: 2 },
+  checkboxLabel: { fontSize: 12, fontWeight: '700', color: isDark ? '#f8fafc' : '#000' },
+  checkboxDesc: { fontSize: 9, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
   checkboxIconBox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 
-  frequencyContainer: { flexDirection: 'row', backgroundColor: '#f8fafc', padding: 4, borderRadius: 16 },
+  frequencyContainer: { flexDirection: 'row', backgroundColor: isDark ? '#0f172a' : '#f8fafc', padding: 4, borderRadius: 16 },
   frequencyButton: { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
   frequencyText: { fontSize: 12, fontWeight: '700' },
 
   timeGrid: { flexDirection: 'row', gap: 12 },
   timeInputContainer: { flex: 1 },
-  timeLabel: { fontSize: 12, fontWeight: '700', color: '#64748b', marginBottom: 8 },
-  timeInput: { backgroundColor: '#f8fafc', borderRadius: 12, padding: 12, fontSize: 14, fontWeight: '700', color: '#64748b' }
+  timeLabel: { fontSize: 12, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b', marginBottom: 8 },
+  timeInput: { backgroundColor: isDark ? '#0f172a' : '#f8fafc', borderRadius: 12, padding: 12, fontSize: 14, fontWeight: '700', color: isDark ? '#94a3b8' : '#64748b' }
 });
 
 

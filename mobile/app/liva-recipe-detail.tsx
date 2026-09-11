@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Image, Text as RNText, SafeAreaView } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, Image, Text as RNText, SafeAreaView } from 'react-native';
 import { ArrowLeft, Mic } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function LivaRecipeDetailScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [companionActive, setCompanionActive] = useState(false);
   const [cookingStep, setCookingStep] = useState(0);
@@ -174,20 +180,20 @@ export default function LivaRecipeDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   heroContainer: {
     height: 240,
     width: '100%',
     position: 'relative',
-    backgroundColor: '#e2e8f0',
+    backgroundColor: isDark ? '#334155' : '#e2e8f0',
   },
   heroImage: {
     width: '100%',
@@ -209,7 +215,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
@@ -222,7 +228,7 @@ const styles = StyleSheet.create({
   },
   heroBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -230,13 +236,13 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
   heroTitle: {
     marginTop: 8,
     fontSize: 24,
     fontWeight: '900',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
   detailsContainer: {
     flex: 1,
@@ -265,13 +271,13 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   section: {},
   sectionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 12,
   },
   ingredientsList: {
@@ -293,7 +299,7 @@ const styles = StyleSheet.create({
   },
   checkMark: {
     fontSize: 8,
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     fontWeight: 'bold',
   },
   ingredientText: {
@@ -319,7 +325,7 @@ const styles = StyleSheet.create({
     color: '#8e8e93',
   },
   footerSafeArea: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   footer: {
     paddingHorizontal: 24,
@@ -329,7 +335,7 @@ const styles = StyleSheet.create({
   // Companion Mode Styles
   companionSafeArea: {
     flex: 1,
-    backgroundColor: '#10201a',
+    backgroundColor: isDark ? '#f8fafc' : '#10201a',
   },
   companionContainer: {
     width: '100%',
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#10201a',
+    backgroundColor: isDark ? '#f8fafc' : '#10201a',
     paddingHorizontal: 24,
     paddingVertical: 20,
     justifyContent: 'space-between',
@@ -357,7 +363,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#34c759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   companionActiveText: {
     fontSize: 12,
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
   exitText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#f43f5e',
+    color: isDark ? '#fb7185' : '#f43f5e',
   },
   companionContent: {
     flex: 1,
@@ -381,14 +387,14 @@ const styles = StyleSheet.create({
   stepIndicator: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     marginBottom: 16,
     letterSpacing: 1,
   },
   stepInstruction: {
     fontSize: 20,
     fontWeight: '900',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     textAlign: 'center',
     lineHeight: 30,
   },
@@ -420,14 +426,14 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.8)',
   },
   voiceControlHighlight: {
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     fontWeight: 'bold',
   },
   micButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     alignItems: 'center',
     justifyContent: 'center',
   },

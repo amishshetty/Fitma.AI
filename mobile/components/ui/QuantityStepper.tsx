@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React from 'react';
-import { View, Pressable, Text as RNText, StyleSheet } from 'react-native';
+import { View, useColorScheme, Pressable, Text as RNText, StyleSheet } from 'react-native';
 import { Minus, Plus } from 'lucide-react-native';
 
 const Text = (props: any) => (
@@ -17,6 +18,11 @@ export default function QuantityStepper({
   value: number;
   onChange: (value: number) => void;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -40,12 +46,12 @@ export default function QuantityStepper({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
     borderRadius: 999,
     padding: 4,
   },
@@ -55,9 +61,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: isDark ? '#334155' : '#e2e8f0',
   },
   buttonPlus: {
     height: 36,
@@ -65,13 +71,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 18,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   valueText: {
     width: 24,
     textAlign: 'center',
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#10201A',
+    color: isDark ? '#f8fafc' : '#10201A',
   },
 });

@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, useColorScheme, StyleSheet, View } from 'react-native';
 
 export default function IconButton({
   children,
@@ -12,6 +13,11 @@ export default function IconButton({
   onPress?: () => void;
   label: string;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <Pressable
       onPress={onPress || onClick}
@@ -28,7 +34,7 @@ export default function IconButton({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   button: {
     height: 44,
     width: 44,

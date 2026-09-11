@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text as RNText, Pressable, Image } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText, Pressable, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Check } from 'lucide-react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,11 @@ const Text = (props: any) => (
 );
 
 export default function LivaRecipeSwiperScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   const recipes = [
@@ -122,14 +128,14 @@ export default function LivaRecipeSwiperScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   contentContainer: {
     flex: 1,
@@ -140,7 +146,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
     maxWidth: 280,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 32,
     borderColor: 'rgba(52, 199, 89, 0.16)',
     borderWidth: 1,
@@ -154,7 +160,7 @@ const styles = StyleSheet.create({
   imageWrapper: {
     height: 192,
     width: '100%',
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : '#f1f5f9',
   },
   image: {
     width: '100%',
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
   macroText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   actionRow: {
     marginTop: 24,
@@ -195,12 +201,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
   },
   skipText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   saveButton: {
     height: 48,
@@ -208,12 +214,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   saveText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
   },
   buttonPressed: {
     opacity: 0.8,
@@ -244,13 +250,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   highlightText: {
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   returnButtonWrapper: {
     marginTop: 24,

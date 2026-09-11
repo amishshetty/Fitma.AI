@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Text as RNText } from 'react-native';
 import { ink, green } from '../constants';
 
 const Text = (props: any) => (
@@ -13,6 +14,11 @@ const Text = (props: any) => (
 export default function ProgressAchievementsScreen({
   onBack = () => {},
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const achievements = [
     {
       title: 'First Meal Logged',
@@ -136,14 +142,14 @@ export default function ProgressAchievementsScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -158,12 +164,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   grid: {
@@ -173,7 +179,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 18,
     borderWidth: 1,
@@ -198,7 +204,7 @@ const styles = StyleSheet.create({
   },
   cardDesc: {
     fontSize: 9,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 14,
     marginTop: 4,
   },
@@ -208,7 +214,7 @@ const styles = StyleSheet.create({
   progressBarBg: {
     height: 6,
     width: '100%',
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: 6,
@@ -220,6 +226,6 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 8,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
 });

@@ -16,13 +16,14 @@ interface AppState {
   proteinLogged: number;
   waterLogged: number;
   meals: any[];
-  history: any;
+  appTheme: 'light' | 'dark' | 'system';
   
   // Actions
   login: (name: string) => void;
   setProfile: (data: any) => void;
   logout: () => void;
   updateGoals: (goals: Partial<UserGoals>) => void;
+  setAppTheme: (theme: 'light' | 'dark' | 'system') => void;
   deleteMeal: (id: string) => void;
   logMeal: (meal: any) => void;
   logWater: (amount: number) => void;
@@ -42,8 +43,10 @@ export const useAppStore = create<AppState>()((set, getStore) => ({
   waterLogged: 0,
   meals: [],
   history: {},
+  appTheme: 'system',
 
   login: (name) => set({ isAuthenticated: true, userName: name }),
+  setAppTheme: (theme) => set({ appTheme: theme }),
   setProfile: (data) => set((state) => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const historyData = data.history || {};
@@ -126,23 +129,33 @@ export const useAppStore = create<AppState>()((set, getStore) => ({
     const pro = meal.protein || 0;
     
     set((state) => {
+      // Use provided timestamp or current time
+      const mealTime = meal.timestamp ? new Date(meal.timestamp) : new Date();
+      const mealDateStr = new Date(mealTime.getTime() - mealTime.getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      const todayHistory = state.history[today] || {};
-      const newCal = state.caloriesLogged + cal;
-      const newPro = state.proteinLogged + pro;
-      const newMeals = [...state.meals, { ...meal, id: Date.now().toString(), time: new Date().toISOString() }];
+      
+      const isToday = mealDateStr === today;
+      
+      // Clean undefined values to prevent Firebase errors
+      const cleanMeal = { ...meal };
+      Object.keys(cleanMeal).forEach(key => cleanMeal[key] === undefined && delete cleanMeal[key]);
+      
+      const targetHistory = state.history[mealDateStr] || { calories: 0, protein: 0, water: 0, meals: [] };
+      const newHistoryMeals = [...(targetHistory.meals || []), { ...cleanMeal, id: mealTime.getTime().toString(), time: mealTime.toISOString() }];
+      
+      const newMealsList = isToday ? [...state.meals, { ...cleanMeal, id: mealTime.getTime().toString(), time: mealTime.toISOString() }] : state.meals;
       
       return {
-        caloriesLogged: newCal,
-        proteinLogged: newPro,
-        meals: newMeals,
+        caloriesLogged: isToday ? state.caloriesLogged + cal : state.caloriesLogged,
+        proteinLogged: isToday ? state.proteinLogged + pro : state.proteinLogged,
+        meals: newMealsList,
         history: {
           ...state.history,
-          [today]: {
-            ...todayHistory,
-            calories: newCal,
-            protein: newPro,
-            meals: newMeals
+          [mealDateStr]: {
+            ...targetHistory,
+            calories: (targetHistory.calories || 0) + cal,
+            protein: (targetHistory.protein || 0) + pro,
+            meals: newHistoryMeals
           }
         }
       };
@@ -155,20 +168,23 @@ export const useAppStore = create<AppState>()((set, getStore) => ({
       
       // Sync to the root user profile to perfectly match the Web App schema
       const userRef = ref(db, `users/${user.uid}`);
-      await update(userRef, {
-        calories: state.caloriesLogged,
-        protein: state.proteinLogged,
-        meals: state.meals,
-      });
-
-      // Also push to history for historical tracking (web uses this for past days)
+      
+      // Only sync the root calories/protein if we updated today's logs
+      const mealTime = meal.timestamp ? new Date(meal.timestamp) : new Date();
+      const mealDateStr = new Date(mealTime.getTime() - mealTime.getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      const historyRef = ref(db, `users/${user.uid}/history/${today}`);
-      await update(historyRef, {
-        calories: state.caloriesLogged,
-        protein: state.proteinLogged,
-        meals: state.meals
-      });
+      
+      if (mealDateStr === today) {
+        await update(userRef, {
+          calories: state.caloriesLogged,
+          protein: state.proteinLogged,
+          meals: state.meals,
+          history: state.history
+        });
+      } else {
+        // Just sync history
+        await update(userRef, { history: state.history });
+      }
     }
   },
   

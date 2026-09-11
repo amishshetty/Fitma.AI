@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, ScrollView, Pressable, TextInput, StyleSheet, Text as RNText, Platform } from 'react-native';
+import { View, useColorScheme, ScrollView, Pressable, TextInput, StyleSheet, Text as RNText, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Mic, Camera, Keyboard, Bell, MessageCircle, Send, Plus, Sparkles,
@@ -18,7 +18,7 @@ const Text = (props: any) => (
   />
 );
 
-const ProgressRing = ({ value, size, color }: any) => {
+const ProgressRing = ({ value, size, color, isDark }: any) => {
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -29,7 +29,7 @@ const ProgressRing = ({ value, size, color }: any) => {
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       <Svg width={size} height={size} style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
         <Circle
-          stroke="#e2e8f0"
+          stroke={isDark ? "#334155" : "#e2e8f0"}
           fill="none"
           cx={size / 2}
           cy={size / 2}
@@ -65,6 +65,11 @@ import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
 
 export default function HomeScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   
   // Connect to Zustand store
@@ -335,7 +340,13 @@ export default function HomeScreen() {
         </Pressable>
 
         {/* Quick Log Meal */}
-        <View style={styles.quickLogContainer}>
+        
+        <LinearGradient 
+          colors={['#34C759', '#00C4B0']} 
+          start={{ x: 0, y: 0 }} 
+          end={{ x: 1, y: 1 }} 
+          style={styles.quickLogContainer}
+        >
           <View style={styles.quickLogHeader}>
             <View>
               <Text style={styles.quickLogTitle}>Quick Log Meal</Text>
@@ -358,7 +369,8 @@ export default function HomeScreen() {
               );
             })}
           </View>
-        </View>
+        
+        </LinearGradient>
 
         {/* Daily Nutrition */}
         <View style={styles.sectionContainer}>
@@ -378,7 +390,7 @@ export default function HomeScreen() {
               const total = parts[1]?.trim();
               return (
                 <View key={item.label} style={styles.nutritionCard}>
-                  <ProgressRing value={item.value} size={64} color={item.color} />
+                  <ProgressRing isDark={isDark} value={item.value} size={64} color={item.color} />
                   <Text style={styles.nutritionLabel}>{item.label}</Text>
                   <Text style={styles.nutritionCurrent}>{current}</Text>
                   {total && <Text style={styles.nutritionTotal}>/ {total}</Text>}
@@ -567,14 +579,14 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#F4FAF6',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#F4FAF6',
   },
   scrollView: {
     flex: 1,
@@ -596,13 +608,13 @@ const styles = StyleSheet.create({
   greetingText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     lineHeight: 32,
   },
   subGreetingText: {
     marginTop: 8,
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   headerRight: {
@@ -614,12 +626,12 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 16,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#10201a',
+    shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#10201a',
     shadowOpacity: 0.06,
     shadowRadius: 14,
     elevation: 2,
@@ -627,9 +639,9 @@ const styles = StyleSheet.create({
   askLivaContainer: {
     marginBottom: 16,
     borderRadius: 24,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     padding: 14,
-    shadowColor: '#000',
+    shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 12,
@@ -646,7 +658,7 @@ const styles = StyleSheet.create({
   askLivaTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   askLivaInputWrapper: {
     marginTop: 8,
@@ -663,13 +675,13 @@ const styles = StyleSheet.create({
   askLivaInput: {
     flex: 1,
     fontSize: 12,
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     padding: 0,
   },
   quickLogContainer: {
     marginBottom: 16,
     borderRadius: 28,
-    backgroundColor: '#10b981',
+    
     padding: 16,
     overflow: 'hidden',
   },
@@ -680,18 +692,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   quickLogTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: isDark ? '#1e293b' : '#ffffff',
   },
   avatarWrapper: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#EAF8F1',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#EAF8F1',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#10201a',
+    shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#10201a',
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
@@ -731,17 +743,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logActionLabel: {
-    color: '#fff',
+      color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 14,
     fontWeight: 'bold',
   },
   sectionContainer: {
     marginBottom: 24,
     borderRadius: 32,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     padding: 24,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -752,19 +764,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   sectionSubtitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   sectionIconBg: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -775,16 +787,16 @@ const styles = StyleSheet.create({
   nutritionCard: {
     flex: 1,
     borderRadius: 24,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   nutritionLabel: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     marginTop: 16,
     marginBottom: 6,
@@ -792,12 +804,12 @@ const styles = StyleSheet.create({
   nutritionCurrent: {
     fontSize: 12,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   nutritionTotal: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   waterBadge: {
@@ -814,7 +826,7 @@ const styles = StyleSheet.create({
   waterBadgeText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759',
   },
   waterTracker: {
     flexDirection: 'row',
@@ -835,11 +847,11 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   waterBtnIconActive: {
     width: 48,
@@ -853,14 +865,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 56,
     borderRadius: 16,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
   waterBtnAddText: {
-    color: '#fff',
+      color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 14,
     fontWeight: 'bold',
   },
@@ -870,7 +882,7 @@ const styles = StyleSheet.create({
   addText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#34C759',
+    color: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759',
   },
   mealsList: {
     gap: 12,
@@ -881,25 +893,25 @@ const styles = StyleSheet.create({
     gap: 16,
     borderRadius: 24,
     padding: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   mealCardActive: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
   },
   mealIconWrapper: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   mealIconWrapperActive: {
-    borderColor: '#34C759',
+    borderColor: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759',
   },
   mealInfo: {
     flex: 1,
@@ -908,14 +920,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
-  textActive: { color: '#000' },
-  textInactive: { color: '#64748b' },
+  textActive: { color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000' },
+  textInactive: { color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b' },
   mealStatus: {
     marginTop: 2,
     fontSize: 12,
     fontWeight: '500',
   },
-  textActiveMuted: { color: '#64748b' },
+  textActiveMuted: { color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b' },
   textInactiveMuted: { color: 'rgba(100,116,139,0.5)' },
   mealTimeStats: {
     alignItems: 'flex-end',
@@ -924,7 +936,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
   },
   insightsSection: {
@@ -937,16 +949,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   insightsIconBg: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderRadius: 16,
     padding: 6,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   insightsTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   insightsList: {
     gap: 12,
@@ -978,14 +990,14 @@ const styles = StyleSheet.create({
   },
   insightCardText: {
     fontSize: 13,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     lineHeight: 18,
   },
   insightActionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     alignSelf: 'flex-start',
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -1012,7 +1024,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
@@ -1024,7 +1036,7 @@ const styles = StyleSheet.create({
   modalHandle: {
     width: 48,
     height: 6,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: isDark ? '#334155' : isDark ? '#334155' : '#e2e8f0',
     borderRadius: 3,
     alignSelf: 'center',
     marginBottom: 24,
@@ -1032,7 +1044,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
     textTransform: 'capitalize',
     marginBottom: 24,
   },
@@ -1042,7 +1054,7 @@ const styles = StyleSheet.create({
   modalEmpty: {
     textAlign: 'center',
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     paddingVertical: 16,
   },
   modalMealCard: {
@@ -1051,23 +1063,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9',
   },
   modalMealName: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000',
   },
   modalMealStats: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 4,
   },
   modalMealTime: {
     fontSize: 10,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   deleteBtn: {

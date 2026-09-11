@@ -1,5 +1,6 @@
+import { useAppStore } from '../../store/useAppStore';
 import React, { useRef } from 'react';
-import { Pressable, Text as RNText, StyleSheet, Animated } from 'react-native';
+import { Pressable, useColorScheme, Text as RNText, StyleSheet, Animated } from 'react-native';
 
 const Text = (props: any) => (
   <RNText 
@@ -20,6 +21,11 @@ export default function PrimaryButton({
   icon?: React.ReactNode;
   disabled?: boolean;
 }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
@@ -64,7 +70,7 @@ export default function PrimaryButton({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   button: {
     minHeight: 56,
     width: '100%',
@@ -77,7 +83,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   buttonActive: {
-    backgroundColor: '#34C759', // Fitma Primary Green
+    backgroundColor: isDark ? '#4ade80' : '#34C759', // Fitma Primary Green
     shadowColor: 'rgba(52,199,89,0.34)',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 1,
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   text: {
-    color: '#ffffff',
+    color: isDark ? '#1e293b' : '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
   },

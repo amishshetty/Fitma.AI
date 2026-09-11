@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Pressable, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
-import { Text as RNText } from 'react-native';
-import { 
-  ChevronLeft, ChevronDown, ChevronRight, 
-  Sunrise, Sun, Moon, Coffee, Check, Flame, 
-  Droplets, Activity
+import { View, useColorScheme, ScrollView, Pressable, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import { Text as RNText, Image } from 'react-native';
+import {
+  ChevronLeft, ChevronDown, ChevronRight,
+  Sunrise, Sun, Moon, Coffee, Check, Flame,
+  Droplets, Activity, Target, Sparkles
 } from 'lucide-react-native';
 import { useAppStore } from '../../store/useAppStore';
 
@@ -17,6 +17,11 @@ const Text = (props: any) => (
 );
 
 export default function MyPlanScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [dateOffset, setDateOffset] = useState(0);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -176,40 +181,76 @@ export default function MyPlanScreen() {
           {/* Daily Goals */}
           <View style={styles.sectionRow}>
             <Text style={styles.sectionTitle}>Daily Goals</Text>
-            <Text style={styles.sectionCount}>
-              {(displayCalories > 0 ? 1 : 0) + (displayWater > 0 ? 1 : 0)} / 5
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={styles.sectionCount}>0 / 5</Text>
+                <Check size={14} color="#94a3b8" style={{ marginLeft: 4 }} />
+              </View>
           </View>
 
           {/* Log Food */}
           <Pressable style={styles.logCard}>
             <View style={styles.logCardBody}>
-              <View style={[styles.logDot, displayCalories > 0 && styles.logDotDone]}>
-                {displayCalories > 0 && <Check size={12} color="#fff" />}
-              </View>
+              <View style={styles.logDot} />
               <Text style={styles.logCardTitle}>Log Your Food</Text>
               <View style={styles.logCardSub}>
                 <Flame size={12} color="#94a3b8" />
                 <Text style={styles.logCardSubText}>{displayCalories} / {dailyGoalCal} cal</Text>
               </View>
             </View>
-            <View style={[styles.logCardImg, { backgroundColor: '#f9ebd6' }]} />
+            <View style={[styles.logCardImg, { backgroundColor: '#f9ebd6' }]}>
+                <Image source={require('../../assets/images/my_plan_food.jpg')} style={styles.logCardImage} />
+              </View>
           </Pressable>
 
           {/* Log Water */}
           <Pressable style={[styles.logCard, { marginTop: 12 }]}>
             <View style={styles.logCardBody}>
-              <View style={[styles.logDot, displayWater > 0 && styles.logDotDone]}>
-                {displayWater > 0 && <Check size={12} color="#fff" />}
-              </View>
+              <View style={styles.logDot} />
               <Text style={styles.logCardTitle}>Log Water</Text>
               <View style={styles.logCardSub}>
                 <Droplets size={12} color="#94a3b8" />
                 <Text style={styles.logCardSubText}>{displayWater} / {dailyGoalWater}ml</Text>
               </View>
             </View>
-            <View style={[styles.logCardImg, { backgroundColor: '#dcf2fe' }]} />
+            <View style={[styles.logCardImg, { backgroundColor: '#dcf2fe' }]}>
+                <Image source={require('../../assets/images/my_plan_water.jpg')} style={styles.logCardImage} />
+              </View>
           </Pressable>
+        
+          {/* Log Weight */}
+          <Pressable style={[styles.logCard, { marginTop: 12 }]}>
+            <View style={styles.logCardBody}>
+              <View style={styles.logDot} />
+              <Text style={styles.logCardTitle}>Log Weight</Text>
+              <View style={styles.logCardSub}>
+                <Target size={12} color="#94a3b8" />
+                <Text style={styles.logCardSubText}>75.6 kg</Text>
+              </View>
+            </View>
+            <View style={[styles.logCardImg, { backgroundColor: isDark ? '#1e293b' : '#f1f5f9' }]}>
+                <Image source={require('../../assets/images/my_plan_weight.jpg')} style={styles.logCardImage} />
+            </View>
+          </Pressable>
+
+          {/* Log Activities */}
+          <Pressable style={[styles.logCard, { marginTop: 12 }]}>
+            <View style={styles.logCardBody}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={styles.logCardTitle}>Log Activities</Text>
+                <View style={{ backgroundColor: isDark ? '#334155' : '#e2e8f0', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 }}>
+                  <Text style={{ fontSize: 9, fontWeight: 'bold', color: '#64748b' }}>COMING SOON</Text>
+                </View>
+              </View>
+              <View style={styles.logCardSub}>
+                <Activity size={12} color="#94a3b8" />
+                <Text style={styles.logCardSubText}>Future Scope</Text>
+              </View>
+            </View>
+            <View style={[styles.logCardImg, { backgroundColor: '#fde9eb', opacity: 0.6 }]}>
+                <Image source={require('../../assets/images/my_plan_activities.jpg')} style={[styles.logCardImage, { opacity: 0.5 }]} />
+            </View>
+          </Pressable>
+
         </ScrollView>
 
         {/* Calendar Drawer — inline, NOT Modal, so it stays within 480px container */}
@@ -266,59 +307,59 @@ export default function MyPlanScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#EAF8F1' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: isDark ? '#0f172a' : '#EAF8F1' },
   root: { 
     width: '100%', 
     maxWidth: 480, 
     alignSelf: 'center', 
     flex: 1, 
-    backgroundColor: '#EAF8F1',
+    backgroundColor: isDark ? '#0f172a' : '#EAF8F1',
     position: 'relative',
     overflow: 'hidden',
   },
   header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8 },
-  headerTitle: { fontSize: 26, fontWeight: 'bold', color: '#10201a' },
+  headerTitle: { fontSize: 26, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' },
 
   dateNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingBottom: 16 },
   dateArrow: { padding: 8 },
   dateBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  dateLabel: { fontSize: 15, fontWeight: 'bold', color: '#10201a' },
+  dateLabel: { fontSize: 15, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' },
 
   scrollContent: { paddingHorizontal: 16, paddingBottom: 32 },
 
   // ── Summary Card ──
   card: { 
-    backgroundColor: '#fff', 
+    backgroundColor: isDark ? '#1e293b' : '#fff', 
     borderRadius: 28, 
     padding: 18, 
     marginBottom: 20,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 16, elevation: 4,
+    shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.04, shadowRadius: 16, elevation: 4,
   },
   mealGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 18 },
   mealCell: { 
     width: '47%', flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: '#fff', padding: 10, borderRadius: 18,
-    borderWidth: 1, borderColor: '#f1f5f9',
+    backgroundColor: isDark ? '#1e293b' : '#fff', padding: 10, borderRadius: 18,
+    borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   mealIconWrap: { 
-    width: 36, height: 36, borderRadius: 18, backgroundColor: '#fff', 
+    width: 36, height: 36, borderRadius: 18, backgroundColor: isDark ? '#1e293b' : '#fff', 
     justifyContent: 'center', alignItems: 'center', 
-    borderWidth: 1, borderColor: '#f1f5f9',
+    borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   mealCellLabel: { fontSize: 8, fontWeight: 'bold', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.3 },
-  mealCellCal: { fontSize: 15, fontWeight: '900', color: '#10201a', marginTop: 1 },
+  mealCellCal: { fontSize: 15, fontWeight: '900', color: isDark ? '#f8fafc' : '#10201a', marginTop: 1 },
   mealCellUnit: { fontSize: 9, fontWeight: '600', color: '#94a3b8' },
 
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   totalLabel: { fontSize: 10, fontWeight: 'bold', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  totalValue: { fontSize: 30, fontWeight: '900', color: '#10201a', lineHeight: 30 },
+  totalValue: { fontSize: 30, fontWeight: '900', color: isDark ? '#f8fafc' : '#10201a', lineHeight: 30 },
   totalGoal: { fontSize: 13, fontWeight: '600', color: '#94a3b8', marginBottom: 2 },
 
   ring: { 
     width: 44, height: 44, borderRadius: 22, 
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 3, borderColor: '#e2e8f0',
+    borderWidth: 3, borderColor: isDark ? '#334155' : '#e2e8f0',
   },
   ringFill: {
     ...StyleSheet.absoluteFillObject,
@@ -326,43 +367,52 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
 
-  emptyMeals: { padding: 16, backgroundColor: '#f8fafc', borderRadius: 16, marginTop: 8, alignItems: 'center' },
+  emptyMeals: { padding: 16, backgroundColor: isDark ? '#0f172a' : '#f8fafc', borderRadius: 16, marginTop: 8, alignItems: 'center' },
   emptyText: { fontSize: 13, color: '#94a3b8', fontWeight: '500' },
 
   // ── Meal rows ──
   mealRow: { 
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    padding: 14, backgroundColor: '#fff', borderRadius: 18,
-    borderWidth: 1, borderColor: '#f1f5f9',
+    padding: 14, backgroundColor: isDark ? '#1e293b' : '#fff', borderRadius: 18,
+    borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   mealRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
   mealRowIcon: { 
-    width: 36, height: 36, borderRadius: 18, backgroundColor: '#f8fafc', 
+    width: 36, height: 36, borderRadius: 18, backgroundColor: isDark ? '#0f172a' : '#f8fafc', 
     justifyContent: 'center', alignItems: 'center', 
-    borderWidth: 1, borderColor: '#f1f5f9' 
+    borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9' 
   },
-  mealRowType: { fontSize: 14, fontWeight: 'bold', color: '#10201a', textTransform: 'capitalize' },
+  mealRowType: { fontSize: 14, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a', textTransform: 'capitalize' },
   mealRowName: { fontSize: 11, color: '#94a3b8', marginTop: 2, maxWidth: 120 },
-  mealRowCal: { fontSize: 13, fontWeight: 'bold', color: '#10201a' },
+  mealRowCal: { fontSize: 13, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' },
   mealRowPro: { fontSize: 10, color: '#94a3b8', fontWeight: '500', marginTop: 2 },
 
   // ── Section ──
   sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, marginTop: 4 },
-  sectionTitle: { fontSize: 17, fontWeight: 'bold', color: '#10201a' },
+  sectionTitle: { fontSize: 17, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' },
   sectionCount: { fontSize: 11, fontWeight: 'bold', color: '#94a3b8' },
 
   // ── Log Cards ──
   logCard: { 
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 22, overflow: 'hidden',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.03, shadowRadius: 12, elevation: 2,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: isDark ? '#1e293b' : '#fff', borderRadius: 22, overflow: 'hidden',
+    shadowColor: isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.03, shadowRadius: 12, elevation: 2,
   },
   logCardBody: { flex: 1, padding: 18 },
-  logDot: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#e2e8f0', marginBottom: 6, justifyContent: 'center', alignItems: 'center' },
-  logDotDone: { backgroundColor: '#34C759', borderColor: '#34C759' },
-  logCardTitle: { fontSize: 15, fontWeight: 'bold', color: '#10201a' },
+  logDot: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: isDark ? '#334155' : '#e2e8f0', marginBottom: 6, justifyContent: 'center', alignItems: 'center' },
+  logDotDone: { backgroundColor: isDark ? '#4ade80' : '#34C759', borderColor: isDark ? '#4ade80' : '#34C759' },
+  logCardTitle: { fontSize: 15, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' },
   logCardSub: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
   logCardSubText: { fontSize: 11, fontWeight: '600', color: '#94a3b8' },
-  logCardImg: { width: 120, height: 100, borderTopLeftRadius: 32, borderBottomLeftRadius: 32 },
+  logCardImage: {
+      width: 112,
+      height: 112,
+      borderRadius: 56,
+      position: 'absolute',
+      left: -16,
+      top: 0,
+      opacity: 0.9,
+    },
+    logCardImg: { width: 120, height: 100, borderTopLeftRadius: 32, borderBottomLeftRadius: 32 },
 
   // ── Overlay (inline, NOT Modal) ──
   overlay: { 
@@ -370,20 +420,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end', zIndex: 100,
   },
   drawer: { 
-    backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, 
+    backgroundColor: isDark ? '#1e293b' : '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, 
     padding: 20, paddingBottom: 32, maxHeight: '80%',
   },
-  handle: { width: 40, height: 4, backgroundColor: '#e2e8f0', borderRadius: 2, alignSelf: 'center', marginBottom: 18 },
-  drawerTitle: { fontSize: 18, fontWeight: 'bold', color: '#10201a', textAlign: 'center', marginBottom: 18 },
+  handle: { width: 40, height: 4, backgroundColor: isDark ? '#334155' : '#e2e8f0', borderRadius: 2, alignSelf: 'center', marginBottom: 18 },
+  drawerTitle: { fontSize: 18, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a', textAlign: 'center', marginBottom: 18 },
 
-  calHeader: { flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#f1f5f9', marginBottom: 8 },
+  calHeader: { flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: isDark ? '#334155' : '#f1f5f9', marginBottom: 8 },
   calDayHeader: { fontSize: 11, fontWeight: 'bold', color: '#94a3b8', width: '14.28%', textAlign: 'center' },
-  calMonthLabel: { fontSize: 12, fontWeight: 'bold', color: '#34C759', textAlign: 'center', marginVertical: 12, letterSpacing: 1 },
+  calMonthLabel: { fontSize: 12, fontWeight: 'bold', color: isDark ? '#4ade80' : '#34C759', textAlign: 'center', marginVertical: 12, letterSpacing: 1 },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   calCell: { width: '14.28%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
-  calCellSel: { backgroundColor: '#34C759', borderRadius: 20 },
-  calDay: { fontSize: 13, color: '#64748b', fontWeight: '500' },
+  calCellSel: { backgroundColor: isDark ? '#4ade80' : '#34C759', borderRadius: 20 },
+  calDay: { fontSize: 13, color: isDark ? '#94a3b8' : '#64748b', fontWeight: '500' },
 
   continueBtn: { backgroundColor: '#101828', padding: 16, borderRadius: 18, alignItems: 'center', marginTop: 16 },
-  continueBtnText: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
+  continueBtnText: { color: isDark ? '#1e293b' : '#fff', fontSize: 15, fontWeight: 'bold' },
 });

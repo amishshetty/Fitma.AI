@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, StyleSheet, Text as RNText } from 'react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -14,6 +15,9 @@ const Text = (props: any) => (
   />
 );
 
+
+
+export default function LivaResponseScreen() {
 const SimpleSlider = ({ value, onValueChange, min, max, step }: any) => {
   const [width, setWidth] = useState(1);
   const handleMove = (e: any) => {
@@ -39,7 +43,15 @@ const SimpleSlider = ({ value, onValueChange, min, max, step }: any) => {
   );
 };
 
-export default function LivaResponseScreen() {
+
+
+
+
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [dinnerCals, setDinnerCals] = useState(600);
 
@@ -153,21 +165,21 @@ export default function LivaResponseScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   contentSpace: {
     gap: 20,
   },
   gaugeCard: {
     borderRadius: 28,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     padding: 20,
     borderColor: 'rgba(52, 199, 89, 0.12)',
     borderWidth: 1,
@@ -181,7 +193,7 @@ const styles = StyleSheet.create({
   gaugeLabel: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 4,
@@ -198,7 +210,7 @@ const styles = StyleSheet.create({
   gaugeValueSmall: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   gaugeRow: {
     marginTop: 16,
@@ -218,12 +230,12 @@ const styles = StyleSheet.create({
   forecastTrend: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 2,
   },
   sliderCard: {
     borderRadius: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     padding: 20,
     borderColor: 'rgba(52, 199, 89, 0.06)',
     borderWidth: 1,
@@ -247,7 +259,7 @@ const styles = StyleSheet.create({
   sliderValue: {
     fontSize: 14,
     fontWeight: '900',
-    color: '#34c759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   sliderFooter: {
     flexDirection: 'row',
@@ -257,7 +269,7 @@ const styles = StyleSheet.create({
   sliderFooterText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
   sliderContainer: {
     height: 30,
@@ -273,7 +285,7 @@ const styles = StyleSheet.create({
   },
   sliderFill: {
     height: 6,
-    backgroundColor: '#34c759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 4,
     position: 'absolute',
   },
@@ -281,7 +293,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#34c759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     position: 'absolute',
     top: 5,
     marginLeft: -10,
@@ -310,6 +322,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     lineHeight: 18,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
   },
 });

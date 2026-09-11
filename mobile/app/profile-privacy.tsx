@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, Text as RNText, TextInput, ActivityIndicator } from 'react-native';
+import { View, useColorScheme, StyleSheet, Pressable, Text as RNText, TextInput, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import ScreenShell from '../components/layout/ScreenShell';
 
@@ -12,6 +13,11 @@ const Text = (props: any) => (
 );
 
 export default function ProfilePrivacyScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
 
   const [faceId, setFaceId] = useState(true);
@@ -190,45 +196,45 @@ export default function ProfilePrivacyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: '#ffffff' },
+const getStyles = (isDark: boolean) => StyleSheet.create({
+  container: { width: '100%', maxWidth: 480, alignSelf: 'center', height: '100%', flex: 1, backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#ffffff' },
   content: { paddingBottom: 32, gap: 16 },
-  card: { borderRadius: 24, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: '#f1f5f9', shadowColor: '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
-  dangerCard: { borderRadius: 24, backgroundColor: '#fff', padding: 20, borderWidth: 1, borderColor: 'rgba(220,38,38,0.1)', shadowColor: 'rgba(220,38,38,0.04)', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 1, shadowRadius: 18, elevation: 2 },
+  card: { borderRadius: 24, backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9', shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.03, shadowRadius: 18, elevation: 2 },
+  dangerCard: { borderRadius: 24, backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff', padding: 20, borderWidth: 1, borderColor: 'rgba(220,38,38,0.1)', shadowColor: 'rgba(220,38,38,0.04)', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 1, shadowRadius: 18, elevation: 2 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(241, 245, 249, 0.5)', marginBottom: 12 },
   rowText: { flex: 1, paddingRight: 16 },
-  itemTitle: { fontSize: 14, fontWeight: 'bold', color: '#000' },
-  itemSubtitle: { fontSize: 12, color: '#64748b', marginTop: 2 },
-  activeText: { fontSize: 14, fontWeight: 'bold', color: '#34C759' },
+  itemTitle: { fontSize: 14, fontWeight: 'bold', color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000' },
+  itemSubtitle: { fontSize: 12, color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b', marginTop: 2 },
+  activeText: { fontSize: 14, fontWeight: 'bold', color: isDark ? '#4ade80' : isDark ? '#4ade80' : '#34C759' },
   switch: { width: 48, height: 24, borderRadius: 12, padding: 2, flexDirection: 'row', alignItems: 'center' },
-  switchThumb: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 1, elevation: 2 },
+  switchThumb: { width: 20, height: 20, borderRadius: 10, backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff', shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 1, elevation: 2 },
   
   exportSection: { paddingTop: 8 },
-  exportTitle: { fontSize: 11, fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  exportTitle: { fontSize: 11, fontWeight: 'bold', color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
   exportGrid: { flexDirection: 'row', gap: 8 },
-  exportBtn: { flex: 1, backgroundColor: '#f8fafc', padding: 12, borderRadius: 12, alignItems: 'center' },
-  exportBtnText: { fontSize: 11, fontWeight: 'bold', color: '#64748b' },
+  exportBtn: { flex: 1, backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc', padding: 12, borderRadius: 12, alignItems: 'center' },
+  exportBtnText: { fontSize: 11, fontWeight: 'bold', color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b' },
   
-  clearBtn: { width: '100%', backgroundColor: '#f8fafc', paddingVertical: 12, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: '#f1f5f9' },
-  clearBtnText: { color: '#000', fontSize: 14, fontWeight: 'bold' },
+  clearBtn: { width: '100%', backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc', paddingVertical: 12, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9' },
+  clearBtnText: { color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000', fontSize: 14, fontWeight: 'bold' },
   
-  dangerTitle: { fontSize: 11, fontWeight: 'bold', color: '#ef4444', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
-  dangerItemTitle: { fontSize: 14, fontWeight: 'bold', color: '#000' },
-  dangerItemSubtitle: { fontSize: 12, color: '#64748b', marginTop: 4, marginBottom: 16 },
-  deleteBtn: { width: '100%', backgroundColor: '#ef4444', paddingVertical: 12, borderRadius: 16, alignItems: 'center', shadowColor: 'rgba(239, 68, 68, 0.2)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 8, elevation: 2 },
-  deleteBtnText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  dangerTitle: { fontSize: 11, fontWeight: 'bold', color: isDark ? '#fb7185' : isDark ? '#fb7185' : '#ef4444', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  dangerItemTitle: { fontSize: 14, fontWeight: 'bold', color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000' },
+  dangerItemSubtitle: { fontSize: 12, color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b', marginTop: 4, marginBottom: 16 },
+  deleteBtn: { width: '100%', backgroundColor: isDark ? '#fb7185' : isDark ? '#fb7185' : '#ef4444', paddingVertical: 12, borderRadius: 16, alignItems: 'center', shadowColor: 'rgba(239, 68, 68, 0.2)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 8, elevation: 2 },
+  deleteBtnText: { color: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff', fontSize: 14, fontWeight: 'bold' },
 
   modalOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24, zIndex: 100 },
-  modalContent: { backgroundColor: '#fff', borderRadius: 28, padding: 24, width: '100%', maxWidth: 290, alignItems: 'center', shadowColor: '#10201a', shadowOffset: { width: 0, height: 20 }, shadowOpacity: 0.16, shadowRadius: 48, elevation: 10 },
+  modalContent: { backgroundColor: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff', borderRadius: 28, padding: 24, width: '100%', maxWidth: 290, alignItems: 'center', shadowColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#10201a', shadowOffset: { width: 0, height: 20 }, shadowOpacity: 0.16, shadowRadius: 48, elevation: 10 },
   modalIcon: { fontSize: 32, marginBottom: 12 },
-  modalIconBg: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  modalTitle: { fontSize: 16, fontWeight: '900', color: '#000', textAlign: 'center' },
-  modalSubtitle: { fontSize: 10, color: '#64748b', textAlign: 'center', marginTop: 4, marginBottom: 16, lineHeight: 14 },
-  modalInput: { width: '100%', backgroundColor: '#f8fafc', padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#f1f5f9', fontSize: 12, fontWeight: 'bold', color: '#000', textAlign: 'center', marginBottom: 12 },
+  modalIconBg: { width: 48, height: 48, borderRadius: 24, backgroundColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  modalTitle: { fontSize: 16, fontWeight: '900', color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000', textAlign: 'center' },
+  modalSubtitle: { fontSize: 10, color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b', textAlign: 'center', marginTop: 4, marginBottom: 16, lineHeight: 14 },
+  modalInput: { width: '100%', backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc', padding: 10, borderRadius: 12, borderWidth: 1, borderColor: isDark ? '#334155' : isDark ? '#334155' : '#f1f5f9', fontSize: 12, fontWeight: 'bold', color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000', textAlign: 'center', marginBottom: 12 },
   modalActions: { flexDirection: 'row', gap: 8, width: '100%' },
-  modalCancelBtn: { flex: 1, backgroundColor: '#f8fafc', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
-  modalCancelText: { fontSize: 10, fontWeight: 'bold', color: '#64748b' },
+  modalCancelBtn: { flex: 1, backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc', paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
+  modalCancelText: { fontSize: 10, fontWeight: 'bold', color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b' },
   modalActionBtnRed: { flex: 1, backgroundColor: '#dc2626', paddingVertical: 10, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  modalActionBtnBlack: { flex: 1, backgroundColor: '#000', paddingVertical: 10, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  modalActionText: { fontSize: 10, fontWeight: 'bold', color: '#fff' },
+  modalActionBtnBlack: { flex: 1, backgroundColor: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000', paddingVertical: 10, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  modalActionText: { fontSize: 10, fontWeight: 'bold', color: isDark ? '#1e293b' : isDark ? '#1e293b' : '#fff' },
 });

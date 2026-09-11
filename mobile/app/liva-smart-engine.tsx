@@ -1,6 +1,7 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState } from 'react';
 import { green, muted, softGreen, ink } from '../constants';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text as RNText } from 'react-native';
 import { BrainCircuit, Activity, Zap, Info, Clock, Calendar, ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -15,6 +16,11 @@ const Text = (props: any) => (
 
 
 export default function LivaSmartEngineScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const [enabled, setEnabled] = useState(true);
   const router = useRouter();
 
@@ -140,14 +146,14 @@ export default function LivaSmartEngineScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollContent: {
     paddingBottom: 48,
@@ -167,11 +173,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 8,
     fontWeight: '500',
   },
@@ -179,16 +185,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   switchCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 24,
     padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     elevation: 2,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.03,
     shadowRadius: 24,
@@ -210,11 +216,11 @@ const styles = StyleSheet.create({
   switchTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   switchSubtitle: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginTop: 4,
   },
   switchTrack: {
@@ -225,19 +231,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   switchTrackEnabled: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     alignItems: 'flex-end',
   },
   switchTrackDisabled: {
-    backgroundColor: '#e2e8f0',
+    backgroundColor: isDark ? '#334155' : '#e2e8f0',
     alignItems: 'flex-start',
   },
   switchThumb: {
     width: 20,
     height: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1,
@@ -257,20 +263,20 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginLeft: 8,
   },
   categoriesContainer: {
     gap: 16,
   },
   categoryCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     elevation: 2,
-    shadowColor: '#10201a',
+    shadowColor: isDark ? '#f8fafc' : '#10201a',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.02,
     shadowRadius: 16,
@@ -284,7 +290,7 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     flex: 1,
   },
   statusBadge: {
@@ -304,16 +310,16 @@ const styles = StyleSheet.create({
   },
   categoryDesc: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 18,
     marginBottom: 16,
   },
   predictionBox: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: isDark ? '#0f172a' : '#f8fafc',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     gap: 8,
   },
   predictionRow: {
@@ -328,13 +334,13 @@ const styles = StyleSheet.create({
   predictionLabelText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     marginLeft: 4,
   },
   predictionValue: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
   },
   confidenceContainer: {
     flexDirection: 'row',
@@ -344,13 +350,13 @@ const styles = StyleSheet.create({
   confidenceBarBg: {
     width: 64,
     height: 6,
-    backgroundColor: '#e2e8f0',
+    backgroundColor: isDark ? '#334155' : '#e2e8f0',
     borderRadius: 3,
     overflow: 'hidden',
   },
   confidenceBarFill: {
     height: '100%',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 3,
   },
   infoBox: {
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     fontWeight: '500',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     lineHeight: 18,
   },
 });

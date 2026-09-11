@@ -42,20 +42,52 @@ CRITICAL NUTRITION CONSISTENCY RULE: If the user logs a food item that exactly o
 
 EXPECTED JSON FORMAT:
 {
+  "greeting": "Optional friendly greeting (e.g. 'Good Morning Amish!')",
   "response": "A nice conversational response...",
+  "motivation": "Optional short motivational quote or phrase",
   "type": "chat | meal | water | delete",
   "waterAmountMl": 0,
   "mealData": {
-    "name": "Food name (e.g. 'Banana', 'Oats', 'Chicken Salad'). NEVER use the meal category like 'Lunch'.",
+    "name": "Food name WITH quantity (e.g. '2 Bananas', '1 bowl of Oats', '2 rotis', 'Chicken Salad'). NEVER drop the quantity user mentioned. NEVER use the meal category like 'Lunch'.",
     "calories": 400,
     "protein": 20,
     "mealType": "breakfast | lunch | dinner | snack | unknown",
-    "items": ["2 rotis", "paneer"]
+    "items": ["2 rotis", "paneer"],
+    "timestamp": "Optional ISO string of the date mentioned by user (e.g. if they say 'yesterday', return yesterday's ISO string)"
   },
+  "summaryData": {
+    "calories": 1500,
+    "protein": 70,
+    "carbs": 150,
+    "fat": 50
+  },
+  "suggestions": [
+    {
+      "name": "Suggestion Name",
+      "calories": 300,
+      "protein": 15,
+      "carbs": 30,
+      "fat": 10,
+      "why": "Why this is good",
+      "alternatives": "Alternative options",
+      "tip": "A helpful tip"
+    }
+  ],
   "deleteData": {
     "mealType": "snack"
   }
 }
+
+User Logged Meals (History):
+${JSON.stringify((userData.meals || []).map((m: any) => {
+  let dateStr = 'Unknown';
+  try {
+    dateStr = new Date(parseInt(m.id)).toDateString();
+  } catch (e) {}
+  return { ...m, dateString: dateStr };
+}))}
+
+Current Local Date: ${new Date().toDateString()}
 
 User Message: "${userMessage}"
   `;

@@ -1,7 +1,13 @@
+import { useAppStore } from '../../store/useAppStore';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, useColorScheme, StyleSheet } from 'react-native';
 
 export default function ProgressDots({ total = 5, current = 0 }: { total?: number; current?: number }) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   return (
     <View style={styles.progressContainer}>
       {Array.from({ length: total }).map((_, index) => (
@@ -20,7 +26,7 @@ export default function ProgressDots({ total = 5, current = 0 }: { total?: numbe
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   progressContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

@@ -1,6 +1,7 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect, useRef } from 'react';
 import { green, muted, softGreen, ink } from '../constants';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { View, useColorScheme, StyleSheet, Animated, Easing } from 'react-native';
 import { Text as RNText } from 'react-native';
 import { useRouter } from 'expo-router';
 import LivaAvatar from '../components/layout/LivaAvatar';
@@ -15,6 +16,11 @@ const Text = (props: any) => (
 
 
 export default function LivaThinkingScreen() {
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const [factIndex, setFactIndex] = useState(0);
   
@@ -113,14 +119,14 @@ export default function LivaThinkingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   root: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   container: {
     flex: 1,
@@ -148,13 +154,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '800',
-    color: '#0f172a',
+    color: isDark ? '#f8fafc' : '#0f172a',
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     textAlign: 'center',
     marginTop: 18,
   },
@@ -169,7 +175,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 5,
   },
 });

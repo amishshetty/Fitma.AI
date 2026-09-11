@@ -1,5 +1,6 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useMemo } from 'react';
-import { View, ScrollView, StyleSheet, Text as RNText } from 'react-native';
+import { View, useColorScheme, ScrollView, StyleSheet, Text as RNText } from 'react-native';
 import { ink, green } from '../constants';
 import Svg, { Path, Circle } from 'react-native-svg';
 
@@ -16,6 +17,11 @@ export default function ProgressMonthlyScreen({
   loggedMeals = [],
   goals = { calories: 1800, protein: 100 },
 }: any) {
+  const appTheme = useAppStore((s: any) => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const stats = useMemo(() => {
     const now = new Date();
     // Start of the month
@@ -174,14 +180,14 @@ export default function ProgressMonthlyScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   rootContainer: {
     width: '100%',
     maxWidth: 480,
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   scrollView: {
     flex: 1,
@@ -196,20 +202,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '900',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     lineHeight: 20,
   },
   chartCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 28,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     marginBottom: 20,
   },
   cardHeader: {
@@ -228,13 +234,13 @@ const styles = StyleSheet.create({
   cardHeaderValue: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#f43f5e',
+    color: isDark ? '#fb7185' : '#f43f5e',
   },
   svgContainer: {
     width: '100%',
     height: 112,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: isDark ? '#334155' : '#f1f5f9',
   },
   svg: {
     width: '100%',
@@ -258,11 +264,11 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
     marginBottom: 12,
   },
   metricLabel: {
@@ -276,11 +282,11 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   foodsCard: {
-    backgroundColor: '#fff',
+    backgroundColor: isDark ? '#1e293b' : '#fff',
     borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#f1f5f9',
+    borderColor: isDark ? '#334155' : '#f1f5f9',
   },
   foodsTitle: {
     fontSize: 12,
@@ -306,7 +312,7 @@ const styles = StyleSheet.create({
   },
   foodCount: {
     fontSize: 12,
-    color: '#64748b',
+    color: isDark ? '#94a3b8' : '#64748b',
     fontWeight: '600',
   },
 });

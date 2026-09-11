@@ -1,7 +1,9 @@
+import { useAppStore } from '../store/useAppStore';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText, ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
+import { View, useColorScheme, StyleSheet, ScrollView, Pressable, TextInput, Text as RNText, ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { ArrowLeft, MicOff, Mic, Send, TrendingUp, Camera, Keyboard } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 // Custom Text to prevent Android clipping
 const Text = (props: any) => (
@@ -16,12 +18,23 @@ const Text = (props: any) => (
 import LivaAvatar from '../components/layout/LivaAvatar';
 
 export default function LivaChatScreen() {
+  const handleCameraPress = async () => {
+    try { await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [4, 3], quality: 1 }); } catch (e) { console.log(e); }
+  };
+
+  const appTheme = useAppStore(s => s.appTheme);
+  const colorScheme = useColorScheme();
+  const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
+  const styles = React.useMemo(() => getStyles(isDark), [isDark]);
+
   const router = useRouter();
   const userName = 'Amish'; // Defaulted
 
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState('');
+  const inputRef = useRef<any>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const isProcessingRef = useRef(false);
   const [isListening, setIsListening] = useState(false);
   
   const scrollViewRef = useRef<ScrollView>(null);
@@ -38,6 +51,15 @@ export default function LivaChatScreen() {
   }, []);
 
   const handleSendText = (textToSend: string) => {
+    if (isProcessingRef.current) return;
+    isProcessingRef.current = true;
+    if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+    }
     if (!textToSend.trim()) return;
 
     const timestamp = new Date().toLocaleTimeString([], {
@@ -71,6 +93,7 @@ export default function LivaChatScreen() {
         },
       ]);
       setIsTyping(false);
+      isProcessingRef.current = false;
     }, 1500);
   };
 
@@ -195,7 +218,8 @@ export default function LivaChatScreen() {
         <View style={styles.inputContainer}>
           <View style={styles.inputWrapper}>
             <TextInput
-              style={styles.textInput}
+                    ref={inputRef}
+                    style={styles.textInput}
               placeholder={isListening ? 'Listening...' : 'Ask Liva anything...'}
               placeholderTextColor="#8e8e93"
               value={inputText}
@@ -214,9 +238,9 @@ export default function LivaChatScreen() {
             <Pressable onPress={toggleVoiceInput} style={styles.actionButton}>
               {isListening ? <MicOff size={22} color="#ff3b30" /> : <Mic size={22} color="#8e8e93" />}
             </Pressable>
-            <Pressable style={styles.actionButton}>
-              <Camera size={22} color="#8e8e93" />
-            </Pressable>
+            <Pressable style={styles.actionButton} onPress={handleCameraPress}>
+                <Camera size={22} color="#8e8e93" />
+              </Pressable>
             <Pressable style={styles.actionButton}>
               <Keyboard size={22} color="#8e8e93" />
             </Pressable>
@@ -227,10 +251,10 @@ export default function LivaChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (isDark: boolean) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   container: {
     width: '100%',
@@ -238,7 +262,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -266,7 +290,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   activeStatus: {
     flexDirection: 'row',
@@ -278,7 +302,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
   },
   statusText: {
     fontSize: 11,
@@ -289,7 +313,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -305,10 +329,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 20,
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: '#f2f2f7',
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.02,
     shadowRadius: 12,
@@ -338,11 +362,11 @@ const styles = StyleSheet.create({
   insightDesc: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     lineHeight: 20,
   },
   insightDescBold: {
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
     fontWeight: 'bold',
   },
   messageRow: {
@@ -362,7 +386,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -383,16 +407,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   messageBubbleUser: {
-    backgroundColor: '#34C759',
+    backgroundColor: isDark ? '#4ade80' : '#34C759',
     borderRadius: 20,
     borderBottomRightRadius: 4,
   },
   messageBubbleLiva: {
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: '#f2f2f7',
     borderRadius: 24,
-    shadowColor: '#000',
+    shadowColor: isDark ? '#f8fafc' : '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 12,
@@ -400,7 +424,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   messageTextUser: {
-    color: '#fff',
+    color: isDark ? '#1e293b' : '#fff',
     fontSize: 15,
     lineHeight: 22,
     fontWeight: '500',
@@ -408,16 +432,16 @@ const styles = StyleSheet.create({
   messageGreeting: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     marginBottom: 8,
   },
   messageTextLiva: {
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     fontSize: 15,
     lineHeight: 22,
   },
   messageMotivation: {
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
     fontSize: 15,
     lineHeight: 22,
     fontWeight: '500',
@@ -437,7 +461,7 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 10,
-    color: '#34C759',
+    color: isDark ? '#4ade80' : '#34C759',
   },
   promptsContainer: {
     paddingHorizontal: 20,
@@ -450,14 +474,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: isDark ? '#1e293b' : '#ffffff',
     borderWidth: 1,
     borderColor: '#f2f2f7',
   },
   promptText: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   inputContainer: {
     paddingHorizontal: 20,
@@ -482,7 +506,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     fontSize: 15,
     fontWeight: '500',
-    color: '#000',
+    color: isDark ? '#f8fafc' : '#000',
   },
   sendButton: {
     width: 32,
