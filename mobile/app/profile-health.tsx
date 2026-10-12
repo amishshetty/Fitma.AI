@@ -42,7 +42,19 @@ const shellStyles = StyleSheet.create({
   footer: { padding: 24, borderTopWidth: 1, borderTopColor: '#f1f5f9', backgroundColor: '#fff' }
 });
 
-export default function ProfileHealthScreen() {
+export default function ProfileHealthScreen({
+  onBack,
+  activity: initialActivity = 'moderate',
+  preferences: initialPreferences = { veg: false, egg: false, nonveg: true, vegan: false, jain: false },
+  allergies: initialAllergies = { peanuts: false, gluten: false, dairy: false, shellfish: false, custom: [] },
+  onUpdateHealth,
+}: {
+  onBack?: () => void;
+  activity?: 'sedentary' | 'light' | 'moderate' | 'athlete';
+  preferences?: any;
+  allergies?: any;
+  onUpdateHealth?: (activity: any, preferences: any, allergies: any) => void;
+} = {}) {
   const appTheme = useAppStore(s => s.appTheme);
   const colorScheme = useColorScheme();
   const isDark = appTheme === 'dark' || (appTheme === 'system' && colorScheme === 'dark');
@@ -50,35 +62,35 @@ export default function ProfileHealthScreen() {
 
   const router = useRouter();
   
-  const [activity, setActivity] = useState('moderate');
-  const [preferences, setPreferences] = useState({ veg: false, egg: false, nonveg: true, vegan: false, jain: false });
-  const [allergies, setAllergies] = useState({ peanuts: false, gluten: false, dairy: false, shellfish: false, custom: [] as string[] });
+  const [activity, setActivity] = useState(initialActivity);
+  const [preferences, setPreferences] = useState(initialPreferences);
+  const [allergies, setAllergies] = useState(initialAllergies);
   const [customAllergyInput, setCustomAllergyInput] = useState('');
   const [bloodReportUploaded, setBloodReportUploaded] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const togglePref = (key: string) => {
-    setPreferences({ ...preferences, [key]: !(preferences as any)[key] });
+    setPreferences((prev: any) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const toggleAllergy = (key: string) => {
-    setAllergies({ ...allergies, [key]: !(allergies as any)[key] });
+    setAllergies((prev: any) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleAddCustomAllergy = () => {
     if (!customAllergyInput.trim()) return;
-    setAllergies({
-      ...allergies,
-      custom: [...allergies.custom, customAllergyInput.trim()]
-    });
+    setAllergies((prev: any) => ({
+      ...prev,
+      custom: [...(prev.custom || []), customAllergyInput.trim()],
+    }));
     setCustomAllergyInput('');
   };
 
   const handleRemoveCustomAllergy = (allergyToRemove: string) => {
-    setAllergies({
-      ...allergies,
-      custom: allergies.custom.filter(a => a !== allergyToRemove)
-    });
+    setAllergies((prev: any) => ({
+      ...prev,
+      custom: (prev.custom || []).filter((a: string) => a !== allergyToRemove),
+    }));
   };
 
   const handleUpload = () => {
@@ -88,7 +100,9 @@ export default function ProfileHealthScreen() {
   };
 
   const handleSave = () => {
-    router.back();
+    if (onUpdateHealth) onUpdateHealth(activity, preferences, allergies);
+    if (onBack) onBack();
+    else router.back();
   };
 
   return (

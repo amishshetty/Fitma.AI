@@ -146,17 +146,17 @@ export default function ProfileSettingsScreen() {
               <Text style={styles.versionText}>0.9.4 Prototype</Text>
             </View>
             
-            <Pressable style={styles.navRow} onPress={() => {}}>
+            <Pressable style={styles.navRow} onPress={() => router.push('/profile-legal')}>
               <Text style={styles.navText}>Terms of Service</Text>
               <ChevronRight size={16} color="#64748b" />
             </Pressable>
             
-            <Pressable style={styles.navRow} onPress={() => {}}>
+            <Pressable style={styles.navRow} onPress={() => router.push('/profile-privacy')}>
               <Text style={styles.navText}>Privacy Policy</Text>
               <ChevronRight size={16} color="#64748b" />
             </Pressable>
             
-            <Pressable style={[styles.navRow, styles.noBorderBottom, { paddingBottom: 0 }]} onPress={() => {}}>
+            <Pressable style={[styles.navRow, styles.noBorderBottom, { paddingBottom: 0 }]} onPress={() => router.push('/profile-licenses')}>
               <Text style={styles.navText}>Open-source Licenses</Text>
               <ChevronRight size={16} color="#64748b" />
             </Pressable>

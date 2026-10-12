@@ -17,13 +17,7 @@ export const handleChat = async (req, res) => {
     customVocabulary = {},
   } = req.body || {};
 
-  console.log('=== INCOMING CHAT REQUEST ===');
-  console.log('Message:', message);
-  console.log('LoggedMeals:', JSON.stringify(loggedMeals, null, 2));
-  console.log('CustomVocabulary:', JSON.stringify(customVocabulary));
-  console.log('LocalDateStr:', req.body.localDateStr);
-  console.log('CurrentTime:', currentTime);
-  console.log('===============================');
+  console.log(`[Liva Chat] Incoming: "${message}" | Meals: ${loggedMeals?.length || 0}`);
 
   if (!message || message.trim() === '') {
     return res.status(400).json({
@@ -76,11 +70,14 @@ export const handleChat = async (req, res) => {
   const userLocalDateStr = req.body.localDateStr || new Date().toDateString();
 
   try {
+    // Only pass the 8 most recent meals to Liva Brain to keep prompt compact and fast
+    const recentMealsForBrain = combinedMeals.slice(-8);
+
     // ---------- GEMINI MODEL ----------
     const systemPrompt = buildLivaBrain(
       message,
       userProfile,
-      combinedMeals,
+      recentMealsForBrain,
       dynamicRemainingCalories,
       userLocalDateStr,
       customVocabulary,
@@ -88,13 +85,11 @@ export const handleChat = async (req, res) => {
       currentTime
     );
 
-    console.log('=== SYSTEM PROMPT ===');
-    console.log(systemPrompt);
-    console.log('=====================');
-
     const history = [];
 
-    previousMessages.forEach((msg) => {
+    // Keep up to 4 recent messages for conversational context
+    const recentHistory = previousMessages.slice(-4);
+    recentHistory.forEach((msg) => {
       history.push({
         role: msg.sender === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }],

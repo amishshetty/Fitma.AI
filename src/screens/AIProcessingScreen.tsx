@@ -11,9 +11,9 @@ export default function AIProcessingScreen({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const factTimer = window.setInterval(
       () => setFactIndex((index) => (index + 1) % rotatingFacts.length),
-      900
+      600
     );
-    const doneTimer = window.setTimeout(onDone, 3200);
+    const doneTimer = window.setTimeout(onDone, 1100);
     return () => {
       window.clearInterval(factTimer);
       window.clearTimeout(doneTimer);

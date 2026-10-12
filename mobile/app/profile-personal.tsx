@@ -27,7 +27,7 @@ export default function ProfilePersonalScreen() {
   const [height, setHeight] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const \[units, setUnits\] = useState\('Metric \(kg, cm\)'\);
+  const [units, setUnits] = useState('Metric (kg, cm)');
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
   
@@ -177,7 +177,7 @@ const getStyles = (isDark: boolean) => StyleSheet.create({
   field: { gap: 4 },
   label: { fontSize: 10, fontWeight: 'bold', color: isDark ? '#94a3b8' : isDark ? '#94a3b8' : '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { width: '100%', backgroundColor: isDark ? isDark ? '#f8fafc' : '#0f172a' : isDark ? '#0f172a' : '#f8fafc', padding: 12, borderRadius: 12, fontSize: 12, fontWeight: 'bold', color: isDark ? isDark ? '#0f172a' : '#f8fafc' : isDark ? '#f8fafc' : '#000' },
-  readOnlyInput: \{ opacity: 0\.7 \},
+  readOnlyInput: { opacity: 0.7 },
     
     dropdownMenu: {
       position: 'absolute',

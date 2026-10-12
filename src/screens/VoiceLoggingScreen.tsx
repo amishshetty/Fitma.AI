@@ -14,7 +14,7 @@ export default function VoiceLoggingScreen({
   onDone: () => void;
 }) {
   useEffect(() => {
-    const timer = window.setTimeout(onDone, 2600);
+    const timer = window.setTimeout(onDone, 1000);
     return () => window.clearTimeout(timer);
   }, [onDone]);
 

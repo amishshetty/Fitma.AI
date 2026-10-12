@@ -230,21 +230,24 @@ export default function HomeScreen() {
     generated.push({
       id: 'trend-fat',
       type: 'suggestion',
-      icon: <Check size={16} color="#34C759" />,
+      icon: <Zap size={16} color="#34C759" />,
       title: 'Weekly Trend',
       text: 'You ate a lot of fats this week. Try eating more veggies today. 🌱',
+      actionText: 'Get light recipes',
+      onClick: () => onNavigate('liva-home'),
+      color: '#34C759',
     });
-    if (generated.length === 0) {
-      generated.push({
-        id: '5',
-        type: 'success',
-        icon: <Check size={16} color="#34C759" />,
-        title: 'On Track!',
-        text: "You're doing great today. Keep up the consistent logging.",
-        actionText: 'View trends',
-        onClick: () => onNavigate('progress-dashboard'),
-      });
-    }
+    // removed
+// removed
+
+
+
+
+
+
+
+
+
 
     return generated.slice(0, 3);
   }, [caloriesLogged, proteinLogged, waterGlasses, goals, proteinPercent, calPercent, onNavigate, onStartLog, onLogWater, loggedMeals]);

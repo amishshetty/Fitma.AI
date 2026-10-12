@@ -5,6 +5,7 @@ import { ArrowRight, BarChart2, PieChart, Sparkles, UtensilsCrossed, Soup, Dropl
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import LivaAvatar from '../../components/layout/LivaAvatar';
+import { NutritionSummaryCard } from '../../components/chat/LivaResponseCards';
 
 const Text = (props: any) => (
   <RNText 
@@ -187,6 +188,7 @@ export default function LivaHomeScreen() {
           text: responseText,
             greeting: safeGreeting,
             motivation: safeMotivation,
+            summaryData: result?.summaryData,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
@@ -292,6 +294,14 @@ export default function LivaHomeScreen() {
                     msg.sender === 'user' ? styles.messageTextUser : styles.messageTextLiva
                   ]}>{msg.text}</Text>
                   {msg.motivation ? <Text style={styles.messageMotivation}>{msg.motivation}</Text> : null}
+                    {msg.summaryData && (
+                      <NutritionSummaryCard
+                        calories={msg.summaryData.calories}
+                        protein={msg.summaryData.protein}
+                        carbs={msg.summaryData.carbs}
+                        fat={msg.summaryData.fat}
+                      />
+                    )}
                 </View>
                 
                 <View style={[styles.timestampWrapper, msg.sender === 'user' ? { justifyContent: 'flex-end' } : { justifyContent: 'flex-start' }]}>

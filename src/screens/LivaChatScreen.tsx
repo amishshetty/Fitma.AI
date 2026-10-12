@@ -387,7 +387,7 @@ export default function LivaChatScreen({
           } catch (e) {}
           setIsListening(false);
         }
-      }, 1500);
+      }, 850);
     };
     recognition.onerror = () => {
       setIsListening(false);

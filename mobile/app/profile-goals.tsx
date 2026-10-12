@@ -134,6 +134,48 @@ export default function ProfileGoalsScreen() {
     setTimeout(() => setSuccess(false), 2400);
   };
   
+  const calculateTargets = (
+    currentWeight: number,
+    currentHeight: number,
+    journey: string
+  ) => {
+    const bmr = 10 * currentWeight + 6.25 * currentHeight - 5 * 25 + 5;
+    const tdee = bmr * 1.55;
+
+    let cals = tdee;
+    let proteinMultiplier = 1.8;
+
+    if (journey === 'Lose Weight') {
+      cals -= 500;
+      proteinMultiplier = 2.0;
+    } else if (journey === 'Gain Muscle') {
+      cals += 500;
+      proteinMultiplier = 2.2;
+    } else if (journey === 'Improve Energy') {
+      cals = tdee;
+      proteinMultiplier = 1.6;
+    } else {
+      cals = tdee;
+      proteinMultiplier = 1.8;
+    }
+
+    return {
+      calories: Math.round(cals / 50) * 50,
+      protein: Math.round((currentWeight * proteinMultiplier) / 5) * 5,
+      water: Math.round((currentWeight * 35) / 250) * 250,
+    };
+  };
+
+  const updateBodyMetrics = (newWeight: number, newHeight: number) => {
+    const targets = calculateTargets(newWeight, newHeight, primaryGoal);
+    setGoals({
+      ...goals,
+      weight: newWeight,
+      height: newHeight,
+      ...targets,
+    });
+  };
+
   const primaryGoalsList = [
     { label: 'Lose Weight', icon: Flame, color: '#fb923c' },
     { label: 'Gain Muscle', icon: Target, color: '#6366f1' },
@@ -183,7 +225,11 @@ export default function ProfileGoalsScreen() {
               return (
                 <Pressable
                   key={g.label}
-                  onPress={() => setPrimaryGoal(g.label)}
+                  onPress={() => {
+                    setPrimaryGoal(g.label);
+                    const targets = calculateTargets(weight, height, g.label);
+                    setGoals({ ...goals, ...targets });
+                  }}
                   style={[
                     styles.goalCard,
                     active ? { borderColor: g.color, shadowColor: g.color, shadowOpacity: 0.1, shadowRadius: 8, elevation: 2 } : {}
@@ -201,8 +247,8 @@ export default function ProfileGoalsScreen() {
 
         <Text style={styles.sectionTitle}>Body Metrics (BMI Calculator)</Text>
         
-        <ModernSlider label="Height" icon={Ruler} color="#3b82f6" unit="cm" min={140} max={220} value={height} onChange={(v: number) => setGoals({...goals, height: v})} />
-        <ModernSlider label="Weight" icon={Scale} color="#a855f7" unit="kg" min={40} max={150} value={weight} onChange={(v: number) => setGoals({...goals, weight: v})} />
+        <ModernSlider label="Height" icon={Ruler} color="#3b82f6" unit="cm" min={140} max={220} value={height} onChange={(v: number) => updateBodyMetrics(weight, v)} />
+        <ModernSlider label="Weight" icon={Scale} color="#a855f7" unit="kg" min={40} max={150} value={weight} onChange={(v: number) => updateBodyMetrics(v, height)} />
 
         {/* BMI Card */}
         <View style={styles.bmiCard}>

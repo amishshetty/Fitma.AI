@@ -9,7 +9,7 @@ import { getDatabase } from 'firebase-admin/database';
 class AIReminderEngine {
   constructor() {
     this.cronTask = null;
-    this.interval = '* * * * *'; // Production: every 1 minute for faster testing
+    this.interval = process.env.REMINDERS_INTERVAL || '*/15 * * * *';
   }
 
   start() {

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, useColorScheme, ScrollView, Pressable, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
-import { Text as RNText, Image } from 'react-native';
+import { Text as RNText, Image, TextInput } from 'react-native';
 import {
   ChevronLeft, ChevronDown, ChevronRight,
   Sunrise, Sun, Moon, Coffee, Check, Flame,
-  Droplets, Activity, Target, Sparkles
+  Droplets, Activity, Target, Sparkles, Mic, Camera, Search
 } from 'lucide-react-native';
 import { useAppStore } from '../../store/useAppStore';
+import { useRouter } from 'expo-router';
+import { quickOptions } from '../../constants';
 
 const Text = (props: any) => (
   <RNText 
@@ -24,6 +26,11 @@ export default function MyPlanScreen() {
 
   const [dateOffset, setDateOffset] = useState(0);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isMealDrawerOpen, setIsMealDrawerOpen] = useState(false);
+  const [isWaterDrawerOpen, setIsWaterDrawerOpen] = useState(false);
+  const [isWeightDrawerOpen, setIsWeightDrawerOpen] = useState(false);
+  const [weightInput, setWeightInput] = useState('');
+  const router = useRouter();
 
   const goals = useAppStore(s => s.goals);
   const history = useAppStore(s => s.history);
@@ -188,7 +195,7 @@ export default function MyPlanScreen() {
           </View>
 
           {/* Log Food */}
-          <Pressable style={styles.logCard}>
+          <Pressable style={styles.logCard} onPress={() => setIsMealDrawerOpen(true)}>
             <View style={styles.logCardBody}>
               <View style={styles.logDot} />
               <Text style={styles.logCardTitle}>Log Your Food</Text>
@@ -203,7 +210,7 @@ export default function MyPlanScreen() {
           </Pressable>
 
           {/* Log Water */}
-          <Pressable style={[styles.logCard, { marginTop: 12 }]}>
+          <Pressable style={[styles.logCard, { marginTop: 12 }]} onPress={() => setIsWaterDrawerOpen(true)}>
             <View style={styles.logCardBody}>
               <View style={styles.logDot} />
               <Text style={styles.logCardTitle}>Log Water</Text>
@@ -218,7 +225,7 @@ export default function MyPlanScreen() {
           </Pressable>
         
           {/* Log Weight */}
-          <Pressable style={[styles.logCard, { marginTop: 12 }]}>
+          <Pressable style={[styles.logCard, { marginTop: 12 }]} onPress={() => setIsWeightDrawerOpen(true)}>
             <View style={styles.logCardBody}>
               <View style={styles.logDot} />
               <Text style={styles.logCardTitle}>Log Weight</Text>
@@ -252,6 +259,133 @@ export default function MyPlanScreen() {
           </Pressable>
 
         </ScrollView>
+
+        {/* Meal Drawer */}
+        {isMealDrawerOpen && (
+          <View style={styles.overlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsMealDrawerOpen(false)} />
+            <View style={styles.drawer}>
+              <View style={styles.handle} />
+              <Text style={styles.drawerTitle}>Log Your Meal</Text>
+              <Text style={{ textAlign: 'center', color: '#94a3b8', marginBottom: 20 }}>Choose how you want to track your food</Text>
+
+              <View style={{ gap: 12 }}>
+                {quickOptions.map((option, i) => {
+                  const Icon = option.icon;
+                  return (
+                    <Pressable
+                      key={i}
+                      style={({pressed}) => [{
+                        flexDirection: 'row', alignItems: 'center', gap: 16,
+                        backgroundColor: isDark ? '#0f172a' : '#fff', padding: 16, borderRadius: 20,
+                        borderWidth: 1.5, borderColor: isDark ? '#334155' : '#f1f5f9'
+                      }, pressed && { transform: [{ scale: 0.98 }] }]}
+                      onPress={() => {
+                        setIsMealDrawerOpen(false);
+                        if (option.mode === 'voice') router.push('/voice-log');
+                        else if (option.mode === 'camera') router.push('/camera-log');
+                        else if (option.mode === 'text') router.push('/text-log');
+                      }}
+                    >
+                      <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: option.bg, justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon size={24} color={option.tint} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: isDark ? '#f8fafc' : '#10201a' }}>{option.title}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: '600', color: '#94a3b8' }}>{option.description}</Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <Pressable style={styles.cancelBtn} onPress={() => setIsMealDrawerOpen(false)}>
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {/* Water Drawer */}
+        {isWaterDrawerOpen && (
+          <View style={styles.overlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsWaterDrawerOpen(false)} />
+            <View style={styles.drawer}>
+              <View style={styles.handle} />
+              <Text style={styles.drawerTitle}>Log Water</Text>
+              <Text style={{ textAlign: 'center', color: '#94a3b8', marginBottom: 20 }}>Quickly add water to your daily goal</Text>
+
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between' }}>
+                {[250, 500, 750, 1000].map(amount => (
+                  <Pressable
+                    key={amount}
+                    style={({pressed}) => [{
+                      width: '48%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      backgroundColor: '#dcf2fe30', paddingVertical: 20, borderRadius: 20,
+                      borderWidth: 1.5, borderColor: '#dcf2fe'
+                    }, pressed && { transform: [{ scale: 0.98 }] }]}
+                    onPress={() => {
+                      logWater(amount);
+                      setIsWaterDrawerOpen(false);
+                    }}
+                  >
+                    <Droplets size={18} color="#0ea5e9" />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#0ea5e9' }}>{amount}ml</Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <Pressable style={styles.cancelBtn} onPress={() => setIsWaterDrawerOpen(false)}>
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {/* Weight Drawer */}
+        {isWeightDrawerOpen && (
+          <View style={styles.overlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsWeightDrawerOpen(false)} />
+            <View style={styles.drawer}>
+              <View style={styles.handle} />
+              <Text style={styles.drawerTitle}>Log Weight</Text>
+              <Text style={{ textAlign: 'center', color: '#94a3b8', marginBottom: 20 }}>Update your body weight for {dateLabel}</Text>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 24, paddingHorizontal: 16 }}>
+                <TextInput
+                  style={{
+                    flex: 1, maxWidth: 200, backgroundColor: isDark ? '#0f172a' : '#f8fafc',
+                    borderWidth: 1, borderColor: isDark ? '#334155' : '#f1f5f9',
+                    borderRadius: 24, padding: 20, fontSize: 30, fontWeight: '900', color: isDark ? '#f8fafc' : '#10201a', textAlign: 'center'
+                  }}
+                  keyboardType="decimal-pad"
+                  value={weightInput}
+                  onChangeText={setWeightInput}
+                  placeholder="70.0"
+                  placeholderTextColor="#94a3b850"
+                />
+                <Text style={{ position: 'absolute', right: 48, fontSize: 18, fontWeight: 'bold', color: '#94a3b8' }}>kg</Text>
+              </View>
+
+              <View style={{ gap: 12 }}>
+                <Pressable
+                  style={({pressed}) => [{
+                    backgroundColor: '#34C759', padding: 16, borderRadius: 16, alignItems: 'center'
+                  }, pressed && { transform: [{ scale: 0.98 }] }]}
+                  onPress={() => {
+                    setIsWeightDrawerOpen(false);
+                    setWeightInput('');
+                  }}
+                >
+                  <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Save Weight</Text>
+                </Pressable>
+                <Pressable style={styles.cancelBtn} onPress={() => setIsWeightDrawerOpen(false)}>
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* Calendar Drawer — inline, NOT Modal, so it stays within 480px container */}
         {isCalendarOpen && (
@@ -436,4 +570,6 @@ const getStyles = (isDark: boolean) => StyleSheet.create({
 
   continueBtn: { backgroundColor: '#101828', padding: 16, borderRadius: 18, alignItems: 'center', marginTop: 16 },
   continueBtnText: { color: isDark ? '#1e293b' : '#fff', fontSize: 15, fontWeight: 'bold' },
+  cancelBtn: { backgroundColor: isDark ? '#0f172a' : '#f8fafc', padding: 16, borderRadius: 16, alignItems: 'center', marginTop: 24 },
+  cancelBtnText: { color: '#94a3b8', fontSize: 15, fontWeight: 'bold' },
 });

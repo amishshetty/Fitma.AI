@@ -288,11 +288,11 @@ export default function LivaHomeScreen({
           },
           currentTime: timestamp,
           memories: memories || [],
-          previousMessages: messages.map((m) => ({
+          previousMessages: messages.slice(-4).map((m) => ({
             sender: m.sender,
             text: m.text,
           })),
-          loggedMeals: (loggedMeals || []).map((m) => {
+          loggedMeals: (loggedMeals || []).slice(-10).map((m) => {
             let dateStr = '';
             try {
               dateStr = new Date(parseInt(m.id)).toDateString();
@@ -478,7 +478,7 @@ export default function LivaHomeScreen({
           } catch (e) {}
           setIsListening(false);
         }
-      }, 1500);
+      }, 850);
     };
     recognition.onerror = () => {
       setIsListening(false);

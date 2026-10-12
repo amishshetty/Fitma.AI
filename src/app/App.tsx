@@ -1044,7 +1044,7 @@ export default function App() {
           }
         }
 
-        // Auto-close after a few seconds so the user can see the result and then return to the app
+        // Auto-close after a brief moment so user can read the result and return to app
         const isUnknownMeal =
           data.mealData &&
           data.mealData.mealType &&
@@ -1054,7 +1054,7 @@ export default function App() {
             if (activeSiriRecRef.current === recognition) {
               setLivaSiriActive(false);
             }
-          }, 3500);
+          }, 1600);
         }
       } catch (err: any) {
         console.error('Fetch Catch:', err);
@@ -1071,7 +1071,7 @@ export default function App() {
           if (activeSiriRecRef.current === recognition) {
             setLivaSiriActive(false);
           }
-        }, 3000);
+        }, 2000);
       }
     };
 
@@ -1097,7 +1097,7 @@ export default function App() {
       // Clear previous silence timeout
       if (silenceTimeout) clearTimeout(silenceTimeout);
 
-      // Auto-submit after 1.5 seconds of silence
+      // Auto-submit after 850ms of silence
       silenceTimeout = setTimeout(() => {
         if (finalTranscript.trim()) {
           finishListening();
@@ -1110,9 +1110,9 @@ export default function App() {
             if (activeSiriRecRef.current === recognition) {
               setLivaSiriActive(false);
             }
-          }, 2500);
+          }, 1800);
         }
-      }, 1500);
+      }, 850);
     };
 
     recognition.onerror = (event: any) => {

@@ -16,9 +16,9 @@ export default function LivaThinkingScreen({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const factTimer = setInterval(
       () => setFactIndex((idx) => (idx + 1) % rotatingHelper.length),
-      1000
+      500
     );
-    const doneTimer = setTimeout(onDone, 3000);
+    const doneTimer = setTimeout(onDone, 1000);
     return () => {
       clearInterval(factTimer);
       clearTimeout(doneTimer);
